@@ -1,0 +1,21 @@
+namespace Context.Player
+{
+    using UnityEngine;
+
+    public class TPRoot : MonoBehaviour
+    {
+        private Transform _followTarget;
+        private Transform _transform;
+
+        public void Init(Transform followTarget)
+        {
+            _followTarget = followTarget;
+            _transform = transform; 
+        }
+
+        public void LateTick()
+        {
+            _transform.position = _followTarget.position;
+        }
+    }
+}
