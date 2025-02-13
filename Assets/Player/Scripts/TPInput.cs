@@ -1,4 +1,4 @@
-namespace Context.Player
+namespace Context.ThirdPersonController
 {
     using UnityEngine;
 
@@ -20,14 +20,16 @@ namespace Context.Player
         public bool RequestedJumpCancel;
         public bool RequestedJumpSustain;
 
-        public void UpdateInput(ControllerInput input)
+        public void UpdateInput(ControllerInput input, Quaternion transientRotation)
         {
-            RequestedRotation = input.Rotation;
-
             // Movement
             RequestedMovement = new Vector3(input.Movement.x, 0f, input.Movement.y);
             RequestedMovement = Vector3.ClampMagnitude(RequestedMovement, 1f);
             RequestedMovement = input.Rotation * RequestedMovement;
+
+            RequestedRotation = RequestedMovement.sqrMagnitude > 0
+                ? Quaternion.LookRotation(RequestedMovement)
+                : transientRotation;
 
             // Jump
             RequestedJump = input.Jump || RequestedJump;

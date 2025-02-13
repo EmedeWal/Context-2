@@ -1,4 +1,4 @@
-namespace Context.Player
+namespace Context.ThirdPersonController
 {
     using UnityEngine;
 
@@ -12,8 +12,6 @@ namespace Context.Player
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-
             _controller = GetComponentInChildren<TPController>();
             _camera = GetComponentInChildren<TPCamera>();
             _root = GetComponentInChildren<TPRoot>();
@@ -21,10 +19,16 @@ namespace Context.Player
             _inputActions = new InputActions();
             _inputActions.Enable();
 
-            var targetTransform = _controller.transform;
+            var mainCamera = Camera.main;
+            if (mainCamera == null)
+                Debug.LogError("Forgot to assign a camera with the 'main' tag!");
+
+            var controllerTransform = _controller.transform;
+            var cameraTarget = _controller.transform.GetChild(0);
+
             _controller.Init();
-            _camera.Init(targetTransform);
-            _root.Init(targetTransform);
+            _camera.Init(cameraTarget, mainCamera);
+            _root.Init(controllerTransform);
 
             gameObject.layer = Layers.GetControllerLayer();
         }
@@ -37,10 +41,9 @@ namespace Context.Player
         private void Update()
         {
             var inputActions = _inputActions.Gameplay;
-            var deltaTime = Time.deltaTime;
 
             var lookInput = inputActions.Look.ReadValue<Vector2>();
-            _camera.Tick(lookInput, deltaTime);
+            _camera.Tick(lookInput);
 
             var controllerInput = new ControllerInput
             {
@@ -55,7 +58,9 @@ namespace Context.Player
 
         private void LateUpdate()
         {
-            _camera.LateTick();
+            var deltaTime = Time.deltaTime;
+
+            _camera.LateTick(deltaTime);
             _root.LateTick();
         }
     }

@@ -1,4 +1,4 @@
-namespace Context.Player
+namespace Context.ThirdPersonController
 {
     using KinematicCharacterController;
     using UnityEngine;
@@ -12,15 +12,17 @@ namespace Context.Player
 
         [Space]
         [Header("Grounded")]
-        [SerializeField] private float _speed = 10f;
         [SerializeField] private float _acceleration = 2f;
         [SerializeField] private float _deceleration = 10f;
+        [SerializeField] private float _groundedSpeed = 10f;
+        [SerializeField] private float _groundRotation = 5f;
 
         [Space]
         [Header("Airborne")]
-        [SerializeField] private float _minAirVelocity = 2f;
+        [SerializeField] private float _airSpeed = 6f;
+        [SerializeField] private float _airRotation = 2f;
         [SerializeField] private float _maxVerticalVelocity = 30f;
-        [SerializeField] private float _airborneManoeuvrability = 40f;
+        [SerializeField] private float _airManoeuvrability = 40f;
         [SerializeField] private float _gravity = -60f;
         [SerializeField] private float _jumpSustainMultiplier = 0.4f;
 
@@ -30,7 +32,6 @@ namespace Context.Player
         [SerializeField] private float _coyoteTime = 0.2f;
         [SerializeField] private float _jumpForce = 20f;
 
-        private float _lastGroundedMagnitude;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _forcedUnground;
@@ -42,7 +43,7 @@ namespace Context.Player
             _input = new();
         }
 
-        public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
+        public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput, _motor.TransientRotation);
 
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
@@ -52,29 +53,33 @@ namespace Context.Player
             }
             else
             {
-                currentVelocity = HandleAirborneLocomotion(currentVelocity, deltaTime, _lastGroundedMagnitude);
+                currentVelocity = HandleAirborneLocomotion(currentVelocity, deltaTime);
             }
 
             currentVelocity = CheckJump(currentVelocity, deltaTime);
+
+            var horizontalSpeed = Vector3.ProjectOnPlane(currentVelocity, _motor.CharacterUp).magnitude;
+            var verticalSpeed = currentVelocity.y;
+            BuildLogger.Instance.LogSpeed(horizontalSpeed, verticalSpeed);
         }
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
         {
+            var rotationSpeed = _motor.GroundingStatus.IsStableOnGround
+                ? _groundRotation
+                : _airRotation;
+
             var forward = Vector3.ProjectOnPlane
             (
                 _input.RequestedRotation * Vector3.forward,
                 _motor.CharacterUp
             );
-            currentRotation = Quaternion.LookRotation(forward, _motor.CharacterUp);
-        }
+            var targetRotation = Quaternion.LookRotation(forward, _motor.CharacterUp);
 
-        public void BeforeCharacterUpdate(float deltaTime) { }
-        public void AfterCharacterUpdate(float deltaTime)
-        {
-            if (_motor.GroundingStatus.IsStableOnGround)
+            if (targetRotation != _motor.TransientRotation)
             {
-                var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-                _lastGroundedMagnitude = planarVelocity.magnitude;
+                var response = 1f - Mathf.Exp(-rotationSpeed * deltaTime);
+                currentRotation = Quaternion.Slerp(currentRotation, targetRotation, response);
             }
         }
 
@@ -89,7 +94,7 @@ namespace Context.Player
                 surfaceNormal: _motor.GroundingStatus.GroundNormal
             ) * requestedMovement.magnitude;
 
-            var targetVelocity = groundedMovement * _speed;
+            var targetVelocity = groundedMovement * _groundedSpeed;
             var response = currentVelocity.magnitude < targetVelocity.magnitude
                 ? _acceleration
                 : _deceleration;
@@ -105,7 +110,7 @@ namespace Context.Player
         #endregion
 
         #region Airborne
-        private Vector3 HandleAirborneLocomotion(Vector3 currentVelocity, float deltaTime, float lastGroundedMagnitude)
+        private Vector3 HandleAirborneLocomotion(Vector3 currentVelocity, float deltaTime)
         {
             var characterUp = _motor.CharacterUp;
             var requestedMovement = _input.RequestedMovement;
@@ -117,35 +122,32 @@ namespace Context.Player
             ) * requestedMovement.magnitude;
 
             var planarVelocity = Vector3.ProjectOnPlane(currentVelocity, characterUp);
-            var dot = Vector3.Dot(planarVelocity.normalized, planarMovement);
+            var movementForce = _airManoeuvrability * deltaTime * planarMovement;
 
-            var movementForce = _airborneManoeuvrability * deltaTime * planarMovement;
-            movementForce = CalculateInputForce(movementForce, planarVelocity, lastGroundedMagnitude, dot);
+            movementForce = CalculateInputForce(movementForce, planarVelocity, planarMovement);
             currentVelocity = CalculateGravity(currentVelocity, characterUp, deltaTime);
 
             currentVelocity += movementForce;
 
-            currentVelocity = ClampVertical(currentVelocity);
-
-            return currentVelocity;
+            return ClampVertical(currentVelocity);
         }
 
-        private Vector3 CalculateInputForce(Vector3 movementForce, Vector3 currentPlanarVelocity, float lastGroundedMagnitude, float directionDot)
+        private Vector3 CalculateInputForce(Vector3 movementForce, Vector3 planarVelocity, Vector3 planarMovement)
         {
-            lastGroundedMagnitude = Mathf.Max(_minAirVelocity, lastGroundedMagnitude);
+            var dot = Vector3.Dot(planarVelocity.normalized, planarMovement);
 
             // Only accelerate an airborne player while he is under the maximum _velocity magnitude
-            if (currentPlanarVelocity.magnitude < lastGroundedMagnitude)
+            if (planarVelocity.magnitude < _airSpeed)
             {
-                var targetPlanarVelocity = currentPlanarVelocity + movementForce;
-                targetPlanarVelocity = Vector3.ClampMagnitude(targetPlanarVelocity, lastGroundedMagnitude);
+                var targetPlanarVelocity = planarVelocity + movementForce;
+                targetPlanarVelocity = Vector3.ClampMagnitude(targetPlanarVelocity, _airSpeed);
 
-                return targetPlanarVelocity - currentPlanarVelocity;
+                return targetPlanarVelocity - planarVelocity;
             }
             // Otherwise, limit the movement force in the same direction
-            else if (directionDot > 0)
+            else if (dot > 0)
             {
-                movementForce = Vector3.ProjectOnPlane(movementForce, currentPlanarVelocity.normalized);
+                movementForce = Vector3.ProjectOnPlane(movementForce, planarVelocity.normalized);
             }
             return movementForce;
         }
@@ -220,6 +222,8 @@ namespace Context.Player
         #endregion
 
         #region Unused
+        public void BeforeCharacterUpdate(float deltaTime) { }
+        public void AfterCharacterUpdate(float deltaTime) { }
         public void PostGroundingUpdate(float deltaTime) { }
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }

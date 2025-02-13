@@ -1615,7 +1615,7 @@ namespace KinematicCharacterController
         /// </summary>
         private Vector3 GetObstructionNormal(Vector3 hitNormal, bool stableOnHit)
         {
-            // Find hit/obstruction/offset normal
+            // Find hit/obstruction/_offset normal
             Vector3 obstructionNormal = hitNormal;
             if (GroundingStatus.IsStableOnGround && !MustUnground() && !stableOnHit)
             {

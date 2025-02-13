@@ -1,4 +1,4 @@
-namespace Context.Player
+namespace Context.ThirdPersonController
 {
     using UnityEngine;
 
@@ -10,12 +10,12 @@ namespace Context.Player
         public void Init(Transform followTarget)
         {
             _followTarget = followTarget;
-            _transform = transform; 
+            _transform = transform;
         }
 
         public void LateTick()
         {
-            _transform.position = _followTarget.position;
+            _transform.SetPositionAndRotation(_followTarget.position, _followTarget.rotation);  
         }
     }
 }
