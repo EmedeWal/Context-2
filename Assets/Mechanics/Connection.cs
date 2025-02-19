@@ -59,7 +59,7 @@ namespace Context
             var end = Colliders[1].ClosestPoint(a);
 
             var dis = Vector3.Distance(start, end);
-            var radius = _width * 0.5f;
+            var radius = 0.01f;
             var dir = b - a;
 
             var hits = Physics.SphereCastAll(start, radius, dir, dis);
