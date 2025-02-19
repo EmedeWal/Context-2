@@ -7,12 +7,16 @@ namespace Context.ThirdPersonController
         public Quaternion Rotation => _transform.rotation;
 
         [Header("SETTINGS")]
+
+        [Space]
+        [Header("Controls")]
         [SerializeField] private Vector3 _offset = new(0, 1.5f, 7.5f);
-        [SerializeField] private float _sensitivity = 0.5f;
-        [SerializeField] private bool _invertControls = false;
+        [SerializeField] private Vector2 _sensitivity = new(0.3f, 0.15f);
         [SerializeField] private float _maximumAngle = 30f;
         [SerializeField] private float _mimimumAngle = -15f;
+        [SerializeField] private bool _invertControls = false;
 
+        [Space]
         [Header("Smoothing")]
         [SerializeField] private float _smoothTimeX = 0.05f;
         [SerializeField] private float _smoothTimeY = 0.2f;
@@ -34,6 +38,8 @@ namespace Context.ThirdPersonController
 
         public void Init(Transform followTarget, Camera mainCamera)
         {
+            Cursor.lockState = CursorLockMode.Locked;
+
             _cameraTransform = mainCamera.transform;
             _followTarget = followTarget;
 
@@ -47,8 +53,8 @@ namespace Context.ThirdPersonController
         public void Tick(Vector2 input)
         {
             var sensitivity = _sensitivity * (_invertControls ? -1 : 1);
-            var horizontal = input.x * sensitivity;
-            var vertical = input.y * sensitivity;
+            var horizontal = input.x * sensitivity.x;
+            var vertical = input.y * sensitivity.y;
 
             if (_lookSmoothing > 0)
             {

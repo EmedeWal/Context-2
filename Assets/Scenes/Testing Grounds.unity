@@ -802,13 +802,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ed740f641eda6d4c801c74165b0ca38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: {x: 0, y: 1.5, z: -9}
-  _sensitivity: 0.5
-  _invertControls: 0
+  _offset: {x: 0, y: 3, z: -12}
+  _sensitivity: {x: 0.3, y: 0.15}
   _maximumAngle: 30
   _mimimumAngle: -15
+  _invertControls: 0
   _smoothTimeX: 0.05
-  _smoothTimeY: 0.2
+  _smoothTimeY: 1
   _lookSmoothing: 0.2
 --- !u!1 &577624094
 GameObject:
@@ -1681,11 +1681,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed415ea24a40ca14c89d894258786b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _acceleration: 2
-  _deceleration: 10
-  _groundedSpeed: 10
+  _acceleration: 3
+  _deceleration: 5
+  _groundedSpeed: 5
   _groundRotation: 5
-  _airSpeed: 6
+  _airSpeed: 3
   _airRotation: 2
   _maxVerticalVelocity: 30
   _airManoeuvrability: 40

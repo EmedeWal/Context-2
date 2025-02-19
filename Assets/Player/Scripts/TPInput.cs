@@ -20,16 +20,17 @@ namespace Context.ThirdPersonController
         public bool RequestedJumpCancel;
         public bool RequestedJumpSustain;
 
-        public void UpdateInput(ControllerInput input, Quaternion transientRotation)
+        public void UpdateInput(ControllerInput input)
         {
             // Movement
             RequestedMovement = new Vector3(input.Movement.x, 0f, input.Movement.y);
-            RequestedMovement = Vector3.ClampMagnitude(RequestedMovement, 1f);
             RequestedMovement = input.Rotation * RequestedMovement;
 
-            RequestedRotation = RequestedMovement.sqrMagnitude > 0
-                ? Quaternion.LookRotation(RequestedMovement)
-                : transientRotation;
+            // Ensure there is movement before setting rotation
+            if (RequestedMovement.sqrMagnitude > 0.001f)
+            {
+                RequestedRotation = Quaternion.LookRotation(RequestedMovement.normalized);
+            }
 
             // Jump
             RequestedJump = input.Jump || RequestedJump;

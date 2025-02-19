@@ -15,7 +15,7 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _acceleration = 2f;
         [SerializeField] private float _deceleration = 10f;
         [SerializeField] private float _groundedSpeed = 10f;
-        [SerializeField] private float _groundRotation = 5f;
+        [SerializeField] private float _groundedRotation = 5f;
 
         [Space]
         [Header("Airborne")]
@@ -43,17 +43,17 @@ namespace Context.ThirdPersonController
             _input = new();
         }
 
-        public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput, _motor.TransientRotation);
+        public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
 
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
             if (_motor.GroundingStatus.IsStableOnGround)
             {
-                currentVelocity = HandleGroundedLocomotion(currentVelocity, deltaTime);
+                HandleGroundedLocomotion(ref currentVelocity, deltaTime);
             }
             else
             {
-                currentVelocity = HandleAirborneLocomotion(currentVelocity, deltaTime);
+                HandleAirborneLocomotion(ref currentVelocity, deltaTime);
             }
 
             currentVelocity = CheckJump(currentVelocity, deltaTime);
@@ -65,34 +65,36 @@ namespace Context.ThirdPersonController
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
         {
-            var rotationSpeed = _motor.GroundingStatus.IsStableOnGround
-                ? _groundRotation
-                : _airRotation;
-
-            var forward = Vector3.ProjectOnPlane
-            (
-                _input.RequestedRotation * Vector3.forward,
-                _motor.CharacterUp
-            );
-            var targetRotation = Quaternion.LookRotation(forward, _motor.CharacterUp);
-
-            if (targetRotation != _motor.TransientRotation)
+            if (_input.RequestedMovement.sqrMagnitude > 0.001f) // Only update rotation if moving
             {
-                var response = 1f - Mathf.Exp(-rotationSpeed * deltaTime);
-                currentRotation = Quaternion.Slerp(currentRotation, targetRotation, response);
+                var rotationSpeed = _motor.GroundingStatus.IsStableOnGround
+                    ? _groundedRotation
+                    : _airRotation;
+
+                var forward = Vector3.ProjectOnPlane
+                (
+                    _input.RequestedRotation * Vector3.forward,
+                    _motor.CharacterUp
+                );
+                var targetRotation = Quaternion.LookRotation(forward, _motor.CharacterUp);
+
+                if (targetRotation != _motor.TransientRotation)
+                {
+                    var response = 1f - Mathf.Exp(-rotationSpeed * deltaTime);
+                    currentRotation = Quaternion.Slerp(currentRotation, targetRotation, response);
+                }
             }
         }
 
         #region MOVEMENT
         #region Grounded
-        private Vector3 HandleGroundedLocomotion(Vector3 currentVelocity, float deltaTime)
+        private void HandleGroundedLocomotion(ref Vector3 currentVelocity, float deltaTime)
         {
-            var requestedMovement = _input.RequestedMovement;
             var groundedMovement = _motor.GetDirectionTangentToSurface
             (
-                direction: requestedMovement,
+                direction: _motor.CharacterForward,
                 surfaceNormal: _motor.GroundingStatus.GroundNormal
-            ) * requestedMovement.magnitude;
+            ) * _input.RequestedMovement.magnitude;
 
             var targetVelocity = groundedMovement * _groundedSpeed;
             var response = currentVelocity.magnitude < targetVelocity.magnitude
@@ -105,12 +107,12 @@ namespace Context.ThirdPersonController
                 b: targetVelocity,
                 t: 1f - Mathf.Exp(-response * deltaTime)
             );
-            return moveVelocity;
+            currentVelocity = moveVelocity;
         }
         #endregion
 
         #region Airborne
-        private Vector3 HandleAirborneLocomotion(Vector3 currentVelocity, float deltaTime)
+        private void HandleAirborneLocomotion(ref Vector3 currentVelocity, float deltaTime)
         {
             var characterUp = _motor.CharacterUp;
             var requestedMovement = _input.RequestedMovement;
@@ -129,7 +131,7 @@ namespace Context.ThirdPersonController
 
             currentVelocity += movementForce;
 
-            return ClampVertical(currentVelocity);
+            currentVelocity = ClampVertical(currentVelocity);
         }
 
         private Vector3 CalculateInputForce(Vector3 movementForce, Vector3 planarVelocity, Vector3 planarMovement)
