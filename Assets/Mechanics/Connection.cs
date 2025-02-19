@@ -49,25 +49,32 @@ namespace Context
             }
         }
 
-        public void LateTick()
+        public void FixedTick()
         {
             var a = Colliders[0].bounds.center;
             var b = Colliders[1].bounds.center;
 
+            // Offset the points slightly to avoid overlapping with colliders
+            var start = Colliders[0].ClosestPoint(b);
+            var end = Colliders[1].ClosestPoint(a);
+
+            var dis = Vector3.Distance(start, end);
+            var radius = _width * 0.5f;
             var dir = b - a;
-            var ray = new Ray(a, dir);
 
-            var obstructed = Physics.Raycast(ray, out var hit, dir.magnitude)
-                          && !Colliders.Contains(hit.collider);
+            var hits = Physics.SphereCastAll(start, radius, dir, dis);
 
-            //                           && (!Colliders.Contains(hit.collider) || hit.collider != _meshCollider);
+            var obstructed = hits.Any(hit =>
+                hit.collider != null
+                && hit.collider != _meshCollider
+                && !Colliders.Contains(hit.collider)); // Ignore its own mesh collider
 
-            _lineRenderer.colorGradient = obstructed 
-                ? _obstructedGradient 
+            _lineRenderer.colorGradient = obstructed
+                ? _obstructedGradient
                 : _defaultGradient;
 
-            UpdateLinePoints(a, b);
-            UpdateMeshCollider(); // Update the collider mesh
+            UpdateLinePoints(start, end);
+            UpdateMeshCollider();
         }
 
         public void UpdateConnection(Collider collider, int index)
@@ -84,11 +91,11 @@ namespace Context
 
         private void UpdateMeshCollider()
         {
-            //Mesh mesh = new();
-            //_lineRenderer.BakeMesh(mesh, true);
-            //_meshCollider.sharedMesh = mesh;
-            //_meshCollider.convex = true; // Needed for trigger colliders
-            //_meshCollider.isTrigger = true; // Set to trigger if needed
+            Mesh mesh = new();
+            _lineRenderer.BakeMesh(mesh, true);
+            _meshCollider.sharedMesh = mesh;
+            _meshCollider.convex = true; // Needed for trigger colliders
+            _meshCollider.isTrigger = true; // Set to trigger if needed
         }
     }
 }

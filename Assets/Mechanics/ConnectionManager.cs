@@ -21,10 +21,10 @@ namespace Context
             _connections = new();
         }
 
-        private void LateUpdate()
+        private void FixedUpdate()
         {
             foreach (var connection in _connections)
-                connection.LateTick();
+                connection.FixedTick();
         }
 
         public void TransferConnection(Collider player, Collider target)

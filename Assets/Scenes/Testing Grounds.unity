@@ -1738,19 +1738,19 @@ PrefabInstance:
     - target: {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: '_connectionPoints.Array.data[0]'
       value: 
-      objectReference: {fileID: 1773621491}
+      objectReference: {fileID: 705064493}
     - target: {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: '_connectionPoints.Array.data[1]'
       value: 
-      objectReference: {fileID: 705064493}
+      objectReference: {fileID: 1980541434}
     - target: {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: '_connectionPoints.Array.data[2]'
       value: 
-      objectReference: {fileID: 1980541434}
+      objectReference: {fileID: 1089281014}
     - target: {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: '_connectionPoints.Array.data[3]'
       value: 
-      objectReference: {fileID: 1089281014}
+      objectReference: {fileID: 1773621491}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
