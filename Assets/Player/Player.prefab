@@ -83,6 +83,10 @@ MonoBehaviour:
   _jumpBuffer: 0.1
   _coyoteTime: 0.2
   _jumpForce: 12
+  _connectableLayer:
+    serializedVersion: 2
+    m_Bits: 32768
+  _checkRange: 3
 --- !u!114 &1034842814954606312
 MonoBehaviour:
   m_ObjectHideFlags: 0

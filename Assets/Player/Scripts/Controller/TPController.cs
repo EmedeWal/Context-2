@@ -32,12 +32,20 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _coyoteTime = 0.2f;
         [SerializeField] private float _jumpForce = 20f;
 
+        [Header("CONNECTIONS")]
+        [SerializeField] private LayerMask _connectableLayer;
+        [SerializeField] private float _checkRange;
+
+        private ConnectionManager _connectionManager;
+
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _forcedUnground;
 
         public void Init()
         {
+            _connectionManager = ConnectionManager.Instance;
+
             _motor = GetComponent<KinematicCharacterMotor>();
             _motor.CharacterController = this;
             _input = new();
@@ -56,7 +64,9 @@ namespace Context.ThirdPersonController
                 HandleAirborneLocomotion(ref currentVelocity, deltaTime);
             }
 
-            currentVelocity = CheckJump(currentVelocity, deltaTime);
+            CheckJump(ref currentVelocity, deltaTime);
+
+            CheckTransfer();
 
             var horizontalSpeed = Vector3.ProjectOnPlane(currentVelocity, _motor.CharacterUp).magnitude;
             var verticalSpeed = currentVelocity.y;
@@ -126,15 +136,15 @@ namespace Context.ThirdPersonController
             var planarVelocity = Vector3.ProjectOnPlane(currentVelocity, characterUp);
             var movementForce = _airManoeuvrability * deltaTime * planarMovement;
 
-            movementForce = CalculateInputForce(movementForce, planarVelocity, planarMovement);
-            currentVelocity = CalculateGravity(currentVelocity, characterUp, deltaTime);
+            CalculateInputForce(ref movementForce, planarVelocity, planarMovement);
+            CalculateGravity(ref currentVelocity, characterUp, deltaTime);
 
             currentVelocity += movementForce;
 
-            currentVelocity = ClampVertical(currentVelocity);
+            ClampVertical(ref currentVelocity);
         }
 
-        private Vector3 CalculateInputForce(Vector3 movementForce, Vector3 planarVelocity, Vector3 planarMovement)
+        private void CalculateInputForce(ref Vector3 movementForce, Vector3 planarVelocity, Vector3 planarMovement)
         {
             var dot = Vector3.Dot(planarVelocity.normalized, planarMovement);
 
@@ -143,28 +153,23 @@ namespace Context.ThirdPersonController
             {
                 var targetPlanarVelocity = planarVelocity + movementForce;
                 targetPlanarVelocity = Vector3.ClampMagnitude(targetPlanarVelocity, _airSpeed);
-
-                return targetPlanarVelocity - planarVelocity;
+                movementForce = targetPlanarVelocity - planarVelocity;
             }
             // Otherwise, limit the movement force in the same direction
             else if (dot > 0)
-            {
                 movementForce = Vector3.ProjectOnPlane(movementForce, planarVelocity.normalized);
-            }
-            return movementForce;
         }
 
-        private Vector3 ClampVertical(Vector3 currentVelocity)
+        private void ClampVertical(ref Vector3 currentVelocity)
         {
             if (Mathf.Abs(currentVelocity.y) > _maxVerticalVelocity)
             {
                 var clampedVertical = Mathf.Clamp(currentVelocity.y, -_maxVerticalVelocity, _maxVerticalVelocity);
                 currentVelocity = new(currentVelocity.x, clampedVertical, currentVelocity.z);
             }
-            return currentVelocity;
         }
 
-        private Vector3 CalculateGravity(Vector3 currentVelocity, Vector3 characterUp, float deltaTime)
+        private void CalculateGravity(ref Vector3 currentVelocity, Vector3 characterUp, float deltaTime)
         {
             var sustainedJump = currentVelocity.y > 0 && _input.RequestedJumpSustain && _input.RequestedJumpCancel == false;
             var gravity = _gravity;
@@ -173,20 +178,16 @@ namespace Context.ThirdPersonController
                 gravity *= _jumpSustainMultiplier;
 
             currentVelocity += gravity * deltaTime * characterUp;
-
-            return currentVelocity;
         }
         #endregion
 
         #region Jumping
-        private Vector3 CheckJump(Vector3 currentVelocity, float deltaTime)
+        private void CheckJump(ref Vector3 currentVelocity, float deltaTime)
         {
             UpdateState(deltaTime);
 
             if (_input.RequestedJump && _airborneTime < _coyoteTime && _forcedUnground == false)
-                currentVelocity = Jump(currentVelocity);
-
-            return currentVelocity;
+                Jump(ref currentVelocity);
         }
 
         private void UpdateState(float deltaTime)
@@ -206,7 +207,7 @@ namespace Context.ThirdPersonController
                 : _jumpBuffer;
         }
 
-        private Vector3 Jump(Vector3 currentVelocity)
+        private void Jump(ref Vector3 currentVelocity)
         {
             _motor.ForceUnground();
             _forcedUnground = true;
@@ -217,11 +218,45 @@ namespace Context.ThirdPersonController
             var targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, _jumpForce);
 
             currentVelocity += characterUp * (targetVerticalSpeed - currentVerticalSpeed);
-
-            return currentVelocity;
         }
         #endregion
         #endregion
+
+        private void CheckTransfer()
+        {
+            if (_input.RequestedTransfer)
+            {
+                var pos = _motor.TransientPosition;
+                var hits = Physics.OverlapSphere(pos, _checkRange, _connectableLayer);
+
+                Collider closestHit = null;
+                float closestDistance = float.MaxValue;
+
+                foreach (var hit in hits)
+                {
+                    var distance = Vector3.Distance(pos, hit.bounds.center);
+                    if (distance < closestDistance)
+                    {
+                        closestHit = hit;
+                        closestDistance = distance;
+                    }
+                }
+
+                if (closestHit != null)
+                    _connectionManager.TransferConnection(_motor.Capsule, closestHit);
+            }
+
+            _input.RequestedTransfer = false;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (_motor != null)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireSphere(_motor.TransientPosition, _checkRange);
+            }
+        }
 
         #region Unused
         public void BeforeCharacterUpdate(float deltaTime) { }

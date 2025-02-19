@@ -9,13 +9,14 @@ namespace Context.ThirdPersonController
         public bool Jump;
         public bool CancelJump;
         public bool SustainJump;
+        public bool Transfer;
     }
 
     public class TPInput
     {
         public Quaternion RequestedRotation;
         public Vector3 RequestedMovement;
-        public float TimeSinceJumpRequest;
+        public bool RequestedTransfer;
         public bool RequestedJump;
         public bool RequestedJumpCancel;
         public bool RequestedJumpSustain;
@@ -34,6 +35,7 @@ namespace Context.ThirdPersonController
 
             // Jump
             RequestedJump = input.Jump || RequestedJump;
+            RequestedTransfer = input.Transfer || RequestedTransfer;
             RequestedJumpCancel = input.CancelJump || RequestedJumpCancel;
             RequestedJumpSustain = input.SustainJump;
         }
