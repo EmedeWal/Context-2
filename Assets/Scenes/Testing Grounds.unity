@@ -1181,7 +1181,7 @@ PrefabInstance:
       objectReference: {fileID: 1773621491}
     - target: {fileID: 6467554232059524352, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
@@ -1591,6 +1591,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2293167602650712199, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+      propertyPath: _maxConnections
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3561326844448049247, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: m_Name
       value: Connection Point (0)
@@ -1649,8 +1653,12 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: _maxConnections
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: _initialConnections.Array.size
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: '_initialConnections.Array.data[0]'

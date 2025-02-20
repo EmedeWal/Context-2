@@ -21,6 +21,7 @@ namespace Context
 
         private LineRenderer _lineRenderer;
         private MeshCollider _meshCollider;
+        private Mesh _bakedMesh;
 
         public void Init(BaseConnectionPoint pointA, BaseConnectionPoint pointB)
         {
@@ -35,6 +36,21 @@ namespace Context
             _lineRenderer.endWidth = _width;
 
             SetupConnection(pointA, pointB);
+        }
+
+        public void Cleanup()
+        {
+            if (_meshCollider != null && _meshCollider.sharedMesh != null)
+            {
+                Destroy(_meshCollider.sharedMesh);
+                _meshCollider.sharedMesh = null;
+            }
+
+            if (_bakedMesh != null)
+            {
+                Destroy(_bakedMesh);
+                _bakedMesh = null;
+            }
         }
 
         public void SetupConnection(BaseConnectionPoint a, BaseConnectionPoint b)
@@ -86,11 +102,13 @@ namespace Context
             _lineRenderer.SetPosition(1, pointB);
         }
 
-        private void UpdateMeshCollider()
+        public void UpdateMeshCollider()
         {
-            Mesh mesh = new();
-            _lineRenderer.BakeMesh(mesh, true);
-            _meshCollider.sharedMesh = mesh;
+            if (_bakedMesh != null) Destroy(_bakedMesh); // Destroy previous mesh to free memory
+
+            _bakedMesh = new Mesh();
+            _lineRenderer.BakeMesh(_bakedMesh, true);
+            _meshCollider.sharedMesh = _bakedMesh;
 
             _meshCollider.convex = true;
             _meshCollider.isTrigger = true;

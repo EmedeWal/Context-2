@@ -52,7 +52,7 @@ namespace Context
         public void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
         {
             // Return if either is at their c cap
-            if (HasMaxConnections(connectionPointA) || HasMaxConnections(connectionPointB))
+            if (HasAnyConnections(connectionPointA) || HasAnyConnections(connectionPointB))
             {
                 Debug.LogWarning("Requested connection is invalid! Either point has max connections!");
                 return;
@@ -62,27 +62,38 @@ namespace Context
 
         public void InteractWithConnection(BaseConnectionPoint player, BaseConnectionPoint target)
         {
-            // Find the other c point attached to the player
-            var connection = _connectionPoints[player][0];
-            var other = connection.Connections.FirstOrDefault(conn => conn != player);
+            // Get the player playerTargetConnection
+            var playerTargetConnection = _connectionPoints[player][0];
 
-            if (_connectionPoints[target].Contains(connection))
+            if (_connectionPoints[target].Contains(playerTargetConnection))
             {
-                Debug.Log("thou wists tho remove thine connection.");
+                // Find the connection of the target that is NOT linked to the player
+                var targetOtherConnection = _connectionPoints[target]
+                    .FirstOrDefault(conn => !conn.Connections.Contains(player));
 
-                // what should happen now: the player's connection needs to be transferred from the target
-                //TransferConnection(player, target, other, connection);
-            }
-            else
-            {
-                // If the target already has max connections OR is already connected to other, return
-                if (HasMaxConnections(target) || _connectionPoints[target].Any(c => c.Connections.Contains(other)))
+                if (targetOtherConnection == null)
                 {
-                    Debug.LogWarning("Target was already connected with the other or has max connections.");
+                    Debug.LogWarning("target had no other connection!");
                     return;
                 }
 
-                TransferConnection(player, other, target, connection);
+                var other = targetOtherConnection.Connections.FirstOrDefault(conn => conn != target);
+                TransferConnection(target, player, other, playerTargetConnection);
+
+                RemoveConnection(targetOtherConnection);
+            }
+            else
+            {
+                var other = playerTargetConnection.Connections.FirstOrDefault(conn => conn != player);
+
+                // If the target already has max connections OR is already connected to other, return
+                if (HasAnyConnections(target) || _connectionPoints[target].Any(c => c.Connections.Contains(other)))
+                {
+                    Debug.LogWarning("Target was already connected with the other.");
+                    return;
+                }
+
+                TransferConnection(player, other, target, playerTargetConnection);
                 CreateConnection(player, target);
             }
         }
@@ -95,7 +106,16 @@ namespace Context
 
             // Update tracking dictionary
             _connectionPoints[connectionPointA].Remove(connection);
+            //_connectionPoints[connectionPointB].Remove(connection);
+
+            //_connectionPoints[connectionPointB].Add(connection);
             _connectionPoints[connectionPointC].Add(connection);
+
+            connectionPointA.CurrentConnections--;
+            //connectionPointB.CurrentConnections--;
+
+            //connectionPointB.CurrentConnections++;
+            connectionPointC.CurrentConnections++;
         }
 
         private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
@@ -107,8 +127,31 @@ namespace Context
             // Store the c in both points
             _connectionPoints[connectionPointA].Add(connection);
             _connectionPoints[connectionPointB].Add(connection);
+
+            connectionPointA.CurrentConnections++;
+            connectionPointB.CurrentConnections++;
         }
 
-        private bool HasMaxConnections(BaseConnectionPoint point) => _connectionPoints[point].Count >= point.MaxConnections;
+        private void RemoveConnection(Connection connection)
+        {
+            var pointsToUpdate = new List<BaseConnectionPoint>();   
+
+            // Collect keys where the connection exists
+            foreach (var kvp in _connectionPoints)
+                if (kvp.Value.Contains(connection))
+                    pointsToUpdate.Add(kvp.Key);
+
+            // Remove the connection from the collected keys
+            foreach (var point in pointsToUpdate)
+            {
+                _connectionPoints[point].Remove(connection);
+                point.CurrentConnections--;
+            }
+
+            connection.Cleanup();
+            Destroy(connection.gameObject);
+        }
+
+        private bool HasAnyConnections(BaseConnectionPoint point) => _connectionPoints[point].Count > 0;
     }
 }

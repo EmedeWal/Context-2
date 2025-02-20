@@ -45,6 +45,8 @@ namespace Context.ThirdPersonController
             _motor = GetComponent<KinematicCharacterMotor>();
             _motor.CharacterController = this;
             _input = new();
+
+            _collider = _motor.Capsule;
         }
 
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
