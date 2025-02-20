@@ -7,6 +7,7 @@ namespace Context
     public class Connection : MonoBehaviour
     {
         public BaseConnectionPoint[] Connections { get; private set; }
+        public bool Obstruced { get; private set; } 
 
         [Header("SETTINGS")]
 
@@ -82,14 +83,14 @@ namespace Context
             var radius = 0.01f;
 
             var hits = Physics.SphereCastAll(start, radius, dir, dis);
-            var obstructed = hits.Any(hit =>
+            Obstruced = hits.Any(hit =>
                 hit.collider != null &&
                 hit.collider != _meshCollider &&  // Exclude its own mesh collider
                 hit.collider != colliderA &&     // Exclude its own connection point A
                 hit.collider != colliderB        // Exclude its own connection point B
             );
 
-            _lineRenderer.colorGradient = obstructed
+            _lineRenderer.colorGradient = Obstruced 
                 ? _obstructedGradient
                 : _defaultGradient;
 

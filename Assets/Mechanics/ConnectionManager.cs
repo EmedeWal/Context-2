@@ -2,6 +2,7 @@ namespace Context
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Unity.VisualScripting;
     using UnityEngine;
 
     public class ConnectionManager : MonoBehaviour
@@ -84,6 +85,12 @@ namespace Context
             }
             else
             {
+                if (playerTargetConnection.Obstruced)
+                {
+                    Debug.LogWarning("Connection to player is obstructed, cannot connect!");
+                    return;
+                }
+
                 var other = playerTargetConnection.Connections.FirstOrDefault(conn => conn != player);
 
                 // If the target already has max connections OR is already connected to other, return
