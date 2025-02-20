@@ -70,6 +70,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed415ea24a40ca14c89d894258786b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <InitialConnections>k__BackingField: []
+  <MaxConnections>k__BackingField: 1
   _acceleration: 3
   _deceleration: 5
   _groundedSpeed: 5

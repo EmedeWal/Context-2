@@ -255,6 +255,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 85657026}
   m_CullTransparentMesh: 1
+--- !u!114 &212801242 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2293167602650712199, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+  m_PrefabInstance: {fileID: 1254942065}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &314912531
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -746,6 +757,17 @@ Transform:
   - {fileID: 804965273}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &694916836 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2293167602650712199, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+  m_PrefabInstance: {fileID: 1267734473}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &804965272
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,6 +1179,10 @@ PrefabInstance:
       propertyPath: '_connectionPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 1773621491}
+    - target: {fileID: 6467554232059524352, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
     m_RemovedGameObjects: []
@@ -1406,6 +1432,28 @@ CapsuleCollider:
   m_CorrespondingSourceObject: {fileID: 5476456664309094115, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
   m_PrefabInstance: {fileID: 8952199178424010554}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1809068960 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2293167602650712199, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+  m_PrefabInstance: {fileID: 314912531}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2061298694 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2293167602650712199, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+  m_PrefabInstance: {fileID: 1128522334}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2071270176
 GameObject:
   m_ObjectHideFlags: 0
@@ -1567,6 +1615,10 @@ PrefabInstance:
       propertyPath: '_connectionPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 1773621491}
+    - target: {fileID: 6467554232059524352, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5109098463146579794, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
     m_RemovedGameObjects: []
@@ -1598,12 +1650,52 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: _initialConnections.Array.size
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: '_initialConnections.Array.data[0]'
       value: 
       objectReference: {fileID: 5613495805381558455}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '_initialConnections.Array.data[1]'
+      value: 
+      objectReference: {fileID: 694916836}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '_initialConnections.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1809068960}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '_initialConnections.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2061298694}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '_initialConnections.Array.data[4]'
+      value: 
+      objectReference: {fileID: 212801242}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: <InitialConnections>k__BackingField.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '<InitialConnections>k__BackingField.Array.data[0]'
+      value: 
+      objectReference: {fileID: 5613495805381558455}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '<InitialConnections>k__BackingField.Array.data[1]'
+      value: 
+      objectReference: {fileID: 694916836}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '<InitialConnections>k__BackingField.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1809068960}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '<InitialConnections>k__BackingField.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2061298694}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '<InitialConnections>k__BackingField.Array.data[4]'
+      value: 
+      objectReference: {fileID: 212801242}
     - target: {fileID: 8818158436555604993, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

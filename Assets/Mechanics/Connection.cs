@@ -6,7 +6,7 @@ namespace Context
     [RequireComponent(typeof(LineRenderer), typeof(MeshCollider))]
     public class Connection : MonoBehaviour
     {
-        public Collider[] Colliders { get; private set; }
+        public BaseConnectionPoint[] Connections { get; private set; }
 
         [Header("SETTINGS")]
 
@@ -22,11 +22,10 @@ namespace Context
         private LineRenderer _lineRenderer;
         private MeshCollider _meshCollider;
 
-        public void Init(Collider a, Collider b)
+        public void Init(BaseConnectionPoint pointA, BaseConnectionPoint pointB)
         {
             _lineRenderer = GetComponent<LineRenderer>();
             _meshCollider = GetComponent<MeshCollider>();
-            Colliders = new Collider[2] { a, b };
 
             _lineRenderer.colorGradient = _defaultGradient;
             _lineRenderer.numCornerVertices = 6;
@@ -35,42 +34,56 @@ namespace Context
             _lineRenderer.startWidth = _width;
             _lineRenderer.endWidth = _width;
 
-            UpdateLinePoints(Colliders[0].bounds.center, Colliders[1].bounds.center);
+            SetupConnection(pointA, pointB);
+        }
+
+        public void SetupConnection(BaseConnectionPoint a, BaseConnectionPoint b)
+        {
+            Connections = new BaseConnectionPoint[2] { a, b };
+            UpdateConnection(Connections[0].Collider.bounds.center, Connections[1].Collider.bounds.center);
+        }
+
+        public void UpdateConnection(Vector3 pointA, Vector3 pointB)
+        {
+            UpdateLinePoints(pointA, pointB);
             UpdateMeshCollider();
         }
 
         public void FixedTick()
         {
-            var a = Colliders[0].bounds.center;
-            var b = Colliders[1].bounds.center;
+            var colliderA = Connections[0].Collider;
+            var colliderB = Connections[1].Collider;
+
+            var pointA = colliderA.bounds.center;
+            var pointB = colliderB.bounds.center;
 
             // Offset the points slightly to avoid overlapping with colliders
-            var start = Colliders[0].ClosestPoint(b);
-            var end = Colliders[1].ClosestPoint(a);
+            var start = colliderA.ClosestPoint(pointB);
+            var end = colliderB.ClosestPoint(pointA);
 
             var dis = Vector3.Distance(start, end);
+            var dir = (pointB - pointA).normalized; // Normalize direction to avoid issues
             var radius = 0.01f;
-            var dir = b - a;
 
             var hits = Physics.SphereCastAll(start, radius, dir, dis);
-
             var obstructed = hits.Any(hit =>
-                hit.collider != null
-                && hit.collider != _meshCollider
-                && !Colliders.Contains(hit.collider)); // Ignore its own mesh collider
+                hit.collider != null &&
+                hit.collider != _meshCollider &&  // Exclude its own mesh collider
+                hit.collider != colliderA &&     // Exclude its own connection point A
+                hit.collider != colliderB        // Exclude its own connection point B
+            );
 
             _lineRenderer.colorGradient = obstructed
                 ? _obstructedGradient
                 : _defaultGradient;
 
-            UpdateLinePoints(start, end);
-            UpdateMeshCollider();
+            UpdateConnection(pointA, pointB);
         }
 
-        private void UpdateLinePoints(Vector3 a, Vector3 b)
+        private void UpdateLinePoints(Vector3 pointA, Vector3 pointB)
         {
-            _lineRenderer.SetPosition(0, a);
-            _lineRenderer.SetPosition(1, b);
+            _lineRenderer.SetPosition(0, pointA);
+            _lineRenderer.SetPosition(1, pointB);
         }
 
         private void UpdateMeshCollider()
@@ -78,8 +91,9 @@ namespace Context
             Mesh mesh = new();
             _lineRenderer.BakeMesh(mesh, true);
             _meshCollider.sharedMesh = mesh;
-            _meshCollider.convex = true; // Needed for trigger colliders
-            _meshCollider.isTrigger = true; // Set to trigger if needed
+
+            _meshCollider.convex = true;
+            _meshCollider.isTrigger = true;
         }
     }
 }

@@ -225,21 +225,24 @@ namespace Context.ThirdPersonController
                 var pos = _motor.TransientPosition;
                 var hits = Physics.OverlapSphere(pos, _checkRange, _connectableLayer);
 
-                Collider closestHit = null;
-                float closestDistance = float.MaxValue;
+                var closestComponent = default(BaseConnectionPoint);
+                var closestDistance = float.MaxValue;
 
                 foreach (var hit in hits)
                 {
                     var distance = Vector3.Distance(pos, hit.bounds.center);
                     if (distance < closestDistance)
                     {
-                        closestHit = hit;
+                        closestComponent = hit.GetComponent<BaseConnectionPoint>();
                         closestDistance = distance;
+
+                        if (closestComponent == null)
+                            Debug.LogError("Someone forgot to have the script on the connectable layer!!!");
                     }
                 }
 
-                if (closestHit != null)
-                    _manager.TransferConnection(_motor.Capsule, closestHit);
+                if (closestComponent != null)
+                    _manager.InteractWithConnection(this, closestComponent);
             }
 
             _input.RequestedTransfer = false;
