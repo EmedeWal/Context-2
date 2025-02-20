@@ -3,7 +3,7 @@ namespace Context.ThirdPersonController
     using KinematicCharacterController;
     using UnityEngine;
 
-    public class TPController : MonoBehaviour, ICharacterController
+    public class TPController : BaseConnectionPoint, ICharacterController
     {
         private KinematicCharacterMotor _motor;
         private TPInput _input;
@@ -36,16 +36,12 @@ namespace Context.ThirdPersonController
         [SerializeField] private LayerMask _connectableLayer;
         [SerializeField] private float _checkRange;
 
-        private ConnectionManager _connectionManager;
-
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _forcedUnground;
 
         public void Init()
         {
-            _connectionManager = ConnectionManager.Instance;
-
             _motor = GetComponent<KinematicCharacterMotor>();
             _motor.CharacterController = this;
             _input = new();
@@ -243,7 +239,7 @@ namespace Context.ThirdPersonController
                 }
 
                 if (closestHit != null)
-                    _connectionManager.TransferConnection(_motor.Capsule, closestHit);
+                    _manager.TransferConnection(_motor.Capsule, closestHit);
             }
 
             _input.RequestedTransfer = false;

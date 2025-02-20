@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 2212544218323082183}
   - component: {fileID: 6467554232059524352}
   - component: {fileID: 953891932344886827}
-  - component: {fileID: 5109098463146579794}
+  - component: {fileID: 2293167602650712199}
   m_Layer: 15
-  m_Name: Connection Point
+  m_Name: Connection Point (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,7 +111,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &5109098463146579794
+--- !u!114 &2293167602650712199
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,7 +120,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3561326844448049247}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5fde1ce666afff4b8ca724c7b857c0a, type: 3}
+  m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectionPoints: []
+  _initialConnections: []
+  _maxConnections: 2
+  _currentConnections: 0

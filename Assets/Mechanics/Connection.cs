@@ -28,25 +28,15 @@ namespace Context
             _meshCollider = GetComponent<MeshCollider>();
             Colliders = new Collider[2] { a, b };
 
-            if (a == b)
-            {
-                Debug.LogError("Should not assign a connection with two of the same colliders!");
-                Destroy(gameObject);
-            }
-            else
-            {
-                _lineRenderer.numCornerVertices = 6;
-                _lineRenderer.numCapVertices = 6;
-                _lineRenderer.positionCount = 2;
-                _lineRenderer.startWidth = _width;
-                _lineRenderer.endWidth = _width;
+            _lineRenderer.colorGradient = _defaultGradient;
+            _lineRenderer.numCornerVertices = 6;
+            _lineRenderer.numCapVertices = 6;
+            _lineRenderer.positionCount = 2;
+            _lineRenderer.startWidth = _width;
+            _lineRenderer.endWidth = _width;
 
-                UpdateLinePoints(Colliders[0].bounds.center, Colliders[1].bounds.center);
-                _lineRenderer.colorGradient = _defaultGradient;
-
-                // Generate the collider mesh
-                UpdateMeshCollider();
-            }
+            UpdateLinePoints(Colliders[0].bounds.center, Colliders[1].bounds.center);
+            UpdateMeshCollider();
         }
 
         public void FixedTick()
@@ -74,12 +64,6 @@ namespace Context
                 : _defaultGradient;
 
             UpdateLinePoints(start, end);
-            UpdateMeshCollider();
-        }
-
-        public void UpdateConnection(Collider collider, int index)
-        {
-            Colliders[index] = collider;
             UpdateMeshCollider();
         }
 

@@ -1,9 +1,7 @@
 namespace Context
 {
     using System.Collections.Generic;
-    using System.Linq;
     using UnityEngine;
-    using System;
 
     public class ConnectionManager : MonoBehaviour
     {
@@ -11,55 +9,75 @@ namespace Context
 
         [SerializeField] private Connection _connectionPrefab;
 
-        private List<Connection> _connections;
+        private Dictionary<BaseConnectionPoint, List<Connection>> _connectionPoints; // Track connections per collider
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else DestroyImmediate(gameObject);
 
-            _connections = new();
+            _connectionPoints = new();
+
+            // First init
+            var connectionPoints = FindObjectsByType<BaseConnectionPoint>(FindObjectsSortMode.None);
+            foreach (var connectionPoint in connectionPoints)
+                connectionPoint.Init(this);
+
+            // then make initial connections
+            foreach (var connectionPoint in connectionPoints)
+                foreach (var other in connectionPoint.InitialConnections)
+                    RequestConnection(connectionPoint, other);
         }
 
         private void FixedUpdate()
         {
-            foreach (var connection in _connections)
-                connection.FixedTick();
-        }
-
-        public void TransferConnection(Collider player, Collider target)
-        {
-            if (HasExistingConnection(player, target))
-                return; 
-
-            var connections = new List<Connection>(_connections);
-            foreach (var connection in connections)
+            HashSet<Connection> tickedConnections = new(); // Track already ticked connections
+            foreach (var connectionList in _connectionPoints.Values)
             {
-                if (connection.Colliders.Contains(player))
+                foreach (var connection in connectionList)
                 {
-                    var index = Array.IndexOf(connection.Colliders, player);
-                    var other = connection.Colliders[(index + 1) % connection.Colliders.Length];
-
-                    if (HasExistingConnection(target, other))
-                        return;
-
-                    connection.UpdateConnection(target, index);
-                    CreateConnection(target, player);
+                    if (!tickedConnections.Contains(connection))
+                    {
+                        connection.FixedTick();
+                        tickedConnections.Add(connection);
+                    }
                 }
             }
         }
 
-        public void CreateConnection(Collider a, Collider b)
+        public void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
         {
-            if (HasExistingConnection(a, b))
+            // Ensure dictionary contains the connection points
+            if (!_connectionPoints.ContainsKey(connectionPointA))
+                _connectionPoints.Add(connectionPointA, new List<Connection>());
+
+            if (!_connectionPoints.ContainsKey(connectionPointB))
+                _connectionPoints.Add(connectionPointB, new List<Connection>());
+
+            // Return if either is at their connection cap
+            if (_connectionPoints[connectionPointA].Count >= connectionPointA.MaxConnections || _connectionPoints[connectionPointB].Count >= connectionPointB.MaxConnections)
+            {
+                Debug.LogWarning("Requested connection is invalid! Either point has max connections!");
                 return;
-
-            var connection = Instantiate(_connectionPrefab, transform);
-            connection.Init(a, b);
-
-            _connections.Add(connection);
+            }
+            CreateConnection(connectionPointA, connectionPointB);
         }
 
-        private bool HasExistingConnection(Collider a, Collider b) => _connections.Any(c => c.Colliders.Contains(a) && c.Colliders.Contains(b));
+        public void TransferConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
+        {
+
+        }
+
+        private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
+        {
+            // Instantiate and initialize the connection
+            var connection = Instantiate(_connectionPrefab, transform);
+            connection.Init(connectionPointA.Collider, connectionPointB.Collider);
+
+
+            // Store the connection in both points
+            _connectionPoints[connectionPointA].Add(connection);
+            _connectionPoints[connectionPointB].Add(connection);
+        }
     }
 }
