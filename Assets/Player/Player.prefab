@@ -70,21 +70,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed415ea24a40ca14c89d894258786b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InitialConnections>k__BackingField: []
-  <MaxConnections>k__BackingField: 1
-  _acceleration: 3
-  _deceleration: 5
-  _groundedSpeed: 5
-  _groundedRotation: 5
-  _airSpeed: 3
-  _airRotation: 2
+  CurrentConnections: 0
+  _initialConnections: []
+  _maxConnections: 2
+  _acceleration: 12
+  _deceleration: 9
+  _groundedSpeed: 15
+  _groundedRotation: 120
+  _airSpeed: 6
+  _airRotation: 4
   _maxVerticalVelocity: 30
   _airManoeuvrability: 40
-  _gravity: -40
+  _gravity: -90
   _jumpSustainMultiplier: 0.6
   _jumpBuffer: 0.1
   _coyoteTime: 0.2
-  _jumpForce: 12
+  _jumpForce: 22
   _connectableLayer:
     serializedVersion: 2
     m_Bits: 32768
