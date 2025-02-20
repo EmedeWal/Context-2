@@ -69,6 +69,9 @@ namespace Context
             if (_connectionPoints[target].Contains(connection))
             {
                 Debug.Log("thou wists tho remove thine connection.");
+
+                // what should happen now: the player's connection needs to be transferred from the target
+                //TransferConnection(player, target, other, connection);
             }
             else
             {
@@ -79,19 +82,20 @@ namespace Context
                     return;
                 }
 
-                TransferConnection(other, target, player, connection);
+                TransferConnection(player, other, target, connection);
                 CreateConnection(player, target);
             }
         }
 
+        // Connection from a to b goes from b to c
         private void TransferConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB, BaseConnectionPoint connectionPointC, Connection connection)
         {
             // Update the c to go from other to target instead
-            connection.SetupConnection(connectionPointA, connectionPointB);
+            connection.SetupConnection(connectionPointB, connectionPointC);
 
             // Update tracking dictionary
-            _connectionPoints[connectionPointC].Remove(connection);
-            _connectionPoints[connectionPointB].Add(connection);
+            _connectionPoints[connectionPointA].Remove(connection);
+            _connectionPoints[connectionPointC].Add(connection);
         }
 
         private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
