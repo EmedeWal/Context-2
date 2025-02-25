@@ -35,6 +35,12 @@ namespace Context
                     RequestConnection(connectionPoint, other);
         }
 
+        private void OnDisable()
+        {
+            foreach (var connectionPoint in _connectionPoints.Keys)
+                connectionPoint.Cleanup();
+        }
+
         private void FixedUpdate()
         {
             HashSet<Connection> tickedConnections = new(); // Track already ticked connections
@@ -85,6 +91,10 @@ namespace Context
             // Update tracking dictionary
             _connectionPoints[connectionPointA].Remove(connection);
             _connectionPoints[connectionPointC].Add(connection);
+
+            // Notify the connectionPoints of their changes connection count, for handling events and such
+            connectionPointA.OnConnectionModified(_connectionPoints[connectionPointA].Count);
+            connectionPointC.OnConnectionModified(_connectionPoints[connectionPointB].Count);
         }
 
         private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
@@ -96,6 +106,10 @@ namespace Context
             // Store the c in both points
             _connectionPoints[connectionPointA].Add(connection);
             _connectionPoints[connectionPointB].Add(connection);
+
+            // Notify the connectionPoints of their changes connection count, for handling events and such
+            connectionPointA.OnConnectionModified(_connectionPoints[connectionPointA].Count);
+            connectionPointB.OnConnectionModified(_connectionPoints[connectionPointB].Count);
         }
 
         private void RemoveConnection(Connection connection)
