@@ -5,23 +5,17 @@ namespace Context
     [RequireComponent(typeof(Collider))]
     public abstract class BaseConnectionPoint : MonoBehaviour
     {
-        public BaseConnectionPoint[] InitialConnections => _initialConnections;
-        public Collider Collider => _collider;
-        public int MaxConnections => _maxConnections;
+        [field: SerializeField] public BaseConnectionPoint[] InitialConnections { get; private set; }
+        [field: SerializeField] public int MaxConnections { get; private set; } = 2;
 
-        public int CurrentConnections;
-
-
-        [SerializeField] private BaseConnectionPoint[] _initialConnections;
-        [SerializeField, Range(1, 2)] private int _maxConnections = 2;
+        public Collider Collider { get; protected set; }
 
         protected ConnectionManager _manager;
-        protected Collider _collider;
 
         public virtual void Init(ConnectionManager connectionManager)
         {
             _manager = connectionManager;
-            _collider = GetComponent<Collider>();
+            Collider = GetComponent<Collider>();
         }
     }
 }

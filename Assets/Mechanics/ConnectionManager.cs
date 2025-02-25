@@ -2,7 +2,6 @@ namespace Context
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Unity.VisualScripting;
     using UnityEngine;
 
     public class ConnectionManager : MonoBehaviour
@@ -12,6 +11,8 @@ namespace Context
         [SerializeField] private Connection _connectionPrefab;
 
         private Dictionary<BaseConnectionPoint, List<Connection>> _connectionPoints; // Track connections per collider
+
+        [SerializeField] private LayerMask _layerMask;
 
         private void Awake()
         {
@@ -53,7 +54,7 @@ namespace Context
         public void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
         {
             // Return if either is at their c cap
-            if (HasAnyConnections(connectionPointA) || HasAnyConnections(connectionPointB))
+            if (HasMaxContains(connectionPointA) || HasMaxContains(connectionPointB))
             {
                 Debug.LogWarning("Requested connection is invalid! Either point has max connections!");
                 return;
@@ -61,48 +62,18 @@ namespace Context
             CreateConnection(connectionPointA, connectionPointB);
         }
 
-        public void InteractWithConnection(BaseConnectionPoint player, BaseConnectionPoint target)
+        public void InteractWithConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
         {
-            // Get the player playerTargetConnection
-            var playerTargetConnection = _connectionPoints[player][0];
+            var callerTargetConnection = _connectionPoints[caller][0]; // Get the caller connection to the target
+            var other = callerTargetConnection.Connections.FirstOrDefault(conn => conn != caller); // Get the other connection attached to the caller. Can only be one so first or default is good
 
-            if (_connectionPoints[target].Contains(playerTargetConnection))
+            if (BlockConnectionRequest(target, other, callerTargetConnection, out var warning))
             {
-                // Find the connection of the target that is NOT linked to the player
-                var targetOtherConnection = _connectionPoints[target]
-                    .FirstOrDefault(conn => !conn.Connections.Contains(player));
-
-                if (targetOtherConnection == null)
-                {
-                    Debug.LogWarning("target had no other connection!");
-                    return;
-                }
-
-                var other = targetOtherConnection.Connections.FirstOrDefault(conn => conn != target);
-                TransferConnection(target, player, other, playerTargetConnection);
-
-                RemoveConnection(targetOtherConnection);
+                Debug.LogWarning(warning);
+                return;
             }
-            else
-            {
-                if (playerTargetConnection.Obstruced)
-                {
-                    Debug.LogWarning("Connection to player is obstructed, cannot connect!");
-                    return;
-                }
-
-                var other = playerTargetConnection.Connections.FirstOrDefault(conn => conn != player);
-
-                // If the target already has max connections OR is already connected to other, return
-                if (HasAnyConnections(target) || _connectionPoints[target].Any(c => c.Connections.Contains(other)))
-                {
-                    Debug.LogWarning("Target was already connected with the other.");
-                    return;
-                }
-
-                TransferConnection(player, other, target, playerTargetConnection);
-                CreateConnection(player, target);
-            }
+            TransferConnection(caller, other, target, callerTargetConnection);
+            CreateConnection(caller, target);
         }
 
         // Connection from a to b goes from b to c
@@ -113,16 +84,7 @@ namespace Context
 
             // Update tracking dictionary
             _connectionPoints[connectionPointA].Remove(connection);
-            //_connectionPoints[connectionPointB].Remove(connection);
-
-            //_connectionPoints[connectionPointB].Add(connection);
             _connectionPoints[connectionPointC].Add(connection);
-
-            connectionPointA.CurrentConnections--;
-            //connectionPointB.CurrentConnections--;
-
-            //connectionPointB.CurrentConnections++;
-            connectionPointC.CurrentConnections++;
         }
 
         private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
@@ -134,9 +96,6 @@ namespace Context
             // Store the c in both points
             _connectionPoints[connectionPointA].Add(connection);
             _connectionPoints[connectionPointB].Add(connection);
-
-            connectionPointA.CurrentConnections++;
-            connectionPointB.CurrentConnections++;
         }
 
         private void RemoveConnection(Connection connection)
@@ -150,15 +109,39 @@ namespace Context
 
             // Remove the connection from the collected keys
             foreach (var point in pointsToUpdate)
-            {
                 _connectionPoints[point].Remove(connection);
-                point.CurrentConnections--;
-            }
 
             connection.Cleanup();
             Destroy(connection.gameObject);
         }
 
-        private bool HasAnyConnections(BaseConnectionPoint point) => _connectionPoints[point].Count > 0;
+        private bool HasMaxContains(BaseConnectionPoint point) => _connectionPoints[point].Count >= point.MaxConnections;
+        private bool BlockConnectionRequest(BaseConnectionPoint target, BaseConnectionPoint other, Connection callerTargetConnection, out string warning)
+        {
+            if (_connectionPoints[target].Contains(callerTargetConnection))
+            {
+                warning = "Caller is already connected to the target!";
+                return true;
+            }
+
+            var obstructed = Connection.IsObstructed(target.Collider, other.Collider, callerTargetConnection.MeshCollider, _layerMask);
+            if (callerTargetConnection.Obstruced || obstructed)
+            {
+                warning = "Connection to caller is obstructed, cannot connect!";
+                return true;
+            }
+            if (HasMaxContains(target))
+            {
+                warning = "Target has max connections!";
+                return true;
+            }
+            if (_connectionPoints[target].Any(c => c.Connections.Contains(other)))
+            {
+                warning = "Target was already connected with the other.";
+                return true;
+            }
+            warning = string.Empty;
+            return false;
+        }
     }
 }

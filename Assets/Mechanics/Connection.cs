@@ -6,6 +6,7 @@ namespace Context
     [RequireComponent(typeof(LineRenderer), typeof(MeshCollider))]
     public class Connection : MonoBehaviour
     {
+        public MeshCollider MeshCollider => _meshCollider;
         public BaseConnectionPoint[] Connections { get; private set; }
         public bool Obstruced { get; private set; } 
 
@@ -54,6 +55,43 @@ namespace Context
             }
         }
 
+        public void FixedTick()
+        {
+            var colliderA = Connections[0].Collider;
+            var colliderB = Connections[1].Collider;
+            var pointA = colliderA.bounds.center;
+            var pointB = colliderB.bounds.center;
+
+            Obstruced = IsObstructed(colliderA, colliderB, pointA, pointB);
+            _lineRenderer.colorGradient = Obstruced
+                ? _obstructedGradient
+                : _defaultGradient;
+
+            UpdateConnection(pointA, pointB);
+        }
+
+        public static bool IsObstructed(Collider colliderA, Collider colliderB, MeshCollider meshCollider, LayerMask layerMask)
+        {
+            var pointA = colliderA.bounds.center;
+            var pointB = colliderB.bounds.center;
+
+            // Offset the points slightly to avoid overlapping with colliders
+            var start = colliderA.ClosestPoint(pointB);
+            var end = colliderB.ClosestPoint(pointA);
+
+            var dis = Vector3.Distance(start, end);
+            var dir = (pointB - pointA).normalized; // Normalize direction to avoid issues
+            var radius = 0.01f;
+
+            var hits = Physics.SphereCastAll(start, radius, dir, dis, layerMask);
+            return hits.Any(hit =>
+                hit.collider != null &&
+                hit.collider != colliderA && // Exclude its own connection point A
+                hit.collider != colliderB && // Exclude its own connection point B
+                hit.collider != meshCollider 
+            );
+        }
+
         public void SetupConnection(BaseConnectionPoint a, BaseConnectionPoint b)
         {
             Connections = new BaseConnectionPoint[2] { a, b };
@@ -66,14 +104,8 @@ namespace Context
             UpdateMeshCollider();
         }
 
-        public void FixedTick()
+        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB)
         {
-            var colliderA = Connections[0].Collider;
-            var colliderB = Connections[1].Collider;
-
-            var pointA = colliderA.bounds.center;
-            var pointB = colliderB.bounds.center;
-
             // Offset the points slightly to avoid overlapping with colliders
             var start = colliderA.ClosestPoint(pointB);
             var end = colliderB.ClosestPoint(pointA);
@@ -83,18 +115,12 @@ namespace Context
             var radius = 0.01f;
 
             var hits = Physics.SphereCastAll(start, radius, dir, dis);
-            Obstruced = hits.Any(hit =>
+            return hits.Any(hit =>
                 hit.collider != null &&
                 hit.collider != _meshCollider &&  // Exclude its own mesh collider
                 hit.collider != colliderA &&     // Exclude its own connection point A
                 hit.collider != colliderB        // Exclude its own connection point B
             );
-
-            _lineRenderer.colorGradient = Obstruced 
-                ? _obstructedGradient
-                : _defaultGradient;
-
-            UpdateConnection(pointA, pointB);
         }
 
         private void UpdateLinePoints(Vector3 pointA, Vector3 pointB)

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5476456664309094115}
   - component: {fileID: 6548532282193351310}
   - component: {fileID: 1034842814954606312}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,9 +70,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed415ea24a40ca14c89d894258786b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentConnections: 0
-  _initialConnections: []
-  _maxConnections: 2
+  <InitialConnections>k__BackingField: []
+  <MaxConnections>k__BackingField: 2
   _acceleration: 12
   _deceleration: 9
   _groundedSpeed: 15
@@ -143,7 +142,7 @@ GameObject:
   - component: {fileID: 6653516328653784138}
   - component: {fileID: 890307575177900361}
   - component: {fileID: 3109085437854808129}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1246233443783319533}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8818158436555604993}
   - component: {fileID: 5994539127638566117}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -307,7 +306,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2031012858388296431}
   - component: {fileID: 4008179414733813371}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -359,7 +358,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6642228110178604182}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,7 +393,7 @@ GameObject:
   - component: {fileID: 349268449994926532}
   - component: {fileID: 5932624136953173816}
   - component: {fileID: 2257468893720909080}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -529,7 +528,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2296799295331146364}
   - component: {fileID: 7759216517830518252}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -576,7 +575,7 @@ GameObject:
   - component: {fileID: 200826316748103944}
   - component: {fileID: 2776388628298725731}
   - component: {fileID: 1584794435930192882}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -660,7 +659,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6324967270133158758}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Camera Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}

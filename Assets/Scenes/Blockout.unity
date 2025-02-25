@@ -20095,6 +20095,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6993690592025543180, guid: 00a41c4207aa8624097d269b3389966c, type: 3}
+      propertyPath: _layerMask.m_Bits
+      value: 32819
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
