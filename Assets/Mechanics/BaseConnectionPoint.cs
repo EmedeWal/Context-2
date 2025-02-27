@@ -1,39 +1,65 @@
 namespace Context
 {
+    using System.Collections.Generic;
     using UnityEngine.Events;
     using UnityEngine;
+    using System.Linq;
 
     [RequireComponent(typeof(Collider))]
     public abstract class BaseConnectionPoint : MonoBehaviour
     {
-        [field: SerializeField] public BaseConnectionPoint[] InitialConnections { get; private set; }
-        [field: SerializeField] public int MaxConnections { get; private set; } = 2;
+        public List<Connection> Connections; // private setter later
+        public Collider Collider { get; private set; }
 
-        public Collider Collider { get; protected set; }
+        [Header("REFERENCES")]
 
-        protected ConnectionManager _manager;
+        [Header("Connections")]
+        [field: SerializeField] public BaseConnectionPoint[] InitialConnectionPoints { get; private set; }
+        [SerializeField] protected int _maxConnections;
 
-        [Header("EVENTS")]
+        [Space]
+        [Header("Events")]
         [SerializeField] private UnityEvent _firstConnection;
         [SerializeField] private UnityEvent _allConnections;
 
+        protected ConnectionManager _manager;
+
         public virtual void Init(ConnectionManager connectionManager)
         {
-            _manager = connectionManager;
+            Connections = new();
             Collider = GetComponent<Collider>();
+
+            _manager = connectionManager;
         }
 
         public virtual void Cleanup()
         {
+            foreach (var connection in Connections)
+                connection.Cleanup();
+
             _firstConnection = null;
             _allConnections = null;
         }
 
-        public void OnConnectionModified(int connections)
+        public bool HasMaxConnections() => Connections.Count >= _maxConnections; 
+
+        public virtual void AddConnection(Connection connection)
         {
-            if (connections == 1)
+            Connections.Add(connection);
+            OnConnectionModified();
+        }
+
+        public virtual void RemoveConnection(Connection connection)
+        {
+            Connections.Remove(connection);
+            OnConnectionModified();
+        }
+
+        public void OnConnectionModified()
+        {
+            if (Connections.Count == 1)
                 OnFirstConnection();
-            else if (connections == MaxConnections)
+            else if (Connections.Count == _maxConnections)
                 OnAllConnections();
         }
 
@@ -41,16 +67,20 @@ namespace Context
         {
             _firstConnection?.Invoke();
             _firstConnection = null;
-
-            Debug.Log("First Connection event invoked!");
         }
 
         protected virtual void OnAllConnections()
         {
             _allConnections?.Invoke();
             _allConnections = null;
+        }
 
-            Debug.Log("All Connections event invoked!");
+        protected  OtherConnectionStruct GetFirstOtherConnection()
+        {
+            var connection = Connections[0];
+            var other = connection.AttachedPoints.FirstOrDefault(conn => conn != this);
+
+            return new OtherConnectionStruct(other, connection);
         }
     }
 }

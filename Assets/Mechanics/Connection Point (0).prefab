@@ -123,6 +123,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initialConnections: []
+  <InitialConnectionPoints>k__BackingField: []
   _maxConnections: 2
-  _currentConnections: 0
+  _firstConnection:
+    m_PersistentCalls:
+      m_Calls: []
+  _allConnections:
+    m_PersistentCalls:
+      m_Calls: []

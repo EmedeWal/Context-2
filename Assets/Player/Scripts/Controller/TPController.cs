@@ -6,6 +6,7 @@ namespace Context.ThirdPersonController
     public class TPController : BaseConnectionPoint, ICharacterController
     {
         private KinematicCharacterMotor _motor;
+        private TriggerChannel _channel;
         private TPInput _input;
 
         [Header("MOVEMENT")]
@@ -34,8 +35,9 @@ namespace Context.ThirdPersonController
 
         [Header("CONNECTIONS")]
         [SerializeField] private LayerMask _connectableLayer;
-        [SerializeField] private float _checkRange;
+        [SerializeField] private float _checkRange = 3;
 
+        private OtherConnectionStruct _oldStruct;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _forcedUnground;
@@ -44,9 +46,21 @@ namespace Context.ThirdPersonController
         {
             _motor = GetComponent<KinematicCharacterMotor>();
             _motor.CharacterController = this;
+
+            _channel = GetComponentInChildren<TriggerChannel>();
+            _channel.Init(this, _checkRange);
+
             _input = new();
 
-            Collider = _motor.Capsule;
+            _channel.ConnectionEnter += TPController_ConnectionEnter;
+            _channel.ConnectionExit += TPController_ConnectionExit;
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+
+            _channel.Cleanup();
         }
 
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
@@ -227,27 +241,26 @@ namespace Context.ThirdPersonController
                 var pos = _motor.TransientPosition;
                 var hits = Physics.OverlapSphere(pos, _checkRange, _connectableLayer);
 
-                var closestComponent = default(BaseConnectionPoint);
-                var closestDistance = float.MaxValue;
-
-                foreach (var hit in hits)
+                if (hits.Length > 0)
                 {
-                    var distance = Vector3.Distance(pos, hit.bounds.center);
-                    if (distance < closestDistance)
-                    {
-                        closestComponent = hit.GetComponent<BaseConnectionPoint>();
-                        closestDistance = distance;
-
-                        if (closestComponent == null)
-                            Debug.LogError("Someone forgot to have the script on the connectable layer!!!");
-                    }
+                    if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component)) _manager.StabilizeConnections(component);
+                    else Debug.LogWarning("Hit on connectable Layer had no base connection point script.");
                 }
-
-                if (closestComponent != null)
-                    _manager.InteractWithConnection(this, closestComponent);
             }
 
             _input.RequestedTransfer = false;
+        }
+
+        private void TPController_ConnectionEnter(BaseConnectionPoint point)
+        {
+            _oldStruct = GetFirstOtherConnection();
+            _manager.CreateUnstableConnection(this, point, _oldStruct);
+        }
+
+        private void TPController_ConnectionExit(BaseConnectionPoint point)
+        {
+            var newStruct = GetFirstOtherConnection();
+            _manager.RemoveUnstableConnection(this, point, _oldStruct, newStruct);
         }
 
         private void OnDrawGizmos()

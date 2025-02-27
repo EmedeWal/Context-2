@@ -4,13 +4,25 @@ namespace Context
     using System.Linq;
     using UnityEngine;
 
+    public struct OtherConnectionStruct
+    {
+        public BaseConnectionPoint Other;
+        public Connection Connection;
+
+        public OtherConnectionStruct(BaseConnectionPoint other, Connection connection)
+        {
+            Other = other;  
+            Connection = connection;
+        }
+    }
+
     public class ConnectionManager : MonoBehaviour
     {
-        public static ConnectionManager Instance;
+        public static ConnectionManager Instance { get; private set; }
 
         [SerializeField] private Connection _connectionPrefab;
 
-        private Dictionary<BaseConnectionPoint, List<Connection>> _connectionPoints; // Track connections per collider
+        private List<BaseConnectionPoint> _connectionPoints;
 
         [SerializeField] private LayerMask _layerMask;
 
@@ -25,32 +37,32 @@ namespace Context
             var connectionPoints = FindObjectsByType<BaseConnectionPoint>(FindObjectsSortMode.None);
             foreach (var connectionPoint in connectionPoints)
             {
-                _connectionPoints.Add(connectionPoint, new List<Connection>());
+                _connectionPoints.Add(connectionPoint);
                 connectionPoint.Init(this);
             }
 
             // then make initial connections
             foreach (var connectionPoint in connectionPoints)
-                foreach (var other in connectionPoint.InitialConnections)
+                foreach (var other in connectionPoint.InitialConnectionPoints)
                     RequestConnection(connectionPoint, other);
         }
 
         private void OnDisable()
         {
-            foreach (var connectionPoint in _connectionPoints.Keys)
+            foreach (var connectionPoint in _connectionPoints)
                 connectionPoint.Cleanup();
         }
 
-        private void FixedUpdate()
+        private void LateUpdate()
         {
             HashSet<Connection> tickedConnections = new(); // Track already ticked connections
-            foreach (var connectionList in _connectionPoints.Values)
+            foreach (var point in _connectionPoints)
             {
-                foreach (var connection in connectionList)
+                foreach (var connection in point.Connections)
                 {
                     if (!tickedConnections.Contains(connection))
                     {
-                        connection.FixedTick();
+                        connection.LateTick();
                         tickedConnections.Add(connection);
                     }
                 }
@@ -60,96 +72,99 @@ namespace Context
         public void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
         {
             // Return if either is at their c cap
-            if (HasMaxContains(connectionPointA) || HasMaxContains(connectionPointB))
+            if (connectionPointA.HasMaxConnections() || connectionPointB.HasMaxConnections())
             {
                 Debug.LogWarning("Requested connection is invalid! Either point has max connections!");
                 return;
             }
-            CreateConnection(connectionPointA, connectionPointB);
+            CreateConnection(connectionPointA, connectionPointB, true);
         }
 
-        public void InteractWithConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
+        public void CreateUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target, OtherConnectionStruct data)
         {
-            var callerTargetConnection = _connectionPoints[caller][0]; // Get the caller connection to the target
-            var other = callerTargetConnection.Connections.FirstOrDefault(conn => conn != caller); // Get the other connection attached to the caller. Can only be one so first or default is good
-
-            if (BlockConnectionRequest(target, other, callerTargetConnection, out var warning))
+            if (BlockConnectionRequest(target, data.Other, data.Connection, out var warning))
             {
                 Debug.LogWarning(warning);
                 return;
             }
-            TransferConnection(caller, other, target, callerTargetConnection);
-            CreateConnection(caller, target);
+            TransferConnection(caller, data.Other, target, data.Connection, false);
+            CreateConnection(caller, target, false);
+        }
+
+        public void RemoveUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target, OtherConnectionStruct oldData, OtherConnectionStruct newData)
+        {
+            if (!oldData.Connection.Stable && !newData.Connection.Stable)
+            {
+                RemoveConnection(newData.Connection);
+                TransferConnection(target, oldData.Other, caller, oldData.Connection, true);
+            }
+        }
+
+        public void StabilizeConnections(BaseConnectionPoint target)
+        {
+            // Ensure all connections are unobstructed before stabilizing
+            if (target.Connections.Any(connection => connection.Obstructed))
+            {
+                Debug.LogWarning("Cannot stabilize connections: One or more connections are obstructed!");
+                return;
+            }
+
+            // If all are unobstructed, mark them as stable
+            foreach (var connection in target.Connections)
+                connection.Stable = true;
         }
 
         // Connection from a to b goes from b to c
-        private void TransferConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB, BaseConnectionPoint connectionPointC, Connection connection)
+        private void TransferConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB, BaseConnectionPoint connectionPointC, Connection connection, bool stable)
         {
             // Update the c to go from other to target instead
             connection.SetupConnection(connectionPointB, connectionPointC);
 
             // Update tracking dictionary
-            _connectionPoints[connectionPointA].Remove(connection);
-            _connectionPoints[connectionPointC].Add(connection);
+            connectionPointA.RemoveConnection(connection);
+            connectionPointC.AddConnection(connection);
 
-            // Notify the connectionPoints of their changes connection count, for handling events and such
-            connectionPointA.OnConnectionModified(_connectionPoints[connectionPointA].Count);
-            connectionPointC.OnConnectionModified(_connectionPoints[connectionPointB].Count);
+            connection.Stable = stable;
         }
 
-        private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
+        private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB, bool stable)
         {
-            // Instantiate and initialize the c
+            // Instantiate and initialize the connection
             var connection = Instantiate(_connectionPrefab, transform);
-            connection.Init(connectionPointA, connectionPointB);
+            connection.Init(connectionPointA, connectionPointB, stable);
 
-            // Store the c in both points
-            _connectionPoints[connectionPointA].Add(connection);
-            _connectionPoints[connectionPointB].Add(connection);
-
-            // Notify the connectionPoints of their changes connection count, for handling events and such
-            connectionPointA.OnConnectionModified(_connectionPoints[connectionPointA].Count);
-            connectionPointB.OnConnectionModified(_connectionPoints[connectionPointB].Count);
+            // Store the connection in both points
+            connectionPointA.AddConnection(connection);
+            connectionPointB.AddConnection(connection);
         }
 
         private void RemoveConnection(Connection connection)
         {
-            var pointsToUpdate = new List<BaseConnectionPoint>();   
+            // Collect the connection points that have this connection
+            var connectedPoints = _connectionPoints.Where(point => point.Connections.Contains(connection)).ToList();
 
-            // Collect keys where the connection exists
-            foreach (var kvp in _connectionPoints)
-                if (kvp.Value.Contains(connection))
-                    pointsToUpdate.Add(kvp.Key);
-
-            // Remove the connection from the collected keys
-            foreach (var point in pointsToUpdate)
-                _connectionPoints[point].Remove(connection);
+            // Remove the connection from each connection point
+            foreach (var point in connectedPoints)
+                point.RemoveConnection(connection);
 
             connection.Cleanup();
             Destroy(connection.gameObject);
         }
 
-        private bool HasMaxContains(BaseConnectionPoint point) => _connectionPoints[point].Count >= point.MaxConnections;
+        //private bool HasMaxContains(BaseConnectionPoint point) => _connectionPoints[point].Count >= point._maxConnections;
         private bool BlockConnectionRequest(BaseConnectionPoint target, BaseConnectionPoint other, Connection callerTargetConnection, out string warning)
         {
-            if (_connectionPoints[target].Contains(callerTargetConnection))
+            if (target.Connections.Contains(callerTargetConnection))
             {
                 warning = "Caller is already connected to the target!";
                 return true;
             }
-
-            var obstructed = Connection.IsObstructed(target.Collider, other.Collider, callerTargetConnection.MeshCollider, _layerMask);
-            if (callerTargetConnection.Obstruced || obstructed)
-            {
-                warning = "Connection to caller is obstructed, cannot connect!";
-                return true;
-            }
-            if (HasMaxContains(target))
+            if (target.HasMaxConnections())
             {
                 warning = "Target has max connections!";
                 return true;
             }
-            if (_connectionPoints[target].Any(c => c.Connections.Contains(other)))
+            if (target.Connections.Any(c => c.AttachedPoints.Contains(other)))
             {
                 warning = "Target was already connected with the other.";
                 return true;

@@ -6,36 +6,42 @@ namespace Context
     [RequireComponent(typeof(LineRenderer), typeof(MeshCollider))]
     public class Connection : MonoBehaviour
     {
-        public MeshCollider MeshCollider => _meshCollider;
-        public BaseConnectionPoint[] Connections { get; private set; }
-        public bool Obstruced { get; private set; } 
+        public BaseConnectionPoint[] AttachedPoints { get; private set; }
+        public bool Obstructed { get; private set; }
+
+        public bool Stable;
 
         [Header("SETTINGS")]
 
         [Space]
         [Header("Colors")]
-        [SerializeField] private Gradient _defaultGradient;
-        [SerializeField] private Gradient _obstructedGradient;
+        [SerializeField] private Gradient _unstableObstructedGradient;
+        [SerializeField] private Gradient _unstableDefaultGradient;
+        [SerializeField] private Gradient _stableObstructedGradient;
+        [SerializeField] private Gradient _stableDefaultGradient;
 
         [Space]
         [Header("Size")]
-        [SerializeField] private float _width = 0.15f;
+        [SerializeField] private float _sizeWidth = 0.15f;
+        [SerializeField] private float _checkWidth = 0.03f;
 
         private LineRenderer _lineRenderer;
         private MeshCollider _meshCollider;
         private Mesh _bakedMesh;
 
-        public void Init(BaseConnectionPoint pointA, BaseConnectionPoint pointB)
+        public void Init(BaseConnectionPoint pointA, BaseConnectionPoint pointB, bool stable)
         {
             _lineRenderer = GetComponent<LineRenderer>();
             _meshCollider = GetComponent<MeshCollider>();
 
-            _lineRenderer.colorGradient = _defaultGradient;
+            _lineRenderer.colorGradient = _stableDefaultGradient;
             _lineRenderer.numCornerVertices = 6;
             _lineRenderer.numCapVertices = 6;
             _lineRenderer.positionCount = 2;
-            _lineRenderer.startWidth = _width;
-            _lineRenderer.endWidth = _width;
+            _lineRenderer.startWidth = _sizeWidth;
+            _lineRenderer.endWidth = _sizeWidth;
+
+            Stable = stable;
 
             SetupConnection(pointA, pointB);
         }
@@ -55,47 +61,33 @@ namespace Context
             }
         }
 
-        public void FixedTick()
+        public void LateTick()
         {
-            var colliderA = Connections[0].Collider;
-            var colliderB = Connections[1].Collider;
+            var colliderA = AttachedPoints[0].Collider;
+            var colliderB = AttachedPoints[1].Collider;
             var pointA = colliderA.bounds.center;
             var pointB = colliderB.bounds.center;
 
-            Obstruced = IsObstructed(colliderA, colliderB, pointA, pointB);
-            _lineRenderer.colorGradient = Obstruced
-                ? _obstructedGradient
-                : _defaultGradient;
+            var obstructedGradient = Stable
+                ? _stableObstructedGradient
+                : _unstableObstructedGradient;
+
+            var defaultGradient = Stable
+                ? _stableDefaultGradient
+                : _unstableDefaultGradient;  
+
+            Obstructed = IsObstructed(colliderA, colliderB, pointA, pointB);
+            _lineRenderer.colorGradient = Obstructed
+                ? obstructedGradient
+                : defaultGradient;
 
             UpdateConnection(pointA, pointB);
         }
 
-        public static bool IsObstructed(Collider colliderA, Collider colliderB, MeshCollider meshCollider, LayerMask layerMask)
-        {
-            var pointA = colliderA.bounds.center;
-            var pointB = colliderB.bounds.center;
-
-            // Offset the points slightly to avoid overlapping with colliders
-            var start = colliderA.ClosestPoint(pointB);
-            var end = colliderB.ClosestPoint(pointA);
-
-            var dis = Vector3.Distance(start, end);
-            var dir = (pointB - pointA).normalized; // Normalize direction to avoid issues
-            var radius = 0.01f;
-
-            var hits = Physics.SphereCastAll(start, radius, dir, dis, layerMask);
-            return hits.Any(hit =>
-                hit.collider != null &&
-                hit.collider != colliderA && // Exclude its own connection point A
-                hit.collider != colliderB && // Exclude its own connection point B
-                hit.collider != meshCollider 
-            );
-        }
-
         public void SetupConnection(BaseConnectionPoint a, BaseConnectionPoint b)
         {
-            Connections = new BaseConnectionPoint[2] { a, b };
-            UpdateConnection(Connections[0].Collider.bounds.center, Connections[1].Collider.bounds.center);
+            AttachedPoints = new BaseConnectionPoint[2] { a, b };
+            UpdateConnection(AttachedPoints[0].Collider.bounds.center, AttachedPoints[1].Collider.bounds.center);
         }
 
         public void UpdateConnection(Vector3 pointA, Vector3 pointB)
@@ -110,16 +102,14 @@ namespace Context
             var start = colliderA.ClosestPoint(pointB);
             var end = colliderB.ClosestPoint(pointA);
 
-            var dis = Vector3.Distance(start, end);
-            var dir = (pointB - pointA).normalized; // Normalize direction to avoid issues
-            var radius = 0.01f;
+            var dir = end - start; // DO THIS IN THIS ORDER
+            var hits = Physics.SphereCastAll(start, _checkWidth, dir.normalized, dir.magnitude);
 
-            var hits = Physics.SphereCastAll(start, radius, dir, dis);
             return hits.Any(hit =>
                 hit.collider != null &&
                 hit.collider != _meshCollider &&  // Exclude its own mesh collider
                 hit.collider != colliderA &&     // Exclude its own connection point A
-                hit.collider != colliderB        // Exclude its own connection point B
+                hit.collider != colliderB       // Exclude its own connection point B
             );
         }
 
