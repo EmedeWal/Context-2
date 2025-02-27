@@ -71,6 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed415ea24a40ca14c89d894258786b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Connections: []
   <InitialConnectionPoints>k__BackingField:
   - {fileID: 0}
   _maxConnections: 1
@@ -363,7 +364,7 @@ GameObject:
   - component: {fileID: 5994539127638566117}
   m_Layer: 10
   m_Name: Player
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -444,7 +445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _offset: {x: 0, y: 3, z: -12}
-  _sensitivity: {x: 0.3, y: 0.15}
+  _sensitivity: {x: 0.1, y: 0.1}
   _maximumAngle: 30
   _mimimumAngle: -15
   _invertControls: 0
