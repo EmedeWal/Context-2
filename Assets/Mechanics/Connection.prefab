@@ -276,6 +276,9 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   _sizeWidth: 0.15
   _checkWidth: 0.01
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 32823
 --- !u!64 &5912880794630354209
 MeshCollider:
   m_ObjectHideFlags: 0

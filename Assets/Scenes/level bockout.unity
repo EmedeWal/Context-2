@@ -1175,6 +1175,10 @@ PrefabInstance:
       propertyPath: Connections.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: '<InitialConnectionPoints>k__BackingField.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1725187426}
     - target: {fileID: 8818158436555604993, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: m_LocalPosition.x
       value: 205.56
@@ -7136,6 +7140,17 @@ Transform:
   - {fileID: 1345857789}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1725187426 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2293167602650712199, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+  m_PrefabInstance: {fileID: 101663227}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f7e7157567c154cae219541641a50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1744687131 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 24181345780786178, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}

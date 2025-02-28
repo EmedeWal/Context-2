@@ -7,6 +7,7 @@ namespace Context
     public class Connection : MonoBehaviour
     {
         public BaseConnectionPoint[] AttachedPoints { get; private set; }
+        public MeshCollider MeshCollider {  get; private set; }
         public bool Obstructed { get; private set; }
 
         public bool Stable;
@@ -26,13 +27,12 @@ namespace Context
         [SerializeField] private float _checkWidth = 0.03f;
 
         private LineRenderer _lineRenderer;
-        private MeshCollider _meshCollider;
         private Mesh _bakedMesh;
 
         public void Init(BaseConnectionPoint pointA, BaseConnectionPoint pointB, bool stable)
         {
             _lineRenderer = GetComponent<LineRenderer>();
-            _meshCollider = GetComponent<MeshCollider>();
+            MeshCollider = GetComponent<MeshCollider>();
 
             _lineRenderer.colorGradient = _stableDefaultGradient;
             _lineRenderer.numCornerVertices = 6;
@@ -48,10 +48,10 @@ namespace Context
 
         public void Cleanup()
         {
-            if (_meshCollider != null && _meshCollider.sharedMesh != null)
+            if (MeshCollider != null && MeshCollider.sharedMesh != null)
             {
-                Destroy(_meshCollider.sharedMesh);
-                _meshCollider.sharedMesh = null;
+                Destroy(MeshCollider.sharedMesh);
+                MeshCollider.sharedMesh = null;
             }
 
             if (_bakedMesh != null)
@@ -61,7 +61,7 @@ namespace Context
             }
         }
 
-        public void LateTick()
+        public void LateTick(MeshCollider collider)
         {
             var colliderA = AttachedPoints[0].Collider;
             var colliderB = AttachedPoints[1].Collider;
@@ -76,7 +76,7 @@ namespace Context
                 ? _stableDefaultGradient
                 : _unstableDefaultGradient;  
 
-            Obstructed = IsObstructed(colliderA, colliderB, pointA, pointB);
+            Obstructed = IsObstructed(colliderA, colliderB, pointA, pointB, collider);
             _lineRenderer.colorGradient = Obstructed
                 ? obstructedGradient
                 : defaultGradient;
@@ -96,7 +96,7 @@ namespace Context
             UpdateMeshCollider();
         }
 
-        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB)
+        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB, MeshCollider collider)
         {
             // Offset the points slightly to avoid overlapping with colliders
             var start = colliderA.ClosestPoint(pointB);
@@ -105,11 +105,13 @@ namespace Context
             var dir = end - start; // DO THIS IN THIS ORDER
             var hits = Physics.SphereCastAll(start, _checkWidth, dir.normalized, dir.magnitude);
 
+            // Exclude player
+            hits = hits.Where(hit => hit.collider != null && !hit.collider.CompareTag("Player")).ToArray();
             return hits.Any(hit =>
-                hit.collider != null &&
-                hit.collider != _meshCollider &&  // Exclude its own mesh collider
-                hit.collider != colliderA &&     // Exclude its own connection point A
-                hit.collider != colliderB       // Exclude its own connection point B
+                hit.collider != MeshCollider && // Exclude its own mesh collider
+                hit.collider != colliderA &&    // Exclude its own connection point A
+                hit.collider != colliderB &&   // Exclude its own connection point B
+                hit.collider != collider      // Exclude the player connections mesh collider
             );
         }
 
@@ -125,10 +127,10 @@ namespace Context
 
             _bakedMesh = new Mesh();
             _lineRenderer.BakeMesh(_bakedMesh, true);
-            _meshCollider.sharedMesh = _bakedMesh;
+            MeshCollider.sharedMesh = _bakedMesh;
 
-            _meshCollider.convex = true;
-            _meshCollider.isTrigger = true;
+            MeshCollider.convex = true;
+            MeshCollider.isTrigger = true;
         }
     }
 }

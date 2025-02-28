@@ -55,6 +55,9 @@ namespace Context
 
         private void LateUpdate()
         {
+            var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
+            var playerConnectionCollider = player.Connections[0].MeshCollider;
+
             HashSet<Connection> tickedConnections = new(); // Track already ticked connections
             foreach (var point in _connectionPoints)
             {
@@ -62,7 +65,7 @@ namespace Context
                 {
                     if (!tickedConnections.Contains(connection))
                     {
-                        connection.LateTick();
+                        connection.LateTick(playerConnectionCollider);
                         tickedConnections.Add(connection);
                     }
                 }
