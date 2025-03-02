@@ -5,30 +5,24 @@ namespace Context.ThirdPersonController
     public class TPManager : MonoBehaviour
     {
         private TPController _controller;
-        private TPCamera _camera;
         private TPRoot _root;
 
         private InputActions _inputActions;
+        private Transform _cameraTransform;
 
         private void Start()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+
             _controller = GetComponentInChildren<TPController>();
-            _camera = GetComponentInChildren<TPCamera>();
             _root = GetComponentInChildren<TPRoot>();
 
             _inputActions = new InputActions();
             _inputActions.Enable();
-
-            var mainCamera = Camera.main;
-            if (mainCamera == null)
-                Debug.LogError("Forgot to assign a camera with the 'main' tag!");
-
-            var controllerTransform = _controller.transform;
-            var cameraTarget = _controller.transform.GetChild(0);
+            _cameraTransform = Camera.main.transform;
 
             _controller.Init();
-            _camera.Init(cameraTarget, mainCamera);
-            _root.Init(controllerTransform);
+            _root.Init(_controller.transform);
 
             gameObject.layer = Layers.GetControllerLayer();
         }
@@ -41,13 +35,9 @@ namespace Context.ThirdPersonController
         private void Update()
         {
             var inputActions = _inputActions.Gameplay;
-
-            var lookInput = inputActions.Look.ReadValue<Vector2>();
-            _camera.Tick(lookInput);
-
             var controllerInput = new ControllerInput
             {
-                Rotation = _camera.Rotation,
+                Rotation = _cameraTransform.rotation,
                 Movement = inputActions.Move.ReadValue<Vector2>(),
                 Transfer = inputActions.Transfer.WasPressedThisFrame(),
                 Jump = inputActions.Jump.WasPressedThisFrame(),
@@ -59,9 +49,6 @@ namespace Context.ThirdPersonController
 
         private void LateUpdate()
         {
-            var deltaTime = Time.deltaTime;
-
-            _camera.LateTick(deltaTime);
             _root.LateTick();
         }
     }
