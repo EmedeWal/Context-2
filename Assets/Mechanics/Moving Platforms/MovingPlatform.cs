@@ -1,13 +1,16 @@
 namespace Context
 {
+    using Context.ThirdPersonController;
     using System.Collections.Generic;
     using System.Collections;
     using UnityEngine;
 
+    [RequireComponent(typeof(Collider))]    
     [RequireComponent(typeof(Rigidbody))]
     public class MovingPlatform : MonoBehaviour
     {
         [Header("ACTIVATION SETTINGS")]
+        [SerializeField] private ActivationMode _activationMode = ActivationMode.Automatic;
         [SerializeField] private float _activationDelay = 2f;
 
         [Header("PATH SETTINGS")]
@@ -20,28 +23,48 @@ namespace Context
         private int _waypointIndex = 0;
         private bool _movingForward = true;
 
+        private TPController _passenger;
+        private Transform _transform;
+
         private void Start()
         {
-            var rb = GetComponent<Rigidbody>();
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-            rb.isKinematic = false;
-            rb.useGravity = false;
-            _rigidbody = rb;
+            _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            _rigidbody.isKinematic = true;
+            _rigidbody.useGravity = false;
 
-            _waypointList = new List<Transform>();
-            var parent = transform.parent;
-            for (int i = 1; i < parent.childCount; i++) 
-                _waypointList.Add(parent.GetChild(i));
+            _transform = transform;
 
-            if (_waypointList.Count < 2)
-            {
-                Debug.LogError("MovingPlatform requires at least two waypoints.");
-                return;
-            }
+            CollectWaypoints();
 
+            if (_activationMode == ActivationMode.Automatic)
+                Activate();
+        }
+
+        public void Activate()
+        {
+            _activationMode = ActivationMode.None;
+            _rigidbody.isKinematic = true;
             StartCoroutine(MovePlatform());
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.transform.TryGetComponent(out TPController controller))
+            {
+                if (_activationMode is ActivationMode.Collision)
+                    Activate();
+
+                _passenger = controller;
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.transform.TryGetComponent(out TPController controller))
+            {
+                _passenger = null;
+            }
         }
 
         private IEnumerator MovePlatform()
@@ -52,15 +75,22 @@ namespace Context
             {
                 Transform targetWaypoint = _waypointList[_waypointIndex];
 
-                while (Vector3.Distance(transform.position, targetWaypoint.position) > 0.1f)
+                while (Vector3.Distance(_transform.position, targetWaypoint.position) > 0.05f)
                 {
-                    Vector3 direction = (targetWaypoint.position - transform.position).normalized;
-                    _rigidbody.linearVelocity = _movementSpeed * direction;
-                    yield return new WaitForFixedUpdate();
+                    Vector3 newPosition = Vector3.MoveTowards(_transform.position, targetWaypoint.position, _movementSpeed * Time.deltaTime);
+                    Vector3 movement = newPosition - _transform.position;
+                    _transform.position = newPosition;
+
+                    if (_passenger != null)
+                    {
+                        var positon = _passenger.GetTransientPosition();
+                        _passenger.SetTransientPosition(positon + movement);
+                    }
+
+                    yield return null;
                 }
 
-                _rigidbody.linearVelocity = Vector3.zero;
-                transform.position = targetWaypoint.position;
+                _transform.position = targetWaypoint.position;
 
                 if (_movingForward)
                 {
@@ -93,25 +123,32 @@ namespace Context
             }
         }
 
-        private void OnDrawGizmos()
+        private void CollectWaypoints()
         {
-            Gizmos.color = Color.yellow;
-
             _waypointList = new List<Transform>();
             var parent = transform.parent;
             for (int i = 1; i < parent.childCount; i++)
                 _waypointList.Add(parent.GetChild(i));
 
-            if (_waypointList != null && _waypointList.Count > 1)
-            {
-                for (int i = 0; i < _waypointList.Count - 1; i++)
-                {
-                    if (_waypointList[i] != null && _waypointList[i + 1] != null)
-                    {
-                        Gizmos.DrawLine(_waypointList[i].position, _waypointList[i + 1].position);
-                    }
-                }
-            }
+            if (_waypointList.Count < 2)
+                Debug.LogWarning("MovingPlatform requires at least two waypoints.");
         }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.cyan; // Changed to cyan for better visibility
+            CollectWaypoints();
+
+            for (int i = 0; i < _waypointList.Count - 1; i++)
+                if (_waypointList[i] != null && _waypointList[i + 1] != null)
+                    Gizmos.DrawLine(_waypointList[i].position, _waypointList[i + 1].position);
+        }
+    }
+
+    public enum ActivationMode
+    {
+        None,
+        Collision,
+        Automatic,
     }
 }
