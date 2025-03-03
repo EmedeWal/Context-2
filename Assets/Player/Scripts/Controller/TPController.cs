@@ -42,6 +42,8 @@ namespace Context.ThirdPersonController
         private float _airborneTime;
         private bool _forcedUnground;
 
+        public Transform Parent;
+
         public void Init()
         {
             _motor = GetComponent<KinematicCharacterMotor>();
@@ -64,6 +66,8 @@ namespace Context.ThirdPersonController
         }
 
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
+        public void SetTransientPosition(Vector3 position) => _motor.SetPosition(position);
+        public Vector3 GetTransientPosition() => _motor.TransientPosition;
 
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
@@ -261,15 +265,6 @@ namespace Context.ThirdPersonController
         {
             var newStruct = GetFirstOtherConnection();
             _manager.RemoveUnstableConnection(this, point, _oldStruct, newStruct);
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (_motor != null)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(_motor.TransientPosition, _checkRange);
-            }
         }
 
         #region Unused
