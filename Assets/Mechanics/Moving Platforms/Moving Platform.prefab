@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 6502094326639118720}
   - component: {fileID: 5419068372749852058}
   - component: {fileID: 138248230145508860}
+  - component: {fileID: 8377438852063929849}
   m_Layer: 0
   m_Name: Script
   m_TagString: Untagged
@@ -448,10 +449,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d76106b01a4144b9950469dc5d1cd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activationMode: 2
   _activationDelay: 2
   _movementSpeed: 4
   _waypointPause: 0
   _journeyPause: 1
+--- !u!65 &8377438852063929849
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6877183553440471654}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 1.247714, z: 5}
+  m_Center: {x: 0, y: 0.5836768, z: 0}
 --- !u!1 &6903286846316047218
 GameObject:
   m_ObjectHideFlags: 0
