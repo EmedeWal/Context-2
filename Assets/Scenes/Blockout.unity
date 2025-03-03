@@ -5971,6 +5971,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 4768781144206081599, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: Decollision.Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4768781144206081599, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: Decollision.ObstacleLayers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: '<InitialConnectionPoints>k__BackingField.Array.data[0]'
       value: 
