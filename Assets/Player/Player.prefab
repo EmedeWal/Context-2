@@ -414,10 +414,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraRadius: 0.4
   Decollision:
-    Enabled: 1
+    Enabled: 0
     ObstacleLayers:
       serializedVersion: 2
-      m_Bits: 32823
+      m_Bits: 0
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
