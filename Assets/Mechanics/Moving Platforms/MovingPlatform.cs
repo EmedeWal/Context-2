@@ -1,6 +1,5 @@
 namespace Context
 {
-    using Context.ThirdPersonController;
     using System.Collections.Generic;
     using System.Collections;
     using UnityEngine;
@@ -10,7 +9,7 @@ namespace Context
     public class MovingPlatform : MonoBehaviour
     {
         [Header("ACTIVATION SETTINGS")]
-        [SerializeField] private ActivationMode _activationMode = ActivationMode.Automatic;
+        [field:SerializeField] public ActivationMode ActivationMode { get; private set; } = ActivationMode.Automatic;
         [SerializeField] private float _activationDelay = 2f;
 
         [Header("PATH SETTINGS")]
@@ -23,7 +22,7 @@ namespace Context
         private int _waypointIndex = 0;
         private bool _movingForward = true;
 
-        private TPController _passenger;
+        private PassengerTrigger _trigger;
         private Transform _transform;
 
         private void Start()
@@ -33,39 +32,23 @@ namespace Context
             _rigidbody.isKinematic = true;
             _rigidbody.useGravity = false;
 
+            _trigger = GetComponentInChildren<PassengerTrigger>();
+            _trigger.Init(this);
             _transform = transform;
 
             CollectWaypoints();
 
-            if (_activationMode == ActivationMode.Automatic)
+            if (ActivationMode == ActivationMode.Automatic)
                 Activate();
         }
 
         public void Activate()
         {
-            _activationMode = ActivationMode.None;
+            ActivationMode = ActivationMode.None;
             _rigidbody.isKinematic = true;
             StartCoroutine(MovePlatform());
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.transform.TryGetComponent(out TPController controller))
-            {
-                if (_activationMode is ActivationMode.Collision)
-                    Activate();
-
-                _passenger = controller;
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.transform.TryGetComponent(out TPController controller))
-            {
-                _passenger = null;
-            }
-        }
 
         private IEnumerator MovePlatform()
         {
@@ -81,13 +64,12 @@ namespace Context
                     Vector3 movement = newPosition - _transform.position;
                     _transform.position = newPosition;
 
-                    if (_passenger != null)
+                    if (_trigger.Passenger != null)
                     {
-                        var positon = _passenger.GetTransientPosition();
-                        _passenger.SetTransientPosition(positon + movement);
+                        var positon = _trigger.Passenger.GetTransientPosition();
+                        _trigger.Passenger.SetTransientPosition(positon + movement);
                     }
-
-                    yield return null;
+                    yield return new WaitForEndOfFrame();
                 }
 
                 _transform.position = targetWaypoint.position;

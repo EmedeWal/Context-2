@@ -42,8 +42,6 @@ namespace Context.ThirdPersonController
         private float _airborneTime;
         private bool _forcedUnground;
 
-        public Transform Parent;
-
         public void Init()
         {
             _motor = GetComponent<KinematicCharacterMotor>();
