@@ -29,6 +29,7 @@ namespace Context.ThirdPersonController
 
         private void OnDisable()
         {
+            _inputActions.Disable();
             _inputActions.Dispose();
         }
 

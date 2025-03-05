@@ -11,6 +11,8 @@ namespace Context.UI
         private ColorAdjustments _colorAdjustments;
         private Slider _slider;
 
+        private const string BrightnessKey = "BrightnessValue"; // Key for saving brightness
+
         public void Init()
         {
             _slider = GetComponent<Slider>();
@@ -19,8 +21,13 @@ namespace Context.UI
             _slider.minValue = -2f;  // Darker
             _slider.maxValue = 0f;   // Brighter
 
+            // Ensure we get the Color Adjustments override
             if (_globalVolume.profile.TryGet(out _colorAdjustments))
-                _slider.value = _colorAdjustments.postExposure.value;
+            {
+                float savedBrightness = PlayerPrefs.GetFloat(BrightnessKey, 0f); // Default to 0 (neutral)
+                _colorAdjustments.postExposure.Override(savedBrightness);
+                _slider.value = savedBrightness;
+            }
 
             _slider.onValueChanged.AddListener(SetBrightness);
         }
@@ -33,7 +40,11 @@ namespace Context.UI
         private void SetBrightness(float value)
         {
             if (_colorAdjustments != null)
-                _colorAdjustments.postExposure.value = value;
+            {
+                _colorAdjustments.postExposure.Override(value);
+                PlayerPrefs.SetFloat(BrightnessKey, value); // Save brightness
+                PlayerPrefs.Save(); // Ensure it's written to disk
+            }
         }
     }
 }

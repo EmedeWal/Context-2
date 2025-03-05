@@ -82,6 +82,7 @@ namespace Context.UI
 
         private void OnDisable()
         {
+            _inputActions.Disable();
             _inputActions.Dispose();
 
             _playButton.onClick.RemoveAllListeners();

@@ -79,6 +79,7 @@ namespace Context.UI
 
         private void OnDisable()
         {
+            _inputActions.Disable();
             _inputActions.Dispose();
 
             _resumeButton.onClick.RemoveAllListeners();
@@ -125,29 +126,12 @@ namespace Context.UI
         {
             if (_onClick != null)
                 _audioSource.Play();
-
-            LockInput();
         }
 
         private void OnSliderChanged(float value)
         {
             if (_onSlide != null)
                 _audioSource.Play();
-        }
-
-        private void LockInput()
-        {
-            _inputActions.Disable();
-            _eventSystem.currentInputModule.enabled = false;
-
-            CancelInvoke();
-            Invoke(nameof(UnlockInput), _lockTime);
-        }
-
-        private void UnlockInput()
-        {
-            _inputActions.Enable();
-            _eventSystem.currentInputModule.enabled = true;
         }
 
         private void Resume()
