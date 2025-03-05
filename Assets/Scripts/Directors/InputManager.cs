@@ -9,7 +9,7 @@ namespace Context
         public static InputManager Instance { get; private set; }
         public InputActions Actions { get; private set; }
 
-        private BaseInputModule _currentInputModule;
+        [SerializeField] private EventSystem _eventSystem;
         private InputType _currentInputType;
 
         public enum InputType
@@ -31,7 +31,7 @@ namespace Context
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(gameObject);
+                DestroyImmediate(gameObject);
                 return;
             }
 
@@ -44,10 +44,10 @@ namespace Context
             Actions = new();
             Actions.Enable();
 
-            _currentInputModule = EventSystem.current.currentInputModule;
+            Instantiate(_eventSystem, transform);
         }
 
-        private void OnDestroy()
+        private void OnApplicationQuit()
         {
             Actions.Disable();
             Actions.Dispose();
@@ -86,9 +86,7 @@ namespace Context
                 };
             }
             else
-            {
                 _currentInputType = InputType.None;
-            }
         }
 
         public InputType GetInputType() => _currentInputType;

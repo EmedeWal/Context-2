@@ -3,6 +3,7 @@ namespace Context
     using UnityEngine;
     using UnityEngine.UI;
     using System.Collections;
+    using Unity.VisualScripting;
 
     public class DialogueManager : MonoBehaviour
     {
@@ -19,16 +20,21 @@ namespace Context
 
         private void OnEnable()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             Instance = this;
-            DontDestroyOnLoad(gameObject);
 
             _inputActions = InputManager.Instance.Actions;
+        }
+
+        private void OnDisable()
+        {
+            Instance = null;
+        }
+
+        private void Update()
+        {
+            var menuMap = _inputActions.Menu;
+            if (menuMap.Continue.WasPressedThisFrame())
+                NextDialogue();
         }
 
         public void StartDialogue(string[] dialogue)
@@ -65,7 +71,7 @@ namespace Context
 
         public void NextDialogue()
         {
-            if (_isTyping) return;
+            if (_isTyping || _currentIndex >= _currentDialogue.Length) return;
 
             _currentIndex++;
 

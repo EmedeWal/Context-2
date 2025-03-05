@@ -24,8 +24,6 @@ namespace Context
 
         private List<BaseConnectionPoint> _connectionPoints;
 
-        [SerializeField] private LayerMask _layerMask;
-
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -90,14 +88,19 @@ namespace Context
                 Debug.LogWarning(warning);
                 return;
             }
+
             TransferConnection(caller, data.Other, target, data.Connection, false);
             CreateConnection(caller, target, false);
+
+            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, 2.2f, "Connect");
         }
 
         public void RemoveUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target, OtherConnectionStruct oldData, OtherConnectionStruct newData)
         {
             if (!oldData.Connection.Stable && !newData.Connection.Stable)
             {
+                WorldSpaceCanvas.Instance.HidePrompt();
+
                 RemoveConnection(newData.Connection);
                 TransferConnection(target, oldData.Other, caller, oldData.Connection, true);
             }
@@ -111,6 +114,8 @@ namespace Context
                 Debug.LogWarning("Cannot stabilize connections: One or more connections are obstructed!");
                 return;
             }
+
+            WorldSpaceCanvas.Instance.HidePrompt();
 
             // If all are unobstructed, mark them as stable
             foreach (var connection in target.Connections)
