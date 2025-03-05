@@ -1,18 +1,30 @@
 namespace Context
 {
-    using UnityEngine;
+    using UnityEngine.EventSystems;
     using UnityEngine.InputSystem;
+    using UnityEngine;
 
     public class InputManager : MonoBehaviour
     {
         public static InputManager Instance { get; private set; }
-        private InputType _currentInputType = InputType.None;
+        public InputActions Actions { get; private set; }
+
+        private BaseInputModule _currentInputModule;
+        private InputType _currentInputType;
 
         public enum InputType
         {
             None = 0,
             Xbox = 1,
             PlayStation = 2
+        }
+
+        public enum InputMap
+        {
+            None,
+            Gameplay,
+            Menu,
+            All,
         }
 
         private void Awake()
@@ -28,11 +40,29 @@ namespace Context
 
             InputSystem.onDeviceChange += OnDeviceChange;
             UpdateInputType(); // Initialize input type at start
+
+            Actions = new();
+            Actions.Enable();
+
+            _currentInputModule = EventSystem.current.currentInputModule;
         }
 
         private void OnDestroy()
         {
+            Actions.Disable();
+            Actions.Dispose();
+
             InputSystem.onDeviceChange -= OnDeviceChange;
+        }
+
+        public void LockGameplayInput()
+        {
+            Actions.Gameplay.Disable();
+        }
+
+        public void UnlockGameplayInput()
+        {
+            Actions.Gameplay.Enable();
         }
 
         private void OnDeviceChange(InputDevice device, InputDeviceChange change)
@@ -48,24 +78,16 @@ namespace Context
         {
             if (Gamepad.current != null)
             {
-                string layout = Gamepad.current.layout;
-
-                if (layout.Contains("DualShock") || layout.Contains("DualSense"))
+                _currentInputType = Gamepad.current.layout switch
                 {
-                    _currentInputType = InputType.PlayStation;
-                }
-                else if (layout.Contains("Xbox") || layout.Contains("XInput"))
-                {
-                    _currentInputType = InputType.Xbox;
-                }
-                else
-                {
-                    _currentInputType = InputType.None; // Unknown gamepad
-                }
+                    string s when s.Contains("DualShock") || s.Contains("DualSense") => InputType.PlayStation,
+                    string s when s.Contains("Xbox") || s.Contains("XInput") => InputType.Xbox,
+                    _ => InputType.None,
+                };
             }
             else
             {
-                _currentInputType = InputType.None; // Default to PC if no gamepad
+                _currentInputType = InputType.None;
             }
         }
 

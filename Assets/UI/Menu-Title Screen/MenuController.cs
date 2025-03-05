@@ -7,11 +7,6 @@ namespace Context.UI
 
     public class MenuController : MonoBehaviour
     {
-        [Header("SETTINGS")]
-        [Space]
-        [Header("Input")]
-        [SerializeField] private float _lockTime = 0.2f;
-
         [Header("REFERENCES")]
         [Space]
         [SerializeField] private GameObject _menuHolder;
@@ -48,11 +43,9 @@ namespace Context.UI
 
         private void Start()
         {
-            _inputActions = new InputActions();
+            _inputActions = InputManager.Instance.Actions;
             _eventSystem = EventSystem.current;
             _audioSource = GetComponent<AudioSource>();
-
-            _inputActions.Enable();
 
             _resumeButton.onClick.AddListener(OnButtonClick);
             _retryButton.onClick.AddListener(OnButtonClick);
@@ -79,9 +72,6 @@ namespace Context.UI
 
         private void OnDisable()
         {
-            _inputActions.Disable();
-            _inputActions.Dispose();
-
             _resumeButton.onClick.RemoveAllListeners();
             _retryButton.onClick.RemoveAllListeners();
             _quitToMainButton.onClick.RemoveAllListeners();

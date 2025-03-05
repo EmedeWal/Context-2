@@ -7,12 +7,6 @@ namespace Context.UI
 
     public class TitleScreenController : MonoBehaviour
     {
-        [Header("SETTINGS")]
-
-        [Space]
-        [Header("Input")]
-        [SerializeField] private float _lockTime = 0.2f;
-
         [Header("REFERENCES")]
 
         [Space]
@@ -52,11 +46,10 @@ namespace Context.UI
             Cursor.lockState = CursorLockMode.Locked;
             var firstSelected = _playButton.gameObject;
 
-            _inputActions = new InputActions();
+            _inputActions = InputManager.Instance.Actions;
             _eventSystem = EventSystem.current;
             _audioSource = GetComponent<AudioSource>();
 
-            _inputActions.Enable();
             _eventSystem.SetSelectedGameObject(firstSelected);
             _eventSystem.firstSelectedGameObject = firstSelected;
 
@@ -82,9 +75,6 @@ namespace Context.UI
 
         private void OnDisable()
         {
-            _inputActions.Disable();
-            _inputActions.Dispose();
-
             _playButton.onClick.RemoveAllListeners();
             _quitButton.onClick.RemoveAllListeners();
             _creditsButton.onClick.RemoveAllListeners();
@@ -128,29 +118,12 @@ namespace Context.UI
         {
             if (_onClick != null)
                 _audioSource.Play();
-
-            LockInput();
         }
 
         private void OnSliderChanged(float value)
         {
             if (_onSlide != null)
                 _audioSource.Play();
-        }
-
-        private void LockInput()
-        {
-            _inputActions.Disable();
-            _eventSystem.currentInputModule.enabled = false;
-
-            CancelInvoke();
-            Invoke(nameof(UnlockInput), _lockTime);
-        }
-
-        private void UnlockInput()
-        {
-            _inputActions.Enable();
-            _eventSystem.currentInputModule.enabled = true;
         }
 
         private void Play() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);

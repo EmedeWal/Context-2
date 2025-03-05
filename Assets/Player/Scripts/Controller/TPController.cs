@@ -80,7 +80,7 @@ namespace Context.ThirdPersonController
 
             CheckJump(ref currentVelocity, deltaTime);
 
-            CheckTransfer();
+            CheckConnect();
 
             var horizontalSpeed = Vector3.ProjectOnPlane(currentVelocity, _motor.CharacterUp).magnitude;
             var verticalSpeed = currentVelocity.y;
@@ -236,9 +236,9 @@ namespace Context.ThirdPersonController
         #endregion
         #endregion
 
-        private void CheckTransfer()
+        private void CheckConnect()
         {
-            if (_input.RequestedTransfer)
+            if (_input.RequestedTransfer && _motor.GroundingStatus.IsStableOnGround)
             {
                 var pos = _motor.TransientPosition;
                 var hits = Physics.OverlapSphere(pos, _checkRange, _connectableLayer);
