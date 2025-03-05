@@ -117,7 +117,7 @@ namespace Context.UI
             }
 
             var menuActions = _inputActions.Menu;
-            if (menuActions.Cancel.WasPressedThisFrame() && _sliderVLG.activeSelf)
+            if (menuActions.Close.WasPressedThisFrame() && _sliderVLG.activeSelf)
             {
                 OnButtonClick();
                 ManageSliderState(_currentButton, false);

@@ -40,7 +40,7 @@ namespace Context.ThirdPersonController
             {
                 Rotation = _cameraTransform.rotation,
                 Movement = inputActions.Move.ReadValue<Vector2>(),
-                Transfer = inputActions.Transfer.WasPressedThisFrame(),
+                Connect = inputActions.Connect.WasPressedThisFrame(),
                 Jump = inputActions.Jump.WasPressedThisFrame(),
                 CancelJump = inputActions.Jump.WasReleasedThisFrame(),
                 SustainJump = inputActions.Jump.IsPressed(),

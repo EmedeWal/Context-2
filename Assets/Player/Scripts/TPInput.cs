@@ -9,7 +9,7 @@ namespace Context.ThirdPersonController
         public bool Jump;
         public bool CancelJump;
         public bool SustainJump;
-        public bool Transfer;
+        public bool Connect;
     }
 
     public class TPInput
@@ -35,7 +35,7 @@ namespace Context.ThirdPersonController
 
             // Jump
             RequestedJump = input.Jump || RequestedJump;
-            RequestedTransfer = input.Transfer || RequestedTransfer;
+            RequestedTransfer = input.Connect || RequestedTransfer;
             RequestedJumpCancel = input.CancelJump || RequestedJumpCancel;
             RequestedJumpSustain = input.SustainJump;
         }

@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Transfer",
+                    "name": "Connect",
                     "type": "Button",
                     "id": "353bd7ed-685c-4d97-b8f0-55a3afb9e22b",
                     "expectedControlType": "",
@@ -160,7 +160,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Transfer",
+                    "action": "Connect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -171,7 +171,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Transfer",
+                    "action": "Connect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -698,7 +698,7 @@
             "id": "30edcd04-ef6e-4131-a2ff-f1a378aa101d",
             "actions": [
                 {
-                    "name": "Cancel",
+                    "name": "Close",
                     "type": "Button",
                     "id": "7abd425a-b85b-4866-8b1d-e1c90bb242ae",
                     "expectedControlType": "",
@@ -707,7 +707,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Toggle",
+                    "name": "Pause",
                     "type": "Button",
                     "id": "7488711e-268b-49b4-a555-c09724adab63",
                     "expectedControlType": "",
@@ -724,7 +724,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cancel",
+                    "action": "Close",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -735,7 +735,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cancel",
+                    "action": "Close",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -746,7 +746,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Toggle",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -757,7 +757,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Toggle",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
