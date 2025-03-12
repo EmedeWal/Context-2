@@ -43,24 +43,12 @@ namespace Context
 
         public bool HasMaxConnections() => Connections.Count >= _maxConnections; 
 
-        public virtual void AddConnection(Connection connection)
+        public void ConnectionsStabilized()
         {
-            Connections.Add(connection);
-            OnConnectionModified();
-        }
+            var stableConnections = Connections.Where(c => c.Stable).ToList();
 
-        public virtual void RemoveConnection(Connection connection)
-        {
-            Connections.Remove(connection);
-            OnConnectionModified();
-        }
-
-        public void OnConnectionModified()
-        {
-            if (Connections.Count == 1)
-                OnFirstConnection();
-            else if (Connections.Count == _maxConnections)
-                OnAllConnections();
+            if (stableConnections.Count == 1) OnFirstConnection();
+            else if (stableConnections.Count == _maxConnections) OnAllConnections();
         }
 
         protected virtual void OnFirstConnection()
