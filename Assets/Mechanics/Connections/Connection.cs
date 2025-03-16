@@ -61,7 +61,7 @@ namespace Context
             }
         }
 
-        public void LateTick(MeshCollider collider)
+        public void LateTick(Collider collider)
         {
             var colliderA = AttachedPoints[0].Collider;
             var colliderB = AttachedPoints[1].Collider;
@@ -96,7 +96,7 @@ namespace Context
             UpdateMeshCollider();
         }
 
-        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB, MeshCollider collider)
+        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB, Collider collider)
         {
             // Offset the points slightly to avoid overlapping with colliders
             var start = colliderA.ClosestPoint(pointB);
@@ -107,6 +107,7 @@ namespace Context
 
             // Exclude player
             hits = hits.Where(hit => hit.collider != null && !hit.collider.CompareTag("Player")).ToArray();
+            Debug.Log(hits.Length);
             return hits.Any(hit =>
                 hit.collider != MeshCollider && // Exclude its own mesh collider
                 hit.collider != colliderA &&    // Exclude its own connection point A
@@ -121,7 +122,7 @@ namespace Context
             _lineRenderer.SetPosition(1, pointB);
         }
 
-        public void UpdateMeshCollider()
+        private void UpdateMeshCollider()
         {
             if (_bakedMesh != null) Destroy(_bakedMesh); // Destroy previous mesh to free memory
 

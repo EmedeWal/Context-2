@@ -139,8 +139,8 @@ namespace Context
 
         private void CreateConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB, bool stable)
         {
-            // Instantiate and initialize the connection
-            var connection = Instantiate(_connectionPrefab, transform);
+            // Instantiate and initialize the connection. Do not parent due to weird local space mesh baking logic
+            var connection = Instantiate(_connectionPrefab);
             connection.Init(connectionPointA, connectionPointB, stable);
 
             // Store the connection in both points
