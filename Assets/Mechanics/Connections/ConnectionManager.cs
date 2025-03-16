@@ -120,6 +120,8 @@ namespace Context
             // If all are unobstructed, mark them as stable
             foreach (var connection in target.Connections)
                 connection.Stable = true;
+
+            target.ConnectionsStabilized();
         }
 
         // Connection from a to b goes from b to c
@@ -129,8 +131,8 @@ namespace Context
             connection.SetupConnection(connectionPointB, connectionPointC);
 
             // Update tracking dictionary
-            connectionPointA.RemoveConnection(connection);
-            connectionPointC.AddConnection(connection);
+            connectionPointA.Connections.Remove(connection);
+            connectionPointC.Connections.Add(connection);
 
             connection.Stable = stable;
         }
@@ -142,8 +144,8 @@ namespace Context
             connection.Init(connectionPointA, connectionPointB, stable);
 
             // Store the connection in both points
-            connectionPointA.AddConnection(connection);
-            connectionPointB.AddConnection(connection);
+            connectionPointA.Connections.Add(connection);
+            connectionPointB.Connections.Add(connection);
         }
 
         private void RemoveConnection(Connection connection)
@@ -153,7 +155,7 @@ namespace Context
 
             // Remove the connection from each connection point
             foreach (var point in connectedPoints)
-                point.RemoveConnection(connection);
+                point.Connections.Remove(connection);
 
             connection.Cleanup();
             Destroy(connection.gameObject);

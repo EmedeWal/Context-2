@@ -9,13 +9,14 @@ namespace Context
     public class MovingPlatform : MonoBehaviour
     {
         [Header("ACTIVATION SETTINGS")]
-        [field:SerializeField] public ActivationMode ActivationMode { get; private set; } = ActivationMode.Automatic;
+        [field: SerializeField] public ActivationMode ActivationMode { get; private set; } = ActivationMode.Automatic;
         [SerializeField] private float _activationDelay = 2f;
 
         [Header("PATH SETTINGS")]
-        [SerializeField] private float _movementSpeed = 4f;
-        [SerializeField] private float _waypointPause = 1f;
         [SerializeField] private float _journeyPause = 1f;
+        [SerializeField] private float _waypointPause = 1f;
+        [SerializeField] private float _movementSpeed = 4f;
+        [SerializeField] private bool _allowIndepence = false;
 
         private List<Transform> _waypointList;
         private Rigidbody _rigidbody;
@@ -38,8 +39,17 @@ namespace Context
 
             CollectWaypoints();
 
-            if (ActivationMode == ActivationMode.Automatic)
+            if (ActivationMode is ActivationMode.Automatic)
                 Activate();
+        }
+
+        private void Update()
+        {
+            if (HaltDueToIndepence())
+            {
+                _waypointIndex = 0;
+                _movingForward = false;
+            }
         }
 
         public void Activate()
@@ -60,6 +70,8 @@ namespace Context
 
                 while (Vector3.Distance(_transform.position, targetWaypoint.position) > 0.05f)
                 {
+                    targetWaypoint = _waypointList[_waypointIndex];
+
                     Vector3 newPosition = Vector3.MoveTowards(_transform.position, targetWaypoint.position, _movementSpeed * Time.deltaTime);
                     Vector3 movement = newPosition - _transform.position;
                     _transform.position = newPosition;
@@ -73,6 +85,9 @@ namespace Context
                 }
 
                 _transform.position = targetWaypoint.position;
+
+                if (HaltDueToIndepence())
+                    continue;
 
                 if (_movingForward)
                 {
@@ -115,6 +130,9 @@ namespace Context
             if (_waypointList.Count < 2)
                 Debug.LogWarning("MovingPlatform requires at least two waypoints.");
         }
+
+        private bool HaltDueToIndepence() =>
+            !_allowIndepence && _trigger.Passenger == null && _waypointIndex > 0 && _movingForward;
 
         private void OnDrawGizmos()
         {
