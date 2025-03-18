@@ -10,6 +10,8 @@ namespace Context
         [SerializeField] private InputSpriteContainer _container;
         [SerializeField] private Image _promptImage;
 
+        public bool IsEnabled => _promptImage.enabled;
+
         private void OnEnable()
         {
             Instance = this;

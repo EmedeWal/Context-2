@@ -2,6 +2,7 @@ namespace Context
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Unity.VisualScripting;
     using UnityEngine;
 
     public struct OtherConnectionStruct
@@ -70,43 +71,62 @@ namespace Context
             }
         }
 
-        public void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
+        // Trigger enter
+        public void CreateUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
         {
-            // Return if either is at their c cap
-            if (connectionPointA.HasMaxConnections() || connectionPointB.HasMaxConnections())
+            var data = caller.GetFirstOtherConnection();
+            var callerTargetConnection = target.Connections.Any(c => c.AttachedPoints.Contains(caller));
+            var targetOtherConnection = target.Connections.Any(c => c.AttachedPoints.Contains(data.Other));
+
+            if ((targetOtherConnection && !callerTargetConnection) 
+            || (target.ConnectionsOverCap(2) && !callerTargetConnection)
+            || (target.Connections.Count == 1 && callerTargetConnection))
             {
-                Debug.LogWarning("Requested connection is invalid! Either point has max connections!");
+                Debug.LogWarning("Something was invalid.");
                 return;
             }
-            CreateConnection(connectionPointA, connectionPointB, true);
-        }
-
-        public void CreateUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target, OtherConnectionStruct data)
-        {
-            if (BlockConnectionRequest(target, data.Other, data.Connection, out var warning))
-            {
-                Debug.LogWarning(warning);
-                return;
-            }
-
-            TransferConnection(caller, data.Other, target, data.Connection, false);
-            CreateConnection(caller, target, false);
 
             WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, 2.2f, "Connect");
-        }
 
-        public void RemoveUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target, OtherConnectionStruct oldData, OtherConnectionStruct newData)
-        {
-            if (!oldData.Connection.Stable && !newData.Connection.Stable)
+            if (!target.Connections.Contains(data.Connection))
             {
-                WorldSpaceCanvas.Instance.HidePrompt();
-
-                RemoveConnection(newData.Connection);
-                TransferConnection(target, oldData.Other, caller, oldData.Connection, true);
+                TransferConnection(caller, data.Other, target, data.Connection, false);
+                CreateConnection(caller, target, false);
             }
         }
 
-        public void StabilizeConnections(BaseConnectionPoint target)
+        // Trigger exit
+        public void RemoveUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
+        {
+            WorldSpaceCanvas.Instance.HidePrompt();
+
+            var callerData = caller.GetFirstOtherConnection();
+            var callerTargetConnection = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(caller));
+            var targetOtherConnection = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(callerData.Other));
+
+            if (callerTargetConnection == null || targetOtherConnection == null)
+                return;
+
+            if (!callerTargetConnection.Stable && !targetOtherConnection.Stable)
+            {
+                var other = targetOtherConnection.AttachedPoints.FirstOrDefault(p => p != target);
+
+                RemoveConnection(callerTargetConnection);
+                TransferConnection(target, other, caller, targetOtherConnection, true);
+            }
+        }
+
+        // Interacted with connection point. decide to add or undo
+        public void InteractWithConnections(BaseConnectionPoint caller, BaseConnectionPoint target)
+        {
+            if (target.Connections.Any(c => !c.Stable)) 
+                StabilizeConnections(target);
+            else if (WorldSpaceCanvas.Instance.IsEnabled) 
+                UnstabilizeConnections(caller, target);
+        }
+
+        // Press when connections are unstable
+        private void StabilizeConnections(BaseConnectionPoint target)
         {
             // Ensure all connections are unobstructed before stabilizing
             if (target.Connections.Any(connection => connection.Obstructed))
@@ -115,13 +135,31 @@ namespace Context
                 return;
             }
 
-            WorldSpaceCanvas.Instance.HidePrompt();
-
             // If all are unobstructed, mark them as stable
             foreach (var connection in target.Connections)
                 connection.Stable = true;
 
+            // trigger events
             target.ConnectionsStabilized();
+        }
+
+        // Press when connections are stable
+        private void UnstabilizeConnections(BaseConnectionPoint caller, BaseConnectionPoint target)
+        {
+            var otherConnectionStruct = target.GetFirstOtherConnection();
+            otherConnectionStruct.Connection.Stable = false;
+            caller.Connections[0].Stable = false;
+        }
+
+        private void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
+        {
+            // Return if either is at their c cap
+            if (connectionPointA.ConnectionsOverCap(1) || connectionPointB.ConnectionsOverCap(1))
+            {
+                Debug.LogWarning("Requested connection is invalid! Either point has max connections!");
+                return;
+            }
+            CreateConnection(connectionPointA, connectionPointB, true);
         }
 
         // Connection from a to b goes from b to c
@@ -159,28 +197,6 @@ namespace Context
 
             connection.Cleanup();
             Destroy(connection.gameObject);
-        }
-
-        //private bool HasMaxContains(BaseConnectionPoint point) => _connectionPoints[point].Count >= point._maxConnections;
-        private bool BlockConnectionRequest(BaseConnectionPoint target, BaseConnectionPoint other, Connection callerTargetConnection, out string warning)
-        {
-            if (target.Connections.Contains(callerTargetConnection))
-            {
-                warning = "Caller is already connected to the target!";
-                return true;
-            }
-            if (target.HasMaxConnections())
-            {
-                warning = "Target has max connections!";
-                return true;
-            }
-            if (target.Connections.Any(c => c.AttachedPoints.Contains(other)))
-            {
-                warning = "Target was already connected with the other.";
-                return true;
-            }
-            warning = string.Empty;
-            return false;
         }
     }
 }
