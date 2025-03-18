@@ -8,7 +8,7 @@ namespace Context
     [RequireComponent(typeof(Collider))]
     public abstract class BaseConnectionPoint : MonoBehaviour
     {
-        public List<Connection> Connections;
+        public List<Connection> Connections { get; private set; }  
         public Collider Collider { get; private set; }
 
         [field: SerializeField] public BaseConnectionPoint[] InitialConnectionPoints { get; private set; }
