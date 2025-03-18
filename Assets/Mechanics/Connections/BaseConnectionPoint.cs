@@ -8,21 +8,18 @@ namespace Context
     [RequireComponent(typeof(Collider))]
     public abstract class BaseConnectionPoint : MonoBehaviour
     {
-        public List<Connection> Connections; // private setter later
+        public List<Connection> Connections { get; private set; }  
         public Collider Collider { get; private set; }
 
-        [Header("REFERENCES")]
-
-        [Header("Connections")]
         [field: SerializeField] public BaseConnectionPoint[] InitialConnectionPoints { get; private set; }
-        [SerializeField] protected int _maxConnections;
 
-        [Space]
         [Header("Events")]
         [SerializeField] private UnityEvent _firstConnection;
         [SerializeField] private UnityEvent _allConnections;
 
         protected ConnectionManager _manager;
+
+        protected const int MAX_CONNECTIONS = 2;
 
         public virtual void Init(ConnectionManager connectionManager)
         {
@@ -41,14 +38,22 @@ namespace Context
             _allConnections = null;
         }
 
-        public bool HasMaxConnections() => Connections.Count >= _maxConnections; 
+        public bool ConnectionsOverCap(int connectionIncrement) => Connections.Count + connectionIncrement > MAX_CONNECTIONS;
+
+        public OtherConnectionStruct GetFirstOtherConnection()
+        {
+            var connection = Connections[0];
+            var other = connection.AttachedPoints.FirstOrDefault(conn => conn != this);
+
+            return new OtherConnectionStruct(other, connection);
+        }
 
         public void ConnectionsStabilized()
         {
             var stableConnections = Connections.Where(c => c.Stable).ToList();
 
             if (stableConnections.Count == 1) OnFirstConnection();
-            else if (stableConnections.Count == _maxConnections) OnAllConnections();
+            else if (stableConnections.Count == MAX_CONNECTIONS) OnAllConnections();
         }
 
         protected virtual void OnFirstConnection()
@@ -61,14 +66,6 @@ namespace Context
         {
             _allConnections?.Invoke();
             _allConnections = null;
-        }
-
-        protected  OtherConnectionStruct GetFirstOtherConnection()
-        {
-            var connection = Connections[0];
-            var other = connection.AttachedPoints.FirstOrDefault(conn => conn != this);
-
-            return new OtherConnectionStruct(other, connection);
         }
     }
 }

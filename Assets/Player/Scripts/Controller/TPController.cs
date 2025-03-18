@@ -37,7 +37,6 @@ namespace Context.ThirdPersonController
         [SerializeField] private LayerMask _connectableLayer;
         [SerializeField] private float _checkRange = 3;
 
-        private OtherConnectionStruct _oldStruct;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _forcedUnground;
@@ -245,7 +244,7 @@ namespace Context.ThirdPersonController
 
                 if (hits.Length > 0)
                 {
-                    if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component)) _manager.StabilizeConnections(component);
+                    if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component)) _manager.InteractWithConnections(this, component);
                     else Debug.LogWarning("Hit on connectable Layer had no base connection point script.");
                 }
             }
@@ -255,14 +254,12 @@ namespace Context.ThirdPersonController
 
         private void TPController_ConnectionEnter(BaseConnectionPoint point)
         {
-            _oldStruct = GetFirstOtherConnection();
-            _manager.CreateUnstableConnection(this, point, _oldStruct);
+            _manager.CreateUnstableConnection(this, point);
         }
 
         private void TPController_ConnectionExit(BaseConnectionPoint point)
         {
-            var newStruct = GetFirstOtherConnection();
-            _manager.RemoveUnstableConnection(this, point, _oldStruct, newStruct);
+            _manager.RemoveUnstableConnection(this, point);
         }
 
         #region Unused

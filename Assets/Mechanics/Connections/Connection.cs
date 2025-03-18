@@ -107,7 +107,6 @@ namespace Context
 
             // Exclude player
             hits = hits.Where(hit => hit.collider != null && !hit.collider.CompareTag("Player")).ToArray();
-            Debug.Log(hits.Length);
             return hits.Any(hit =>
                 hit.collider != MeshCollider && // Exclude its own mesh collider
                 hit.collider != colliderA &&    // Exclude its own connection point A
