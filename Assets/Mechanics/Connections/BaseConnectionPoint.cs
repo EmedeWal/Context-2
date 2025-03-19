@@ -13,9 +13,15 @@ namespace Context
 
         [field: SerializeField] public BaseConnectionPoint[] InitialConnectionPoints { get; private set; }
 
-        [Header("Events")]
-        [SerializeField] private UnityEvent _firstConnection;
-        [SerializeField] private UnityEvent _allConnections;
+        [Header("REFERENCES")]
+
+        [Space]
+        [Tooltip("Optional. Leave it empty if no dialogue is started when max connections are met.")]
+        [SerializeField] private DialogueDataSO _dialogueData;
+
+        [Space]
+        [Tooltip("This event is invoked when max connections are met.")]
+        [SerializeField] private UnityEvent _completedConnections;
 
         protected ConnectionManager _manager;
 
@@ -34,8 +40,7 @@ namespace Context
             foreach (var connection in Connections)
                 connection.Cleanup();
 
-            _firstConnection = null;
-            _allConnections = null;
+            _completedConnections = null;
         }
 
         public bool ConnectionsOverCap(int connectionIncrement) => Connections.Count + connectionIncrement > MAX_CONNECTIONS;
@@ -51,21 +56,20 @@ namespace Context
         public void ConnectionsStabilized()
         {
             var stableConnections = Connections.Where(c => c.Stable).ToList();
-
-            if (stableConnections.Count == 1) OnFirstConnection();
-            else if (stableConnections.Count == MAX_CONNECTIONS) OnAllConnections();
+            if (stableConnections.Count == MAX_CONNECTIONS)
+                OnCompletedConnections();
         }
 
-        protected virtual void OnFirstConnection()
+        protected virtual void OnCompletedConnections()
         {
-            _firstConnection?.Invoke();
-            _firstConnection = null;
-        }
+            if (_dialogueData != null)
+            {
+                DialogueManager.Instance.StartDialogue(_dialogueData.Dialogue);
+                _dialogueData = null;
+            }
 
-        protected virtual void OnAllConnections()
-        {
-            _allConnections?.Invoke();
-            _allConnections = null;
+            _completedConnections?.Invoke();
+            _completedConnections = null;
         }
     }
 }

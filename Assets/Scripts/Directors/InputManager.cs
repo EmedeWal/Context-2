@@ -69,9 +69,7 @@ namespace Context
         {
             if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected ||
                 change == InputDeviceChange.Removed)
-            {
                 UpdateInputType();
-            }
         }
 
         private void UpdateInputType()

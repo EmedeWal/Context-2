@@ -17,8 +17,7 @@ namespace Context.ThirdPersonController
             _controller = GetComponentInChildren<TPController>();
             _root = GetComponentInChildren<TPRoot>();
 
-            _inputActions = new InputActions();
-            _inputActions.Enable();
+            _inputActions = InputManager.Instance.Actions;
             _cameraTransform = Camera.main.transform;
 
             _controller.Init();
