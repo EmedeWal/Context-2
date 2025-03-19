@@ -40,7 +40,18 @@ namespace Context
 
             var menuMap = _inputActions.Menu;
             if (menuMap.Continue.WasPressedThisFrame())
-                NextDialogue();
+            {
+                if (_isTyping)
+                {
+                    StopAllCoroutines();
+                    _dialogueText.text = _currentDialogue[_currentIndex]; // Instantly set full text
+                    _isTyping = false;
+                }
+                else
+                {
+                    NextDialogue();
+                }
+            }
         }
 
         public void StartDialogue(string[] dialogue)
@@ -69,7 +80,7 @@ namespace Context
             foreach (char letter in text.ToCharArray())
             {
                 _dialogueText.text += letter;
-                yield return new WaitForSecondsRealtime(_textSpeed);
+                yield return new WaitForSeconds(_textSpeed);
             }
 
             _isTyping = false;
