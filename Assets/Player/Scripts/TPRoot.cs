@@ -1,6 +1,5 @@
 namespace Context.ThirdPersonController
 {
-    using System;
     using UnityEngine;
 
     public class TPRoot : MonoBehaviour
