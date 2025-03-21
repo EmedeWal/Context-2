@@ -4,11 +4,17 @@ namespace Context.ThirdPersonController
 
     public class TPAudio : MonoBehaviour
     {
-        [SerializeField] private AudioSource _landSource;
-        [SerializeField] private AudioSource _jumpSource;
-        [SerializeField] private AudioSource _interactSource;
-        [SerializeField] private AudioSource _footstepSource;
+        [Header("REFERENCES")]
 
+        [Space]
+        [Header("Sources")]
+        [SerializeField] private AudioSource _footstepSource;
+        [SerializeField] private AudioSource _interactSource;
+        [SerializeField] private AudioSource _jumpSource;
+        [SerializeField] private AudioSource _landSource;
+
+        [Space]
+        [Header("Data")]
         [SerializeField] private AudioData[] _footstepArray;
         [SerializeField] private AudioData _interactData;
         [SerializeField] private AudioData _jumpData;
@@ -24,7 +30,7 @@ namespace Context.ThirdPersonController
             TPController.InteractionStarted += TPAudio_InteractionStarted;
             TPController.Jumped += TPAudio_Jumped;
             TPController.Landed += TPAudio_Landed;
-            TPRoot.Footstep += TPAudio_Footstep;
+            TPAnimator.Footstep += TPAudio_Footstep;
         }
 
         public void Cleanup()
@@ -33,7 +39,7 @@ namespace Context.ThirdPersonController
             TPController.InteractionStarted -= TPAudio_InteractionStarted;
             TPController.Jumped -= TPAudio_Jumped;
             TPController.Landed -= TPAudio_Landed;
-            TPRoot.Footstep -= TPAudio_Footstep;
+            TPAnimator.Footstep -= TPAudio_Footstep;
         }
 
         private void TPAudio_InteractionStarted() { }
