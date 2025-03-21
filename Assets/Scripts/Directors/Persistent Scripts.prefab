@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1970871931722614726}
   - component: {fileID: 1439929850662169762}
+  - component: {fileID: 7592213709916840403}
   m_Layer: 0
   m_Name: Persistent Scripts
   m_TagString: Untagged
@@ -45,3 +46,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eventSystem: {fileID: 5379692138168043369, guid: 149194281cc433645963d26f1888b941, type: 3}
+--- !u!114 &7592213709916840403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8863228308655089523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a45d188ee46fae4d8891447abcfde65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvasObject: {fileID: 1336456341691679986, guid: 7a3a647ddb2115b46a54fec39c039367, type: 3}

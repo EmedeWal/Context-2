@@ -1,6 +1,5 @@
 namespace Context.UI
 {
-    using UnityEngine.SceneManagement;
     using UnityEngine.EventSystems;
     using UnityEngine.UI;
     using UnityEngine;
@@ -126,7 +125,12 @@ namespace Context.UI
                 _audioSource.Play();
         }
 
-        private void Play() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        private void Play()
+        {
+            var nextIndex = SceneLoader.Instance.GetCurrentBuildIndex() + 1;
+            SceneLoader.Instance.TransitionToScene(nextIndex);
+        }
+
         private void Quit() => Application.Quit();
         private void Credits() => Debug.LogWarning("Credits not implemented.");
         private void Options() => ManageSliderState(_currentSlider, true);
