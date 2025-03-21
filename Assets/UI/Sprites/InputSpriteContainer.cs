@@ -16,16 +16,23 @@ namespace Context
 
         [SerializeField] private List<ActionSprites> _actionSpritesList;
 
-        public Sprite GetSprite(string actionName)
+        public bool GetSprite(string actionName, out Sprite sprite)
         {
+            sprite = null;
+
             var inputType = ApplicationManager.Instance.InputManager.GetInputType();
 
             foreach (var actionSprites in _actionSpritesList)
+            {
                 if (actionSprites.ActionName == actionName)
-                    return actionSprites.Sprites[(int)inputType];
+                {
+                    sprite = actionSprites.Sprites[(int)inputType];
+                    return true;
+                }
+            }
 
             Debug.LogWarning($"No sprite found for action: {actionName}");
-            return null;
+            return false;
         }
     }
 }
