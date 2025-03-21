@@ -28,9 +28,12 @@ namespace Context
         {
             position.y += yOffset;
 
-            _promptImage.sprite = _container.GetSprite(action);
-            _promptImage.transform.position = position;
-            _promptImage.enabled = true;
+            if (_container.GetSprite(action, out var sprite))
+            {
+                _promptImage.transform.position = position;
+                _promptImage.sprite = sprite;
+                _promptImage.enabled = true;
+            }
         }
 
         public void HidePrompt()

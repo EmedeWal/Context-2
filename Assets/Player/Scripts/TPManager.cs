@@ -5,6 +5,7 @@ namespace Context.ThirdPersonController
     public class TPManager : MonoBehaviour
     {
         private TPController _controller;
+        private TPAudio _audio;
         private TPRoot _root;
 
         private InputActions _inputActions;
@@ -15,12 +16,14 @@ namespace Context.ThirdPersonController
             Cursor.lockState = CursorLockMode.Locked;
 
             _controller = GetComponentInChildren<TPController>();
+            _audio = GetComponentInChildren<TPAudio>();
             _root = GetComponentInChildren<TPRoot>();
 
             _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _cameraTransform = Camera.main.transform;
 
             _controller.Init();
+            _audio.Init();
             _root.Init(_controller.transform);
 
             gameObject.layer = Layers.GetControllerLayer();
@@ -28,8 +31,7 @@ namespace Context.ThirdPersonController
 
         private void OnDisable()
         {
-            _inputActions.Disable();
-            _inputActions.Dispose();
+            _audio.Cleanup();
         }
 
         private void Update()

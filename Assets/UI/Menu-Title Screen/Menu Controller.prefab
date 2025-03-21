@@ -60,7 +60,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &623803717511198952
 MonoBehaviour:
@@ -997,7 +997,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25107b59fea11714f9e2edf2bbd2fed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lockTime: 0.2
   _menuHolder: {fileID: 1034872887022799678}
   _buttonVLG: {fileID: 8061035961608404372}
   _sliderVLG: {fileID: 932172945686765379}

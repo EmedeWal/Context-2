@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9336ce46b0a5886428fec657311bf936, type: 3}
+  m_Name: Input Sprite Container
+  m_EditorClassIdentifier: 
+  _actionSpritesList:
+  - ActionName: Move
+    _binding: WASD/Left Stick
+    Sprites:
+    - {fileID: 0}
+    - {fileID: 21300000, guid: 6887a7bd5263f114a890afffa16c1410, type: 3}
+    - {fileID: 21300000, guid: 6887a7bd5263f114a890afffa16c1410, type: 3}
+  - ActionName: Look
+    _binding: Mouse/Right Stick
+    Sprites:
+    - {fileID: 0}
+    - {fileID: 21300000, guid: 9c2fdee376e5669468701f864b08864d, type: 3}
+    - {fileID: 21300000, guid: 9c2fdee376e5669468701f864b08864d, type: 3}
+  - ActionName: Jump
+    _binding: Space/Button South
+    Sprites:
+    - {fileID: 21300000, guid: 4bb79d875e50fc24295006f4a464ce2f, type: 3}
+    - {fileID: 21300000, guid: 0ceb425e986f36e49b8e96e8c51e3895, type: 3}
+    - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}
+  - ActionName: Interact
+    _binding: E/Button West
+    Sprites:
+    - {fileID: 21300000, guid: f8eeeac57aff7ec489f52f179e2f14de, type: 3}
+    - {fileID: 21300000, guid: 49e74c1c97b6f1540b08de9fdd8e69aa, type: 3}
+    - {fileID: 21300000, guid: 5288f33c573de87408c5238cf4f0e40d, type: 3}
+  - ActionName: Pause
+    _binding: Escape/Menu
+    Sprites:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+  - ActionName: Continue
+    _binding: Enter/Button South
+    Sprites:
+    - {fileID: 0}
+    - {fileID: 21300000, guid: 0ceb425e986f36e49b8e96e8c51e3895, type: 3}
+    - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}
