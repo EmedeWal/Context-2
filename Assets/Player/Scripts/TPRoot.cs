@@ -8,8 +8,6 @@ namespace Context.ThirdPersonController
         private Transform _followTarget;
         private Transform _transform;
 
-        public static event Action Footstep;
-
         public void Init(Transform followTarget)
         {
             _followTarget = followTarget;
@@ -20,8 +18,5 @@ namespace Context.ThirdPersonController
         {
             _transform.SetPositionAndRotation(_followTarget.position, _followTarget.rotation);  
         }
-
-        public void OnFootstep() =>
-            Footstep?.Invoke();
     }
 }
