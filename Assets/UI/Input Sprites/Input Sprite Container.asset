@@ -17,26 +17,26 @@ MonoBehaviour:
     _binding: WASD/Left Stick
     Sprites:
     - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 21300000, guid: 6887a7bd5263f114a890afffa16c1410, type: 3}
+    - {fileID: 21300000, guid: 6887a7bd5263f114a890afffa16c1410, type: 3}
   - ActionName: Look
     _binding: Mouse/Right Stick
     Sprites:
     - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 21300000, guid: 9c2fdee376e5669468701f864b08864d, type: 3}
+    - {fileID: 21300000, guid: 9c2fdee376e5669468701f864b08864d, type: 3}
   - ActionName: Jump
     _binding: Space/Button South
     Sprites:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 21300000, guid: 4bb79d875e50fc24295006f4a464ce2f, type: 3}
+    - {fileID: 21300000, guid: 0ceb425e986f36e49b8e96e8c51e3895, type: 3}
+    - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}
   - ActionName: Interact
     _binding: E/Button West
     Sprites:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 21300000, guid: f8eeeac57aff7ec489f52f179e2f14de, type: 3}
+    - {fileID: 21300000, guid: 49e74c1c97b6f1540b08de9fdd8e69aa, type: 3}
+    - {fileID: 21300000, guid: 5288f33c573de87408c5238cf4f0e40d, type: 3}
   - ActionName: Pause
     _binding: Escape/Menu
     Sprites:
@@ -47,5 +47,5 @@ MonoBehaviour:
     _binding: Enter/Button South
     Sprites:
     - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 21300000, guid: 0ceb425e986f36e49b8e96e8c51e3895, type: 3}
+    - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}
