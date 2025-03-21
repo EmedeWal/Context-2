@@ -19,11 +19,11 @@ namespace Context
         private int _currentIndex;
         private bool _isTyping;
 
-        private void OnEnable()
+        private void Start()
         {
             Instance = this;
 
-            _inputActions = InputManager.Instance.Actions;
+            _inputActions = ApplicationManager.Instance.InputManager.Actions;
 
             transform.GetChild(0).gameObject.SetActive(true);
             SetHolderActive(false);
@@ -58,7 +58,7 @@ namespace Context
         {
             if (dialogue == null || dialogue.Length == 0) return;
 
-            InputManager.Instance.LockGameplayInput();
+            ApplicationManager.Instance.InputManager.LockGameplayInput();
             _currentDialogue = dialogue;
             _currentIndex = 0;
 
@@ -99,7 +99,7 @@ namespace Context
         private void EndDialogue()
         {
             SetHolderActive(false);
-            InputManager.Instance.UnlockGameplayInput();
+            ApplicationManager.Instance.InputManager.UnlockGameplayInput();
         }
 
         private void SetHolderActive(bool active)

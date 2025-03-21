@@ -45,7 +45,7 @@ namespace Context.UI
             Cursor.lockState = CursorLockMode.Locked;
             var firstSelected = _playButton.gameObject;
 
-            _inputActions = InputManager.Instance.Actions;
+            _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _eventSystem = EventSystem.current;
             _audioSource = GetComponent<AudioSource>();
 
@@ -127,8 +127,8 @@ namespace Context.UI
 
         private void Play()
         {
-            var nextIndex = SceneLoader.Instance.GetCurrentBuildIndex() + 1;
-            SceneLoader.Instance.TransitionToScene(nextIndex);
+            var nextIndex = ApplicationManager.Instance.SceneLoader.GetCurrentBuildIndex() + 1;
+            ApplicationManager.Instance.SceneLoader.TransitionToScene(nextIndex);
         }
 
         private void Quit() => Application.Quit();

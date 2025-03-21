@@ -17,7 +17,7 @@ namespace Context.ThirdPersonController
             _controller = GetComponentInChildren<TPController>();
             _root = GetComponentInChildren<TPRoot>();
 
-            _inputActions = InputManager.Instance.Actions;
+            _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _cameraTransform = Camera.main.transform;
 
             _controller.Init();
@@ -39,7 +39,8 @@ namespace Context.ThirdPersonController
             {
                 Rotation = _cameraTransform.rotation,
                 Movement = inputActions.Move.ReadValue<Vector2>(),
-                Connect = inputActions.Connect.WasPressedThisFrame(),
+                Interact = inputActions.Interact.WasPressedThisFrame(),
+                SustainInteract = inputActions.Interact.IsPressed(),
                 Jump = inputActions.Jump.WasPressedThisFrame(),
                 CancelJump = inputActions.Jump.WasReleasedThisFrame(),
                 SustainJump = inputActions.Jump.IsPressed(),

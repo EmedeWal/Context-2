@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Connect",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "353bd7ed-685c-4d97-b8f0-55a3afb9e22b",
                     "expectedControlType": "",
@@ -160,7 +160,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Connect",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -171,7 +171,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Connect",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

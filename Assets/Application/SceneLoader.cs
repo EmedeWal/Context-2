@@ -3,34 +3,19 @@ namespace Context
     using UnityEngine.SceneManagement;
     using UnityEngine;
 
-    public class SceneLoader : MonoBehaviour
+    public class SceneLoader
     {
-        public static SceneLoader Instance;
-
-        [SerializeField] private GameObject _canvasObject;
-
-        private Overlay _overlay;
+        private readonly Overlay _overlay;
 
         private const float FADE_TIME = 0.5f;
 
-        private void Awake()
+        public SceneLoader(Overlay overlay)
         {
-            if (Instance != null && Instance != this)
-            {
-                DestroyImmediate(gameObject);
-                return;
-            }
-
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            var canvasObject = Instantiate(_canvasObject, transform);
-            _overlay = new(canvasObject);
+            _overlay = overlay;
         }
 
-        private void Update()
+        public void Tick(float deltaTime)
         {
-            var deltaTime = Time.deltaTime;
             _overlay.Tick(deltaTime);
         }
 

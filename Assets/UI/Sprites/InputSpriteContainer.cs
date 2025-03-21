@@ -18,7 +18,7 @@ namespace Context
 
         public Sprite GetSprite(string actionName)
         {
-            var inputType = InputManager.Instance.GetInputType();
+            var inputType = ApplicationManager.Instance.InputManager.GetInputType();
 
             foreach (var actionSprites in _actionSpritesList)
                 if (actionSprites.ActionName == actionName)

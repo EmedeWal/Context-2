@@ -43,7 +43,7 @@ namespace Context.UI
 
         private void Start()
         {
-            _inputActions = InputManager.Instance.Actions;
+            _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _eventSystem = EventSystem.current;
             _audioSource = GetComponent<AudioSource>();
 

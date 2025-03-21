@@ -2,6 +2,7 @@ namespace Context.ThirdPersonController
 {
     using KinematicCharacterController;
     using UnityEngine;
+    using System;
 
     public class TPController : BaseConnectionPoint, ICharacterController
     {
@@ -33,10 +34,15 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _coyoteTime = 0.2f;
         [SerializeField] private float _jumpForce = 20f;
 
-        [Header("CONNECTIONS")]
-        [SerializeField] private LayerMask _connectableLayer;
-        [SerializeField] private float _checkRange = 3;
+        [Header("INTERACTION")]
+        [SerializeField] private LayerMask _interactionLayer;
+        [SerializeField] private float _interactionDuration = 1f;
+        [SerializeField] private float _interactionRange = 3;
 
+        public static event Action InteractionStarted;
+        public static event Action InteractionCanceled;
+
+        private Timer _interactSustainTimer;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _forcedUnground;
@@ -47,9 +53,14 @@ namespace Context.ThirdPersonController
             _motor.CharacterController = this;
 
             _channel = GetComponentInChildren<TriggerChannel>();
-            _channel.Init(this, _checkRange);
+            _channel.Init(this, _interactionRange);
 
             _input = new();
+
+            _interactSustainTimer = null;
+            _timeSinceJumpRequest = 0;
+            _airborneTime = 0;
+            _forcedUnground = false;
 
             _channel.ConnectionEnter += TPController_ConnectionEnter;
             _channel.ConnectionExit += TPController_ConnectionExit;
@@ -68,6 +79,8 @@ namespace Context.ThirdPersonController
 
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
+            if (HandleSustainedInteraction(ref currentVelocity, deltaTime)) return;
+
             if (_motor.GroundingStatus.IsStableOnGround)
             {
                 HandleGroundedLocomotion(ref currentVelocity, deltaTime);
@@ -84,6 +97,24 @@ namespace Context.ThirdPersonController
             var horizontalSpeed = Vector3.ProjectOnPlane(currentVelocity, _motor.CharacterUp).magnitude;
             var verticalSpeed = currentVelocity.y;
             BuildLogger.Instance.LogSpeed(horizontalSpeed, verticalSpeed);
+        }
+
+        private bool HandleSustainedInteraction(ref Vector3 currentVelocity, float deltaTime)
+        {
+            if (_interactSustainTimer != null)
+            {
+                if (!_input.RequestedInteractSustain)
+                {
+                    OnInteractionCanceled();
+                    _interactSustainTimer = _interactSustainTimer.Cleanup();
+                }
+                else
+                {
+                    currentVelocity = Vector3.zero;
+                    _interactSustainTimer.Tick(deltaTime);
+                }
+            }
+            return _interactSustainTimer != null;
         }
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
@@ -237,30 +268,43 @@ namespace Context.ThirdPersonController
 
         private void CheckConnect()
         {
-            if (_input.RequestedTransfer && _motor.GroundingStatus.IsStableOnGround)
+            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround)
             {
                 var pos = _motor.TransientPosition;
-                var hits = Physics.OverlapSphere(pos, _checkRange, _connectableLayer);
+                var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
 
-                if (hits.Length > 0)
+                if (hits.Length == 0) return;
+
+                if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component))
                 {
-                    if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component)) _manager.InteractWithConnections(this, component);
-                    else Debug.LogWarning("Hit on connectable Layer had no base connection point script.");
+                    OnInteractionStarted();
+                    _interactSustainTimer = new
+                    (
+                        duration: _interactionDuration,
+                        completed: () =>
+                        {
+                            _manager.InteractWithConnections(this, component);
+                            _interactSustainTimer = _interactSustainTimer.Cleanup();
+                        }
+                    );
                 }
+                else Debug.LogWarning("Hit on connectable Layer had no base connection point script.");
+
             }
-
-            _input.RequestedTransfer = false;
+            _input.RequestedInteract = false;
         }
 
-        private void TPController_ConnectionEnter(BaseConnectionPoint point)
-        {
+        private void OnInteractionStarted() =>
+            InteractionStarted?.Invoke();
+
+        private void OnInteractionCanceled() =>
+            InteractionCanceled?.Invoke();
+
+        private void TPController_ConnectionEnter(BaseConnectionPoint point) =>
             _manager.CreateUnstableConnection(this, point);
-        }
 
-        private void TPController_ConnectionExit(BaseConnectionPoint point)
-        {
+        private void TPController_ConnectionExit(BaseConnectionPoint point) =>
             _manager.RemoveUnstableConnection(this, point);
-        }
 
         #region Unused
         public void BeforeCharacterUpdate(float deltaTime) { }

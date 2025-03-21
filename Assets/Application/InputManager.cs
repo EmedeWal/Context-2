@@ -2,14 +2,11 @@ namespace Context
 {
     using UnityEngine.EventSystems;
     using UnityEngine.InputSystem;
-    using UnityEngine;
 
-    public class InputManager : MonoBehaviour
+    public class InputManager
     {
-        public static InputManager Instance { get; private set; }
         public InputActions Actions { get; private set; }
 
-        [SerializeField] private EventSystem _eventSystem;
         private InputType _currentInputType;
 
         public enum InputType
@@ -27,27 +24,16 @@ namespace Context
             All,
         }
 
-        private void Awake()
+        public InputManager()
         {
-            if (Instance != null && Instance != this)
-            {
-                DestroyImmediate(gameObject);
-                return;
-            }
-
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
             InputSystem.onDeviceChange += OnDeviceChange;
             UpdateInputType(); // Initialize input type at start
 
             Actions = new();
             Actions.Enable();
-
-            Instantiate(_eventSystem, transform);
         }
 
-        private void OnApplicationQuit()
+        public void Cleanup()
         {
             Actions.Disable();
             Actions.Dispose();

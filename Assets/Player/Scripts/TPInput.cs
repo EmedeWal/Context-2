@@ -9,14 +9,16 @@ namespace Context.ThirdPersonController
         public bool Jump;
         public bool CancelJump;
         public bool SustainJump;
-        public bool Connect;
+        public bool Interact;
+        public bool SustainInteract;
     }
 
     public class TPInput
     {
         public Quaternion RequestedRotation;
         public Vector3 RequestedMovement;
-        public bool RequestedTransfer;
+        public bool RequestedInteract;
+        public bool RequestedInteractSustain;
         public bool RequestedJump;
         public bool RequestedJumpCancel;
         public bool RequestedJumpSustain;
@@ -29,15 +31,15 @@ namespace Context.ThirdPersonController
 
             // Ensure there is movement before setting rotation
             if (RequestedMovement.sqrMagnitude > 0.001f)
-            {
                 RequestedRotation = Quaternion.LookRotation(RequestedMovement.normalized);
-            }
 
             // Jump
             RequestedJump = input.Jump || RequestedJump;
-            RequestedTransfer = input.Connect || RequestedTransfer;
+            RequestedInteract = input.Interact || RequestedInteract;
             RequestedJumpCancel = input.CancelJump || RequestedJumpCancel;
+
             RequestedJumpSustain = input.SustainJump;
+            RequestedInteractSustain = input.SustainInteract;
         }
     }
 }

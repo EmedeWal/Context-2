@@ -8,7 +8,7 @@ namespace Context
         {
             base.Init(connectionManager);
 
-            gameObject.layer = LayerMask.NameToLayer("Connectable");
+            gameObject.layer = LayerMask.NameToLayer("Interactable");
         }
     }
 }

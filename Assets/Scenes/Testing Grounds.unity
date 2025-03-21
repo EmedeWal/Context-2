@@ -1630,9 +1630,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3742047668917026882, guid: 1fd610bb18701914b9aac4b7e9f73c34, type: 3}
+      propertyPath: _audioTracks.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8863228308655089523, guid: 1fd610bb18701914b9aac4b7e9f73c34, type: 3}
       propertyPath: m_Name
-      value: Persistent Scripts
+      value: Application Manager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
