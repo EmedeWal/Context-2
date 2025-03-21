@@ -31,7 +31,7 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
-  - ActionName: Connect
+  - ActionName: Interact
     _binding: E/Button West
     Sprites:
     - {fileID: 0}
@@ -39,12 +39,6 @@ MonoBehaviour:
     - {fileID: 0}
   - ActionName: Pause
     _binding: Escape/Menu
-    Sprites:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-  - ActionName: Close
-    _binding: Tab/Button East
     Sprites:
     - {fileID: 0}
     - {fileID: 0}
