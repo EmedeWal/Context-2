@@ -33,7 +33,7 @@ namespace Context.ThirdPersonController
             if (RequestedMovement.sqrMagnitude > 0.001f)
                 RequestedRotation = Quaternion.LookRotation(RequestedMovement.normalized);
 
-            // Jump
+            // OnJumped
             RequestedJump = input.Jump || RequestedJump;
             RequestedInteract = input.Interact || RequestedInteract;
             RequestedJumpCancel = input.CancelJump || RequestedJumpCancel;

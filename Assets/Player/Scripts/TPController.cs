@@ -41,10 +41,13 @@ namespace Context.ThirdPersonController
 
         public static event Action InteractionStarted;
         public static event Action InteractionCanceled;
+        public static event Action Jumped;
+        public static event Action Landed;
 
         private Timer _interactSustainTimer;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
+        private bool _previouslyGrounded;
         private bool _forcedUnground;
 
         public void Init()
@@ -60,6 +63,7 @@ namespace Context.ThirdPersonController
             _interactSustainTimer = null;
             _timeSinceJumpRequest = 0;
             _airborneTime = 0;
+            _previouslyGrounded = true;
             _forcedUnground = false;
 
             _channel.ConnectionEnter += TPController_ConnectionEnter;
@@ -81,6 +85,8 @@ namespace Context.ThirdPersonController
         {
             if (HandleSustainedInteraction(ref currentVelocity, deltaTime)) return;
 
+            var grounded = _motor.GroundingStatus.IsStableOnGround;
+
             if (_motor.GroundingStatus.IsStableOnGround)
             {
                 HandleGroundedLocomotion(ref currentVelocity, deltaTime);
@@ -94,9 +100,10 @@ namespace Context.ThirdPersonController
 
             CheckConnect();
 
-            var horizontalSpeed = Vector3.ProjectOnPlane(currentVelocity, _motor.CharacterUp).magnitude;
-            var verticalSpeed = currentVelocity.y;
-            BuildLogger.Instance.LogSpeed(horizontalSpeed, verticalSpeed);
+            if (grounded && !_previouslyGrounded)
+                OnLanded();
+
+            _previouslyGrounded = grounded;
         }
 
         private bool HandleSustainedInteraction(ref Vector3 currentVelocity, float deltaTime)
@@ -231,7 +238,7 @@ namespace Context.ThirdPersonController
             UpdateState(deltaTime);
 
             if (_input.RequestedJump && _airborneTime < _coyoteTime && _forcedUnground == false)
-                Jump(ref currentVelocity);
+                OnJumped(ref currentVelocity);
         }
 
         private void UpdateState(float deltaTime)
@@ -251,8 +258,10 @@ namespace Context.ThirdPersonController
                 : _jumpBuffer;
         }
 
-        private void Jump(ref Vector3 currentVelocity)
+        private void OnJumped(ref Vector3 currentVelocity)
         {
+            Jumped?.Invoke();
+
             _motor.ForceUnground();
             _forcedUnground = true;
             _input.RequestedJump = false;
@@ -299,6 +308,9 @@ namespace Context.ThirdPersonController
 
         private void OnInteractionCanceled() =>
             InteractionCanceled?.Invoke();
+
+        private void OnLanded() =>
+            Landed?.Invoke();
 
         private void TPController_ConnectionEnter(BaseConnectionPoint point) =>
             _manager.CreateUnstableConnection(this, point);
