@@ -1,9 +1,6 @@
 namespace Context
 {
-    using System.Collections.Generic;
-    using UnityEngine.InputSystem.UI;
     using UnityEngine.EventSystems;
-    using UnityEngine.Audio;
     using UnityEngine;
 
     public class ApplicationManager : MonoBehaviour
@@ -26,11 +23,6 @@ namespace Context
         [SerializeField] private GameObject _eventSystem;
         [SerializeField] private GameObject _canvas;
 
-        [Space]
-        [Header("Audio")]
-        [SerializeField] private AudioData[] _audioTracks;
-        [SerializeField] private AudioSource _audioSource;
-
         private InputManager _inputManager;
         private AudioManager _audioManager;
         private SceneLoader _sceneLoader;
@@ -51,7 +43,7 @@ namespace Context
 
                 _overlay = new(canvas);
                 _sceneLoader = new(_overlay);
-                _audioManager = new(_audioSource, _audioTracks);
+                _audioManager = new(GetComponentsInChildren<AudioSource>());
                 _inputManager = new();
 
                 Instance = this;

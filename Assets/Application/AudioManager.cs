@@ -4,35 +4,35 @@ namespace Context
 
     public class AudioManager
     {
-        private readonly AudioSource _musicSource;
-        private readonly AudioData[] _trackArray;
+        private readonly AudioSource[] _musicSources;
+        private readonly float _overlapTime = 5f; // Overlap duration
 
-        private int _trackIndex;
+        private int _activeSourceIndex;
 
-        public AudioManager(AudioSource source, AudioData[] array)
+        public AudioManager(AudioSource[] sources)
         {
-            _musicSource = source;
+            if (sources == null || sources.Length != 2)
+            {
+                Debug.LogError("AudioManager requires exactly two AudioSources.");
+                return;
+            }
 
-            // If the incoming array is empty, return
-            if (array == null || array.Length == 0) return;
+            _musicSources = sources;
+            _activeSourceIndex = 0;
 
-            // Initialize the track array or if it has been initialized, check if the incoming array is the same. If so, don't update.
-            if (_trackArray != null && Collections.AreScriptableObjectArraysEqual(_trackArray, array)) return;
-
-            _musicSource.loop = true;
-            _trackArray = array;
-            _trackIndex = 0;
-
-            Play(_trackArray[_trackIndex], _musicSource);
+            _musicSources[_activeSourceIndex].Play(); // Start first track
         }
 
         public void Tick()
         {
-            if (!_musicSource.isPlaying && _trackArray != null) // Cycle to next track if this one is finished
-            {
-                _trackIndex = Collections.SafeIncrement(_trackIndex, _trackArray.Length);
-                Play(_trackArray[_trackIndex], _musicSource);
-            }
+            var activeSource = _musicSources[_activeSourceIndex];
+            var nextSource = _musicSources[1 - _activeSourceIndex]; // The inactive one
+
+            if (activeSource.isPlaying && activeSource.time >= activeSource.clip.length - _overlapTime && !nextSource.isPlaying)
+                nextSource.Play();
+
+            if (!activeSource.isPlaying && nextSource.isPlaying)
+                _activeSourceIndex = 1 - _activeSourceIndex;
         }
 
         public void Play(AudioData data, AudioSource source, float multiplier = 1)
