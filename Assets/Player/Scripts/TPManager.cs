@@ -31,6 +31,7 @@ namespace Context.ThirdPersonController
 
         private void OnDisable()
         {
+            _root.Cleanup();
             _audio.Cleanup();
         }
 
@@ -52,7 +53,7 @@ namespace Context.ThirdPersonController
 
         private void LateUpdate()
         {
-            _root.LateTick();
+            _root.LateTick(Time.deltaTime, _controller.IsMoving());
         }
     }
 }

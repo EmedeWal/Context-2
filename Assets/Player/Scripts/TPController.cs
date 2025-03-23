@@ -77,6 +77,12 @@ namespace Context.ThirdPersonController
             _channel.Cleanup();
         }
 
+        public bool IsMoving()
+        {
+            var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
+            return planarVelocity.sqrMagnitude > 0;
+        }
+
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
         public void SetTransientPosition(Vector3 position) => _motor.SetPosition(position);
         public Vector3 GetTransientPosition() => _motor.TransientPosition;
