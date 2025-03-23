@@ -9,21 +9,10 @@ namespace Context.UI
         [Header("REFERENCES")]
 
         [Space]
-        [Header("VLG's")]
-        [SerializeField] private GameObject _buttonVLG;
-        [SerializeField] private GameObject _sliderVLG;
-
-        [Space]
         [Header("Buttons")]
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _quitButton;
         [SerializeField] private Button _creditsButton;
-        [SerializeField] private Button _optionsButton;
-
-        [Space]
-        [Header("Selection")]
-        [SerializeField] private GameObject _currentButton;
-        [SerializeField] private GameObject _currentSlider;
 
         [Space]
         [Header("Sliders")]
@@ -33,34 +22,33 @@ namespace Context.UI
 
         [Space]
         [Header("Audio")]
-        [SerializeField] private AudioClip _onClick;
-        [SerializeField] private AudioClip _onSlide;
+        [SerializeField] private AudioData _clickData;
+        [SerializeField] private AudioData _slideData;
 
-        private InputActions _inputActions;
         private EventSystem _eventSystem;
         private AudioSource _audioSource;
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.lockState = CursorLockMode.None;
             var firstSelected = _playButton.gameObject;
 
-            _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _eventSystem = EventSystem.current;
             _audioSource = GetComponent<AudioSource>();
 
-            _eventSystem.SetSelectedGameObject(firstSelected);
-            _eventSystem.firstSelectedGameObject = firstSelected;
+            if (ApplicationManager.Instance.InputManager.GetInputType() > 0)
+            {
+                _eventSystem.SetSelectedGameObject(firstSelected);
+                _eventSystem.firstSelectedGameObject = firstSelected;
+            }
 
             _playButton.onClick.AddListener(OnButtonClick);
             _quitButton.onClick.AddListener(OnButtonClick);
             _creditsButton.onClick.AddListener(OnButtonClick);
-            _optionsButton.onClick.AddListener(OnButtonClick);
 
             _playButton.onClick.AddListener(Play);
             _quitButton.onClick.AddListener(Quit);
             _creditsButton.onClick.AddListener(Credits);
-            _optionsButton.onClick.AddListener(Options);
 
             foreach (var item in _volumeSettings)
                 item.Init();
@@ -68,8 +56,6 @@ namespace Context.UI
 
             foreach (var item in _sliders)
                 item.onValueChanged.AddListener(OnSliderChanged);
-
-            _sliderVLG.SetActive(false);
         }
 
         private void OnDisable()
@@ -77,7 +63,6 @@ namespace Context.UI
             _playButton.onClick.RemoveAllListeners();
             _quitButton.onClick.RemoveAllListeners();
             _creditsButton.onClick.RemoveAllListeners();
-            _optionsButton.onClick.RemoveAllListeners();
 
             foreach (var item in _volumeSettings)
                 item.Cleanup();
@@ -89,40 +74,22 @@ namespace Context.UI
 
         private void Update()
         {
+            if (ApplicationManager.Instance.InputManager.GetInputType() == 0) return;
+
             var currentSelected = _eventSystem.currentSelectedGameObject;
-            var sliderVLGOpen = _sliderVLG.activeSelf;
-
-            if (currentSelected == null)
-            {
-                var selected = sliderVLGOpen 
-                    ? _currentSlider
-                    : _currentButton;
-                _eventSystem.SetSelectedGameObject(selected);
-            }
-            else
-            {
-                if (sliderVLGOpen) _currentSlider = currentSelected;
-                else _currentButton = currentSelected;
-            }
-
-            var menuActions = _inputActions.Menu;
-            if (menuActions.Close.WasPressedThisFrame() && _sliderVLG.activeSelf)
-            {
-                OnButtonClick();
-                ManageSliderState(_currentButton, false);
-            }
+            if (currentSelected == null) _eventSystem.SetSelectedGameObject(_playButton.gameObject);
         }
 
         private void OnButtonClick()
         {
-            if (_onClick != null)
-                _audioSource.Play();
+            if (_clickData != null)
+                ApplicationManager.Instance.AudioManager.Play(_clickData, _audioSource);
         }
 
         private void OnSliderChanged(float value)
         {
-            if (_onSlide != null)
-                _audioSource.Play();
+            if (_slideData != null)
+                ApplicationManager.Instance.AudioManager.Play(_slideData, _audioSource);
         }
 
         private void Play()
@@ -133,12 +100,5 @@ namespace Context.UI
 
         private void Quit() => Application.Quit();
         private void Credits() => Debug.LogWarning("Credits not implemented.");
-        private void Options() => ManageSliderState(_currentSlider, true);
-
-        private void ManageSliderState(GameObject selected, bool active)
-        {
-            _sliderVLG.SetActive(active);
-            _eventSystem.SetSelectedGameObject(selected);
-        }
     }
 }

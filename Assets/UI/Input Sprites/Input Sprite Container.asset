@@ -22,7 +22,7 @@ MonoBehaviour:
   - ActionName: Look
     _binding: Mouse/Right Stick
     Sprites:
-    - {fileID: 0}
+    - {fileID: 21300000, guid: 0a12333fa9094a64bae79a493d39278d, type: 3}
     - {fileID: 21300000, guid: 9c2fdee376e5669468701f864b08864d, type: 3}
     - {fileID: 21300000, guid: 9c2fdee376e5669468701f864b08864d, type: 3}
   - ActionName: Jump
