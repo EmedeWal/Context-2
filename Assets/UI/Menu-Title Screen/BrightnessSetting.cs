@@ -2,32 +2,31 @@ namespace Context.UI
 {
     using UnityEngine;
     using UnityEngine.UI;
-    using UnityEngine.Rendering;
-    using UnityEngine.Rendering.Universal;
 
     public class BrightnessSetting : MonoBehaviour
     {
-        [SerializeField] private Volume _globalVolume;  // Reference to the Global Volume
-        private ColorAdjustments _colorAdjustments;
+        private Overlay _overlayScript;
         private Slider _slider;
 
-        private const string BrightnessKey = "BrightnessValue"; // Key for saving brightness
+        private float _highBrightness = 0f;
+        private float _lowBrightness = 0.5f;  
+
+        private const string BrightnessKey = "BrightnessValue"; // Save key
 
         public void Init()
         {
+            _overlayScript = ApplicationManager.Instance.Overlay;
             _slider = GetComponent<Slider>();
 
-            // Set slider range
-            _slider.minValue = -2f;  // Darker
-            _slider.maxValue = 0f;   // Brighter
+            // Set brightness range (0 = fully bright, 0.2 = slightly darker)
+            _slider.minValue = 0f;  // Fully transparent (brightest)
+            _slider.maxValue = 1f;  // Slightly dark
 
-            // Ensure we get the Color Adjustments override
-            if (_globalVolume.profile.TryGet(out _colorAdjustments))
-            {
-                float savedBrightness = PlayerPrefs.GetFloat(BrightnessKey, 0f); // Default to 0 (neutral)
-                _colorAdjustments.postExposure.Override(savedBrightness);
-                _slider.value = savedBrightness;
-            }
+            // Load saved brightness value
+            float savedBrightness = PlayerPrefs.GetFloat(BrightnessKey, 0f);
+            _slider.value = savedBrightness;
+
+            _overlayScript.SetDefaultOpacity(TranslateValue(savedBrightness));
 
             _slider.onValueChanged.AddListener(SetBrightness);
         }
@@ -39,12 +38,12 @@ namespace Context.UI
 
         private void SetBrightness(float value)
         {
-            if (_colorAdjustments != null)
-            {
-                _colorAdjustments.postExposure.Override(value);
-                PlayerPrefs.SetFloat(BrightnessKey, value); // Save brightness
-                PlayerPrefs.Save(); // Ensure it's written to disk
-            }
+            _overlayScript.SetDefaultOpacity(TranslateValue(value));
+            PlayerPrefs.SetFloat(BrightnessKey, value);
+            PlayerPrefs.Save();
         }
+
+        private float TranslateValue(float value) =>
+            Mathf.Lerp(_lowBrightness, _highBrightness, value);
     }
 }

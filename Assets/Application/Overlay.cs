@@ -15,6 +15,8 @@ namespace Context
         private Timer _fadeInTimer;
         private float _fadeTime;
 
+        public float DefaultOpacity { get; private set; } = 0f; // Default brightness level (adjustable)
+
         public Overlay(GameObject canvasObject)
         {
             _overlay = canvasObject.GetComponentInChildren<Image>();
@@ -27,7 +29,7 @@ namespace Context
             _fadeTime = 0;
 
             _overlay.color = Color.black;
-            SetOverlayAlpha(0f);
+            SetOverlayAlpha(DefaultOpacity);
         }
 
         public void Tick(float deltaTime)
@@ -38,12 +40,12 @@ namespace Context
             }
             else if (_fadeInTimer != null)
             {
-                SetOverlayAlpha(_fadeInTimer.GetInvertedProgress());
+                SetOverlayAlpha(Mathf.Lerp(DefaultOpacity, 1f, _fadeInTimer.GetInvertedProgress()));
                 _fadeInTimer.Tick(deltaTime);
             }
             else if (_fadeOutTimer != null)
             {
-                SetOverlayAlpha(_fadeOutTimer.GetProgress());
+                SetOverlayAlpha(Mathf.Lerp(1f, DefaultOpacity, _fadeOutTimer.GetProgress()));
                 _fadeOutTimer.Tick(deltaTime);
             }
         }
@@ -62,8 +64,7 @@ namespace Context
 
         private void OnSceneTransitionStarted()
         {
-            SetOverlayAlpha(0f);
-
+            SetOverlayAlpha(DefaultOpacity);
             _fadeInTimer = new(_fadeTime, () => FadeInCompleted());
         }
 
@@ -84,7 +85,7 @@ namespace Context
 
         private void OnSceneTransitionFinished()
         {
-            SetOverlayAlpha(0f);
+            SetOverlayAlpha(DefaultOpacity);
 
             _fadeCompleteAction?.Invoke();
             _fadeOutTimer = _fadeOutTimer?.Cleanup();
@@ -95,6 +96,12 @@ namespace Context
             var color = _overlay.color;
             color.a = Mathf.Clamp01(alpha);
             _overlay.color = color;
+        }
+
+        public void SetDefaultOpacity(float value)
+        {
+            DefaultOpacity = Mathf.Clamp01(value);
+            SetOverlayAlpha(DefaultOpacity); // Immediately apply new default brightness
         }
 
         private bool IsInTransition() =>
