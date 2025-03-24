@@ -39,7 +39,8 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _interactionDuration = 1f;
         [SerializeField] private float _interactionRange = 3;
 
-        public static event Action InteractionStarted;
+        public static event Action Add;
+        public static event Action Remove;
         public static event Action Jumped;
         public static event Action Landed;
 
@@ -269,7 +270,8 @@ namespace Context.ThirdPersonController
 
                 if (hits[0].TryGetComponent<StaticConnectionPoint>(out var component))
                 {
-                    OnInteractionStarted();
+                    if (_manager.HasStableConnection(this, component)) OnRemove();
+                    else OnAdd();
 
                     component.StartConnection(pos);
                     var direction = component.transform.position - pos;
@@ -292,8 +294,11 @@ namespace Context.ThirdPersonController
             _input.RequestedInteract = false;
         }
 
-        private void OnInteractionStarted() =>
-            InteractionStarted?.Invoke();
+        private void OnAdd() =>
+            Add?.Invoke();
+
+        private void OnRemove() =>
+            Remove?.Invoke();
 
         private void OnLanded() =>
             Landed?.Invoke();

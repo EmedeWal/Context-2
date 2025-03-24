@@ -288,7 +288,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed415ea24a40ca14c89d894258786b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InitialConnectionPoints>k__BackingField: []
+  <InitialConnectionPoints>k__BackingField:
+  - {fileID: 0}
   _dialogueData: {fileID: 0}
   _completedConnections:
     m_PersistentCalls:
@@ -1414,7 +1415,7 @@ Transform:
   m_GameObject: {fileID: 2602172895592267090}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.29999995, z: -15}
+  m_LocalPosition: {x: 0, y: -0.29999995, z: -14.999999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2295,7 +2296,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: da57e2d4750079140846ed1dd02e5a8d, type: 2}
   - {fileID: 11400000, guid: bc8b310e0842efe44b0cd6f9d862b1a0, type: 2}
   - {fileID: 11400000, guid: 26d0645673b99d54aa9254b92fb11408, type: 2}
-  _interactData: {fileID: 0}
+  _removeData: {fileID: 11400000, guid: b1511fa8d642ed247816586754146f47, type: 2}
+  _addData: {fileID: 11400000, guid: 54169ac5ec3de324eb4ac202b7314505, type: 2}
   _jumpData: {fileID: 11400000, guid: a4a7f990843abea45ad02158de4e97b9, type: 2}
   _landData: {fileID: 11400000, guid: ccf01b68fd512014d9d5dc3318d9d640, type: 2}
 --- !u!1 &4283970265585364030
@@ -4079,7 +4081,7 @@ Transform:
   m_GameObject: {fileID: 8589375594183367642}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.4699999, z: -17.61}
+  m_LocalPosition: {x: 0, y: -0.29999995, z: -14.999999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

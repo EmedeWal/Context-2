@@ -202,5 +202,11 @@ namespace Context
             connection.Cleanup();
             Destroy(connection.gameObject);
         }
+
+        public bool HasStableConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
+        {
+            return caller.Connections.Any(connection =>
+                connection.Stable && connection.AttachedPoints.Contains(target));
+        }
     }
 }

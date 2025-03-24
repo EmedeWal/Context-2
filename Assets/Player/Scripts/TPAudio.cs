@@ -16,7 +16,8 @@ namespace Context.ThirdPersonController
         [Space]
         [Header("Data")]
         [SerializeField] private AudioData[] _footstepArray;
-        [SerializeField] private AudioData _interactData;
+        [SerializeField] private AudioData _removeData;
+        [SerializeField] private AudioData _addData;
         [SerializeField] private AudioData _jumpData;
         [SerializeField] private AudioData _landData;
 
@@ -26,7 +27,8 @@ namespace Context.ThirdPersonController
         {
             _audioManager = ApplicationManager.Instance.AudioManager;
 
-            TPController.InteractionStarted += TPAudio_InteractionStarted;
+            TPController.Add += TPAudio_Add;
+            TPController.Remove += TPAudio_Remove;
             TPController.Jumped += TPAudio_Jumped;
             TPController.Landed += TPAudio_Landed;
             TPAnimator.Footstep += TPAudio_Footstep;
@@ -34,16 +36,23 @@ namespace Context.ThirdPersonController
 
         public void Cleanup()
         {
-            TPController.InteractionStarted -= TPAudio_InteractionStarted;
+            TPController.Add -= TPAudio_Add;
+            TPController.Remove -= TPAudio_Remove;
             TPController.Jumped -= TPAudio_Jumped;
             TPController.Landed -= TPAudio_Landed;
             TPAnimator.Footstep -= TPAudio_Footstep;
         }
 
-        private void TPAudio_InteractionStarted()
+        private void TPAudio_Remove()
         {
-            _audioManager.Play(_interactData, _interactSource);
+            _audioManager.Play(_removeData, _interactSource);
         }
+
+        private void TPAudio_Add()
+        {
+            _audioManager.Play(_addData, _interactSource);
+        }
+
         private void TPAudio_Footstep()
         {
             var index = Random.Range(0, _footstepArray.Length);

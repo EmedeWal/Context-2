@@ -39,14 +39,16 @@ namespace Context.ThirdPersonController
 
             TPController.Jumped += TPAnimator_Jumped;
             TPController.Landed += TPAnimator_Landed;
-            TPController.InteractionStarted += TPAnimator_InteractionStarted;
+            TPController.Remove += TPAnimator_InteractionStarted;
+            TPController.Add += TPAnimator_InteractionStarted;
         }
 
         public void Cleanup()
         {
             TPController.Jumped -= TPAnimator_Jumped;
             TPController.Landed -= TPAnimator_Landed;
-            TPController.InteractionStarted -= TPAnimator_InteractionStarted;
+            TPController.Remove -= TPAnimator_InteractionStarted;
+            TPController.Add -= TPAnimator_InteractionStarted;
         }
 
         public void UpdateAnimations(float deltaTime, bool isMoving)
