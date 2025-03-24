@@ -698,15 +698,6 @@
             "id": "30edcd04-ef6e-4131-a2ff-f1a378aa101d",
             "actions": [
                 {
-                    "name": "Close",
-                    "type": "Button",
-                    "id": "7abd425a-b85b-4866-8b1d-e1c90bb242ae",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Pause",
                     "type": "Button",
                     "id": "7488711e-268b-49b4-a555-c09724adab63",
@@ -728,30 +719,8 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "09f3cc0e-1fe5-4c6b-9a3e-6ef360f68e6e",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Close",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "39eb44a1-9825-4226-b798-6781c9180fe9",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Close",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "4bf64fda-8fad-4dca-bfa0-b259dd2c1ed3",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

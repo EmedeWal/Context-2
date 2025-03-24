@@ -32,19 +32,5 @@ namespace Context
                 fadeTime: FADE_TIME
             );
         }
-
-        public string GetCurrentSceneName() =>
-            SceneManager.GetActiveScene().name;
-
-        public void TransitionToScene(string sceneName)
-        {
-            _overlay.FadeRoutineOverlay
-            (
-                fadeHaltAction: () => SceneManager.LoadScene(sceneName),
-                fadeCompleteAction: null,
-                overlayColor: Color.black,
-                fadeTime: FADE_TIME
-            );
-        }
     }
 }

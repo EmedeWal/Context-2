@@ -36,16 +36,19 @@ namespace Context
         {
             if (_fadeHaltTimer != null)
             {
+                SetOverlayAlpha(1f);
                 _fadeHaltTimer.Tick(deltaTime);
             }
             else if (_fadeInTimer != null)
             {
-                SetOverlayAlpha(Mathf.Lerp(DefaultOpacity, 1f, _fadeInTimer.GetInvertedProgress()));
+                var progress = _fadeInTimer.GetInvertedProgress();
+                SetOverlayAlpha(Mathf.Lerp(DefaultOpacity, 1f, progress));
                 _fadeInTimer.Tick(deltaTime);
             }
             else if (_fadeOutTimer != null)
             {
-                SetOverlayAlpha(Mathf.Lerp(1f, DefaultOpacity, _fadeOutTimer.GetProgress()));
+                var progress = _fadeOutTimer.GetInvertedProgress();
+                SetOverlayAlpha(Mathf.Lerp(1f, DefaultOpacity, progress));
                 _fadeOutTimer.Tick(deltaTime);
             }
         }

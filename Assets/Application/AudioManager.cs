@@ -39,7 +39,11 @@ namespace Context
         {
             if (data.Clip != null && data.Group != null)
             {
-                if (source.isPlaying && !data.Overwrite)
+                var time = source.clip != null ? source.time : data.Clip.length + 1;
+                var timePercentage = time / data.Clip.length;
+
+                //Debug.Log($"Time: {timePercentage} while trying to play {data.Clip.name}");
+                if (source.isPlaying && timePercentage < data.Overwrite)
                     return;
 
                 source.Stop();

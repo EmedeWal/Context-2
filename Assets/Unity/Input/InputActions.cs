@@ -720,15 +720,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""id"": ""30edcd04-ef6e-4131-a2ff-f1a378aa101d"",
             ""actions"": [
                 {
-                    ""name"": ""Close"",
-                    ""type"": ""Button"",
-                    ""id"": ""7abd425a-b85b-4866-8b1d-e1c90bb242ae"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""7488711e-268b-49b4-a555-c09724adab63"",
@@ -750,30 +741,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""09f3cc0e-1fe5-4c6b-9a3e-6ef360f68e6e"",
-                    ""path"": ""<Keyboard>/tab"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Close"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""39eb44a1-9825-4226-b798-6781c9180fe9"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Close"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""4bf64fda-8fad-4dca-bfa0-b259dd2c1ed3"",
-                    ""path"": ""<Keyboard>/escape"",
+                    ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -900,7 +869,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Interface_TrackedDeviceOrientation = m_Interface.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
-        m_Menu_Close = m_Menu.FindAction("Close", throwIfNotFound: true);
         m_Menu_Pause = m_Menu.FindAction("Pause", throwIfNotFound: true);
         m_Menu_Continue = m_Menu.FindAction("Continue", throwIfNotFound: true);
     }
@@ -1159,14 +1127,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     // Menu
     private readonly InputActionMap m_Menu;
     private List<IMenuActions> m_MenuActionsCallbackInterfaces = new List<IMenuActions>();
-    private readonly InputAction m_Menu_Close;
     private readonly InputAction m_Menu_Pause;
     private readonly InputAction m_Menu_Continue;
     public struct MenuActions
     {
         private @InputActions m_Wrapper;
         public MenuActions(@InputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Close => m_Wrapper.m_Menu_Close;
         public InputAction @Pause => m_Wrapper.m_Menu_Pause;
         public InputAction @Continue => m_Wrapper.m_Menu_Continue;
         public InputActionMap Get() { return m_Wrapper.m_Menu; }
@@ -1178,9 +1144,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_MenuActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_MenuActionsCallbackInterfaces.Add(instance);
-            @Close.started += instance.OnClose;
-            @Close.performed += instance.OnClose;
-            @Close.canceled += instance.OnClose;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
@@ -1191,9 +1154,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(IMenuActions instance)
         {
-            @Close.started -= instance.OnClose;
-            @Close.performed -= instance.OnClose;
-            @Close.canceled -= instance.OnClose;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
@@ -1284,7 +1244,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     }
     public interface IMenuActions
     {
-        void OnClose(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnContinue(InputAction.CallbackContext context);
     }

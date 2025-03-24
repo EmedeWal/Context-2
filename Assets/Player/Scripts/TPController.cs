@@ -46,7 +46,9 @@ namespace Context.ThirdPersonController
         private Timer _interactSustainTimer;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
+        private bool _initializedGrounded;
         private bool _previouslyGrounded;
+        private bool _currentlyGrounded;
         private bool _forcedUnground;
 
         public void Init()
@@ -62,7 +64,9 @@ namespace Context.ThirdPersonController
             _interactSustainTimer = null;
             _timeSinceJumpRequest = 0;
             _airborneTime = 0;
+            _initializedGrounded = false;
             _previouslyGrounded = true;
+            _currentlyGrounded = true;
             _forcedUnground = false;
 
             _channel.ConnectionEnter += TPController_ConnectionEnter;
@@ -79,9 +83,7 @@ namespace Context.ThirdPersonController
         public bool IsMoving()
         {
             var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-            planarVelocity = Vector3.ClampMagnitude(planarVelocity, 1f);
-
-            return planarVelocity.sqrMagnitude > 0.1f && _input.RequestedMovement.sqrMagnitude > 0;
+            return planarVelocity.sqrMagnitude > 0.1f;
         }
 
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
@@ -97,25 +99,11 @@ namespace Context.ThirdPersonController
                 return;
             }
 
-            var grounded = _motor.GroundingStatus.IsStableOnGround;
-
-            if (_motor.GroundingStatus.IsStableOnGround)
-            {
-                HandleGroundedLocomotion(ref currentVelocity, deltaTime);
-            }
-            else
-            {
-                HandleAirborneLocomotion(ref currentVelocity, deltaTime);
-            }
+            if (_currentlyGrounded) HandleGroundedLocomotion(ref currentVelocity, deltaTime);
+            else HandleAirborneLocomotion(ref currentVelocity, deltaTime);
 
             CheckJump(ref currentVelocity, deltaTime);
-
             CheckConnect();
-
-            if (grounded && !_previouslyGrounded)
-                OnLanded();
-
-            _previouslyGrounded = grounded;
         }
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
@@ -232,7 +220,7 @@ namespace Context.ThirdPersonController
         {
             UpdateState(deltaTime);
 
-            if (_input.RequestedJump && _airborneTime < _coyoteTime && _forcedUnground == false)
+            if (_input.RequestedJump && _airborneTime < _coyoteTime && _forcedUnground == false && _previouslyGrounded)
                 OnJumped(ref currentVelocity);
         }
 
@@ -316,15 +304,22 @@ namespace Context.ThirdPersonController
         private void TPController_ConnectionExit(BaseConnectionPoint point) =>
             _manager.RemoveUnstableConnection(this, point);
 
-        #region Unused
         public void BeforeCharacterUpdate(float deltaTime) { }
-        public void AfterCharacterUpdate(float deltaTime) { }
+        public void AfterCharacterUpdate(float deltaTime)
+        {
+            _previouslyGrounded = _currentlyGrounded;
+            _currentlyGrounded = _motor.GroundingStatus.IsStableOnGround;
+            _initializedGrounded = (_currentlyGrounded && _previouslyGrounded)|| _initializedGrounded;
+        }
         public void PostGroundingUpdate(float deltaTime) { }
-        public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
+        public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
+        {
+            if (!_previouslyGrounded && _initializedGrounded)
+                OnLanded();
+        }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
         public bool IsColliderValidForCollisions(Collider collider) => true;
         public void OnDiscreteCollisionDetected(Collider hitCollider) { }
         public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) { }
-        #endregion
     }
 }

@@ -45,7 +45,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 374e1a89576987549bba4b3136173be5, type: 3}
   m_Resource: {fileID: 8300000, guid: 374e1a89576987549bba4b3136173be5, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -174,7 +174,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 374e1a89576987549bba4b3136173be5, type: 3}
   m_Resource: {fileID: 8300000, guid: 374e1a89576987549bba4b3136173be5, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -306,5 +306,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _eventSystem: {fileID: 5942034887085437497, guid: 149194281cc433645963d26f1888b941, type: 3}
   _canvas: {fileID: 1336456341691679986, guid: 7a3a647ddb2115b46a54fec39c039367, type: 3}
-  _audioTracks: []
-  _audioSource: {fileID: 0}

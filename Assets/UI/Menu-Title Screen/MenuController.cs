@@ -1,180 +1,160 @@
 namespace Context.UI
 {
-    using UnityEngine.SceneManagement;
+    using global::Context.UI.Context.UI;
     using UnityEngine.EventSystems;
+    using System.Collections;
     using UnityEngine.UI;
     using UnityEngine;
 
-    public class MenuController : MonoBehaviour
+    public class MenuScreenController : MonoBehaviour
     {
         [Header("REFERENCES")]
+
         [Space]
+        [Header("Other")]
         [SerializeField] private GameObject _menuHolder;
-        [SerializeField] private GameObject _buttonVLG;
-        [SerializeField] private GameObject _sliderVLG;
 
         [Space]
         [Header("Buttons")]
+        [SerializeField] private Button[] _buttons;
         [SerializeField] private Button _resumeButton;
         [SerializeField] private Button _retryButton;
-        [SerializeField] private Button _quitToMainButton;
+        [SerializeField] private Button _quitToMenuButton;
         [SerializeField] private Button _quitGameButton;
-        [SerializeField] private Button _optionsButton;
-
-        [Space]
-        [Header("Selection")]
-        [SerializeField] private GameObject _currentButton;
-        [SerializeField] private GameObject _currentSlider;
 
         [Space]
         [Header("Sliders")]
-        [SerializeField] private Slider[] _sliders;
         [SerializeField] private VolumeSetting[] _volumeSettings;
         [SerializeField] private BrightnessSetting _brightnessSetting;
 
         [Space]
-        [Header("Audio")]
-        [SerializeField] private AudioClip _onClick;
-        [SerializeField] private AudioClip _onSlide;
+        [Header("Audio Data")]
+        [SerializeField] private AudioData _hoverData;
+        [SerializeField] private AudioData _pauseData;
+        [SerializeField] private AudioData _unpauseData;
+
+        [Space]
+        [Header("Audio Sources")]
+        [SerializeField] private AudioSource _hoverSource;
+        [SerializeField] private AudioSource _pauseSource;
 
         private InputActions _inputActions;
         private EventSystem _eventSystem;
-        private AudioSource _audioSource;
 
         private void Start()
         {
+            var firstSelected = _resumeButton.gameObject;
+
             _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _eventSystem = EventSystem.current;
-            _audioSource = GetComponent<AudioSource>();
 
-            _resumeButton.onClick.AddListener(OnButtonClick);
-            _retryButton.onClick.AddListener(OnButtonClick);
-            _quitToMainButton.onClick.AddListener(OnButtonClick);
-            _quitGameButton.onClick.AddListener(OnButtonClick);
-            _optionsButton.onClick.AddListener(OnButtonClick);
+            if (ApplicationManager.Instance.InputManager.GetInputType() > 0)
+            {
+                _eventSystem.SetSelectedGameObject(firstSelected);
+                _eventSystem.firstSelectedGameObject = firstSelected;
+            }
 
             _resumeButton.onClick.AddListener(Resume);
+            _quitToMenuButton.onClick.AddListener(QuitToMainMenu);
             _retryButton.onClick.AddListener(Retry);
-            _quitToMainButton.onClick.AddListener(QuitToMainMenu);
             _quitGameButton.onClick.AddListener(QuitGame);
-            _optionsButton.onClick.AddListener(Options);
 
             foreach (var item in _volumeSettings)
                 item.Init();
             _brightnessSetting.Init();
 
-            foreach (var item in _sliders)
-                item.onValueChanged.AddListener(OnSliderChanged);
+            // Attach hover sound script to each button
+            foreach (var button in _buttons)
+            {
+                var hoverAudio = button.gameObject.AddComponent<ButtonHoverAudio>();
+                hoverAudio.Init(_hoverSource, _hoverData);
+            }
 
-            _menuHolder.SetActive(false);
-            _sliderVLG.SetActive(false);
+            SetMenuActive(false, false);
         }
 
         private void OnDisable()
         {
-            _resumeButton.onClick.RemoveAllListeners();
             _retryButton.onClick.RemoveAllListeners();
-            _quitToMainButton.onClick.RemoveAllListeners();
-            _quitGameButton.onClick.RemoveAllListeners();
-            _optionsButton.onClick.RemoveAllListeners();
+            _resumeButton.onClick.RemoveAllListeners();
+            _quitToMenuButton.onClick.RemoveAllListeners();
 
             foreach (var item in _volumeSettings)
                 item.Cleanup();
             _brightnessSetting.Cleanup();
-
-            foreach (var item in _sliders)
-                item.onValueChanged.RemoveListener(OnSliderChanged);
         }
 
         private void Update()
         {
-            var currentSelected = _eventSystem.currentSelectedGameObject;
-            var sliderVLGOpen = _sliderVLG.activeSelf;
-
-            if (currentSelected == null)
-            {
-                var selected = sliderVLGOpen ? _currentSlider : _currentButton;
-                _eventSystem.SetSelectedGameObject(selected);
-            }
-            else
-            {
-                if (sliderVLGOpen) _currentSlider = currentSelected;
-                else _currentButton = currentSelected;
-            }
-
-            var menuActions = _inputActions.Menu;
-            if (menuActions.Close.WasPressedThisFrame() && _sliderVLG.activeSelf)
-            {
-                OnButtonClick();
-                ManageSliderState(_currentButton, false);
-            }
-            else if (menuActions.Pause.WasPressedThisFrame())
+            var menu = _inputActions.Menu;
+            if (menu.Pause.WasPressedThisFrame())
                 ToggleMenu();
-        }
 
-        private void OnButtonClick()
-        {
-            if (_onClick != null)
-                _audioSource.Play();
-        }
+            if (ApplicationManager.Instance.InputManager.GetInputType() == 0) return;
 
-        private void OnSliderChanged(float value)
-        {
-            if (_onSlide != null)
-                _audioSource.Play();
+            var currentSelected = _eventSystem.currentSelectedGameObject;
+            if (currentSelected == null) _eventSystem.SetSelectedGameObject(_resumeButton.gameObject);
         }
 
         private void Resume()
         {
-            SetMenuActive(false);
+            SetMenuActive(false, true);
         }
 
         private void Retry()
         {
-            SetMenuActive(false);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Time.timeScale = 1.0f;
+
+            var sceneLoader = ApplicationManager.Instance.SceneLoader;
+            sceneLoader.TransitionToScene(sceneLoader.GetCurrentBuildIndex());
         }
 
         private void QuitToMainMenu()
         {
-            SetMenuActive(false);
-            SceneManager.LoadScene(0);
+            Time.timeScale = 1.0f;
+
+            ApplicationManager.Instance.SceneLoader.TransitionToScene(0);
         }
 
         private void QuitGame()
         {
+            Time.timeScale = 1.0f;
+
             Application.Quit();
-        }
-
-        private void Options()
-        {
-            ManageSliderState(_currentSlider, true);
-        }
-
-        private void ManageSliderState(GameObject selected, bool active)
-        {
-            _sliderVLG.SetActive(active);
-            _eventSystem.SetSelectedGameObject(selected);
         }
 
         private void ToggleMenu()
         {
-            SetMenuActive(!_menuHolder.activeSelf);
+            SetMenuActive(!_menuHolder.activeSelf, true);
         }
 
-        private void SetMenuActive(bool active)
+        private void SetMenuActive(bool active, bool audio)
         {
+            var activeKeyboard = active && ApplicationManager.Instance.InputManager.GetInputType() == 0;
+            var selectedObject = activeKeyboard ? null : _resumeButton.gameObject;
+            var audioData = active ? _pauseData : _unpauseData;
+
             _menuHolder.SetActive(active);
             Time.timeScale = active ? 0 : 1;
 
-            if (active)
-            {
-                _eventSystem.SetSelectedGameObject(_currentButton);
-            }
-            else
-            {
-                _sliderVLG.SetActive(false);
-            }
+            Cursor.lockState = activeKeyboard
+                ? CursorLockMode.None
+                : CursorLockMode.Locked;
+            _eventSystem.SetSelectedGameObject(selectedObject);
+            if (audio) ApplicationManager.Instance.AudioManager.Play(audioData, _pauseSource); 
+
+            StartCoroutine(ManagButtons());
+        }
+
+        private IEnumerator ManagButtons()
+        {
+            foreach (var button in _buttons)
+                button.interactable = false;
+
+            yield return new WaitForSecondsRealtime(0.5f);
+
+            foreach (var button in _buttons)
+                button.interactable = true;
         }
     }
 }

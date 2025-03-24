@@ -38,12 +38,14 @@ namespace Context.ThirdPersonController
             _emptyH = Animator.StringToHash("Empty");
 
             TPController.Jumped += TPAnimator_Jumped;
+            TPController.Landed += TPAnimator_Landed;
             TPController.InteractionStarted += TPAnimator_InteractionStarted;
         }
 
         public void Cleanup()
         {
             TPController.Jumped -= TPAnimator_Jumped;
+            TPController.Landed -= TPAnimator_Landed;
             TPController.InteractionStarted -= TPAnimator_InteractionStarted;
         }
 
@@ -57,23 +59,30 @@ namespace Context.ThirdPersonController
         public void OnFootstep() =>
             Footstep?.Invoke();
 
-        private void CrossFade(int hash, float deltaTime, float transitionTime, int layer = _defaultLayer)
+        private void CrossFade(int hash, float deltaTime, float transitionTime, bool loopProtection = true, int layer = _defaultLayer)
         {
             var currentAnimation = _animator.GetCurrentAnimatorStateInfo(layer);
             var nextAnimation = _animator.GetNextAnimatorStateInfo(layer);
 
-            if (hash != currentAnimation.shortNameHash && hash != nextAnimation.shortNameHash)
-                _animator.CrossFade(hash, transitionTime, layer, deltaTime);
+            if (loopProtection && (hash == currentAnimation.shortNameHash || hash == nextAnimation.shortNameHash))
+                return;
+
+            _animator.CrossFade(hash, transitionTime, layer, deltaTime);
         }
 
         private void TPAnimator_Jumped()
         {
-            CrossFade(_jumpH, _deltaTime, _actionTransitionTime, _overrideLayer);
+            CrossFade(_jumpH, _deltaTime, _actionTransitionTime, false, _overrideLayer);
+        }
+
+        private void TPAnimator_Landed()
+        {
+            CrossFade(_emptyH, _deltaTime, _locomotionTransitionTime, false, _overrideLayer);
         }
 
         private void TPAnimator_InteractionStarted()
         {
-            CrossFade(_interactH, _deltaTime, _actionTransitionTime, _overrideLayer);
+            CrossFade(_interactH, _deltaTime, _actionTransitionTime, false, _overrideLayer);
         }
     }
 }

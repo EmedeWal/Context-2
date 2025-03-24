@@ -12,6 +12,6 @@ namespace Context
         [Range(0, 1)] public float Volume = 0.5f;
         [Min(0)] public float Offset = 0;
         public float[] PitchRanges;
-        public bool Overwrite = true;
+        [Range(0, 1)] public float Overwrite = 0f;
     }
 }

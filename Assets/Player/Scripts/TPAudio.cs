@@ -40,9 +40,24 @@ namespace Context.ThirdPersonController
             TPAnimator.Footstep -= TPAudio_Footstep;
         }
 
-        private void TPAudio_InteractionStarted() { }
-        private void TPAudio_Footstep() { }
-        private void TPAudio_Landed() { }
-        private void TPAudio_Jumped() { }
+        private void TPAudio_InteractionStarted()
+        {
+            _audioManager.Play(_interactData, _interactSource);
+        }
+        private void TPAudio_Footstep()
+        {
+            var index = Random.Range(0, _footstepArray.Length);
+            _audioManager.Play(_footstepArray[index], _footstepSource);
+        }
+        private void TPAudio_Landed()
+        {
+            _jumpSource.Stop();
+            _audioManager.Play(_landData, _landSource);
+        }
+
+        private void TPAudio_Jumped()
+        {
+            _audioManager.Play(_jumpData, _jumpSource);
+        }
     }
 }
