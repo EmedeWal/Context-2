@@ -4,6 +4,7 @@ namespace Context.ThirdPersonController
 
     public class TPRoot : MonoBehaviour
     {
+        private ParticleSystem _dustSystem;
         private Transform _followTarget;
         private Transform _transform;
         
@@ -14,14 +15,19 @@ namespace Context.ThirdPersonController
             _followTarget = followTarget;
             _transform = transform;
 
+            _dustSystem = GetComponentInChildren<ParticleSystem>();
             _animator = GetComponentInChildren<TPAnimator>();
 
             _animator.Init();
+
+            TPAnimator.Footstep += TPRoot_Footstep;
         }
 
         public void Cleanup()
         {
             _animator.Cleanup();
+
+            TPAnimator.Footstep -= TPRoot_Footstep;
         }
 
         public void LateTick(float deltaTime, bool isMoving)
@@ -29,6 +35,11 @@ namespace Context.ThirdPersonController
             _transform.SetPositionAndRotation(_followTarget.position, _followTarget.rotation);
 
             _animator.UpdateAnimations(deltaTime, isMoving);
+        }
+
+        private void TPRoot_Footstep()
+        {
+            _dustSystem.Play();
         }
     }
 }

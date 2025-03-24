@@ -58,8 +58,14 @@ namespace Context.ThirdPersonController
             CrossFade(isMoving ? _walkH : _idleH, _deltaTime, _locomotionTransitionTime);
         }
 
-        public void OnFootstep() =>
+        public void OnFootstep()
+        {
+            var stateInfo = _animator.GetCurrentAnimatorStateInfo(_overrideLayer);
+            if (stateInfo.shortNameHash != _emptyH) return;
+
             Footstep?.Invoke();
+        }
+
 
         private void CrossFade(int hash, float deltaTime, float transitionTime, bool loopProtection = true, int layer = _defaultLayer)
         {
