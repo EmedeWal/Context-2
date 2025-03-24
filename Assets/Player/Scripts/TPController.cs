@@ -80,7 +80,9 @@ namespace Context.ThirdPersonController
         public bool IsMoving()
         {
             var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-            return planarVelocity.sqrMagnitude > 0;
+            planarVelocity = Vector3.ClampMagnitude(planarVelocity, 1f);
+
+            return planarVelocity.sqrMagnitude > 0.1f && _input.RequestedMovement.sqrMagnitude > 0;
         }
 
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
@@ -132,7 +134,8 @@ namespace Context.ThirdPersonController
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
         {
-            if (_input.RequestedMovement.sqrMagnitude > 0.001f) // Only update rotation if moving
+            // Only update lookRotation if moving and not interacting
+            if (_input.RequestedMovement.sqrMagnitude > 0.001f && _interactSustainTimer == null)
             {
                 var rotationSpeed = _motor.GroundingStatus.IsStableOnGround
                     ? _groundedRotation
@@ -293,6 +296,13 @@ namespace Context.ThirdPersonController
                 if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component))
                 {
                     OnInteractionStarted();
+
+                    var direction = component.transform.position - pos;
+                    direction = Vector3.ProjectOnPlane(direction, _motor.CharacterUp);
+
+                    var lookRotation = Quaternion.LookRotation(direction, _motor.CharacterUp);
+                    _motor.SetRotation(lookRotation);
+
                     _interactSustainTimer = new
                     (
                         duration: _interactionDuration,
