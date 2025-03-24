@@ -13,8 +13,13 @@ namespace Context.ThirdPersonController
         private int _idleH;
         private int _emptyH;
 
-        private const float _locomotionTransitionTime = 0.2f;
-        private const float _actionTransitionTime = 0.1f;
+        [Header("SETTINGS")]
+
+        [Space]
+        [Header("Smoothing")]
+        [SerializeField] private float _locomotionTransitionTime = 0.2f;
+        [SerializeField] private float _actionTransitionTime = 0.1f;
+
         private const int _overrideLayer = 1;
         private const int _defaultLayer = 0;
 
@@ -48,13 +53,13 @@ namespace Context.ThirdPersonController
         {
             _deltaTime = deltaTime;
 
-            CrossFade(isMoving ? _walkH : _idleH, _deltaTime);
+            CrossFade(isMoving ? _walkH : _idleH, _deltaTime, _locomotionTransitionTime);
         }
 
         public void OnFootstep() =>
             Footstep?.Invoke();
 
-        private void CrossFade(int hash, float deltaTime, int layer = _defaultLayer, float transitionTime = _locomotionTransitionTime)
+        private void CrossFade(int hash, float deltaTime, float transitionTime, int layer = _defaultLayer)
         {
             var currentAnimation = _animator.GetCurrentAnimatorStateInfo(layer);
             var nextAnimation = _animator.GetNextAnimatorStateInfo(layer);
@@ -65,17 +70,17 @@ namespace Context.ThirdPersonController
 
         private void TPAnimator_Jumped()
         {
-            CrossFade(_jumpH, _deltaTime, _overrideLayer, _actionTransitionTime);
+            CrossFade(_jumpH, _deltaTime, _actionTransitionTime, _overrideLayer);
         }
 
         private void TPAnimator_InteractionStarted()
         {
-            CrossFade(_interactH, _deltaTime, _overrideLayer, _actionTransitionTime);
+            CrossFade(_interactH, _deltaTime, _actionTransitionTime, _overrideLayer);
         }
 
         private void TPAnimator_InteractionCanceled()
         {
-            CrossFade(_emptyH, _deltaTime, _overrideLayer, _actionTransitionTime);
+            CrossFade(_emptyH, _deltaTime, _actionTransitionTime, _overrideLayer);
         }
     }
 }
