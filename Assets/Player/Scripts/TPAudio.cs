@@ -26,7 +26,6 @@ namespace Context.ThirdPersonController
         {
             _audioManager = ApplicationManager.Instance.AudioManager;
 
-            TPController.InteractionCanceled += TPAudio_InteractionCanceled;
             TPController.InteractionStarted += TPAudio_InteractionStarted;
             TPController.Jumped += TPAudio_Jumped;
             TPController.Landed += TPAudio_Landed;
@@ -35,7 +34,6 @@ namespace Context.ThirdPersonController
 
         public void Cleanup()
         {
-            TPController.InteractionCanceled -= TPAudio_InteractionCanceled;
             TPController.InteractionStarted -= TPAudio_InteractionStarted;
             TPController.Jumped -= TPAudio_Jumped;
             TPController.Landed -= TPAudio_Landed;
@@ -43,10 +41,7 @@ namespace Context.ThirdPersonController
         }
 
         private void TPAudio_InteractionStarted() { }
-        private void TPAudio_InteractionCanceled() => _interactSource.Stop();
-
         private void TPAudio_Footstep() { }
-
         private void TPAudio_Landed() { }
         private void TPAudio_Jumped() { }
     }

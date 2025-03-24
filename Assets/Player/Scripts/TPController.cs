@@ -40,7 +40,6 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _interactionRange = 3;
 
         public static event Action InteractionStarted;
-        public static event Action InteractionCanceled;
         public static event Action Jumped;
         public static event Action Landed;
 
@@ -91,7 +90,12 @@ namespace Context.ThirdPersonController
 
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
-            if (HandleSustainedInteraction(ref currentVelocity, deltaTime)) return;
+            if (_interactSustainTimer != null)
+            {
+                _interactSustainTimer.Tick(deltaTime);
+                currentVelocity = Vector3.zero;
+                return;
+            }
 
             var grounded = _motor.GroundingStatus.IsStableOnGround;
 
@@ -112,24 +116,6 @@ namespace Context.ThirdPersonController
                 OnLanded();
 
             _previouslyGrounded = grounded;
-        }
-
-        private bool HandleSustainedInteraction(ref Vector3 currentVelocity, float deltaTime)
-        {
-            if (_interactSustainTimer != null)
-            {
-                if (!_input.RequestedInteractSustain)
-                {
-                    OnInteractionCanceled();
-                    _interactSustainTimer = _interactSustainTimer.Cleanup();
-                }
-                else
-                {
-                    currentVelocity = Vector3.zero;
-                    _interactSustainTimer.Tick(deltaTime);
-                }
-            }
-            return _interactSustainTimer != null;
         }
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
@@ -293,15 +279,14 @@ namespace Context.ThirdPersonController
 
                 if (hits.Length == 0) return;
 
-                if (hits[0].TryGetComponent<BaseConnectionPoint>(out var component))
+                if (hits[0].TryGetComponent<StaticConnectionPoint>(out var component))
                 {
                     OnInteractionStarted();
 
+                    component.StartConnection(pos);
                     var direction = component.transform.position - pos;
                     direction = Vector3.ProjectOnPlane(direction, _motor.CharacterUp);
-
-                    var lookRotation = Quaternion.LookRotation(direction, _motor.CharacterUp);
-                    _motor.SetRotation(lookRotation);
+                    _motor.SetRotation(Quaternion.LookRotation(direction, _motor.CharacterUp));
 
                     _interactSustainTimer = new
                     (
@@ -321,9 +306,6 @@ namespace Context.ThirdPersonController
 
         private void OnInteractionStarted() =>
             InteractionStarted?.Invoke();
-
-        private void OnInteractionCanceled() =>
-            InteractionCanceled?.Invoke();
 
         private void OnLanded() =>
             Landed?.Invoke();
