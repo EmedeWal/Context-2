@@ -135,6 +135,18 @@ PrefabInstance:
       propertyPath: '<InitialConnectionPoints>k__BackingField.Array.data[0]'
       value: 
       objectReference: {fileID: 391538344}
+    - target: {fileID: 6928492156877016310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6928492156877016310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.29999995
+      objectReference: {fileID: 0}
+    - target: {fileID: 6928492156877016310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -14.999999
+      objectReference: {fileID: 0}
     - target: {fileID: 8818158436555604993, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.4449611
@@ -1526,7 +1538,7 @@ SceneRoots:
   - {fileID: 1491575060}
   - {fileID: 1509344108}
   - {fileID: 458800521}
-  - {fileID: 1020658282}
   - {fileID: 90085127}
+  - {fileID: 1020658282}
   - {fileID: 391538343}
   - {fileID: 474330962}

@@ -4,7 +4,9 @@ namespace Context.ThirdPersonController
 
     public class TPRoot : MonoBehaviour
     {
-        private ParticleSystem _dustSystem;
+        [SerializeField] private ParticleSystem _smallDust;
+        [SerializeField] private ParticleSystem _bigDust;
+
         private Transform _followTarget;
         private Transform _transform;
         
@@ -15,11 +17,11 @@ namespace Context.ThirdPersonController
             _followTarget = followTarget;
             _transform = transform;
 
-            _dustSystem = GetComponentInChildren<ParticleSystem>();
             _animator = GetComponentInChildren<TPAnimator>();
 
             _animator.Init();
 
+            TPController.Landed += TPRoot_Landed;
             TPAnimator.Footstep += TPRoot_Footstep;
         }
 
@@ -27,6 +29,7 @@ namespace Context.ThirdPersonController
         {
             _animator.Cleanup();
 
+            TPController.Landed -= TPRoot_Landed;
             TPAnimator.Footstep -= TPRoot_Footstep;
         }
 
@@ -39,7 +42,12 @@ namespace Context.ThirdPersonController
 
         private void TPRoot_Footstep()
         {
-            _dustSystem.Play();
+            _smallDust.Play();
+        }
+
+        private void TPRoot_Landed()
+        {
+            _bigDust.Play();
         }
     }
 }
