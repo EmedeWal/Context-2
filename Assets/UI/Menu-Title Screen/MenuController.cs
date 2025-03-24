@@ -11,8 +11,9 @@ namespace Context.UI
         [Header("REFERENCES")]
 
         [Space]
-        [Header("Other")]
+        [Header("Holders")]
         [SerializeField] private GameObject _menuHolder;
+        [SerializeField] private GameObject _controlHolder;
 
         [Space]
         [Header("Buttons")]
@@ -48,7 +49,10 @@ namespace Context.UI
             _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _eventSystem = EventSystem.current;
 
-            if (ApplicationManager.Instance.InputManager.GetInputType() > 0)
+            var keyboard = ApplicationManager.Instance.InputManager.GetInputType() == 0;
+            _controlHolder.SetActive(!keyboard);
+
+            if (!keyboard)
             {
                 _eventSystem.SetSelectedGameObject(firstSelected);
                 _eventSystem.firstSelectedGameObject = firstSelected;

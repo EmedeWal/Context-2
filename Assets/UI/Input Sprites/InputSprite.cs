@@ -1,9 +1,9 @@
 namespace Context.UI
 {
+    using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
-    [RequireComponent(typeof(Image))]
     public class InputSprite : MonoBehaviour
     {
         [SerializeField] private InputSpriteContainer _container;
@@ -17,7 +17,10 @@ namespace Context.UI
         public void UpdateSprite()
         {
             if (_container.GetSprite(_action, out var sprite))
-                GetComponent<Image>().sprite = sprite;
+            {
+                GetComponentInChildren<Image>().sprite = sprite;
+                GetComponentInChildren<TextMeshProUGUI>().text = _action;
+            }
         }
     }
 }
