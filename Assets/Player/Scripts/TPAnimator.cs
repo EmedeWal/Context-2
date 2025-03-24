@@ -39,14 +39,12 @@ namespace Context.ThirdPersonController
 
             TPController.Jumped += TPAnimator_Jumped;
             TPController.InteractionStarted += TPAnimator_InteractionStarted;
-            TPController.InteractionCanceled += TPAnimator_InteractionCanceled;
         }
 
         public void Cleanup()
         {
             TPController.Jumped -= TPAnimator_Jumped;
             TPController.InteractionStarted -= TPAnimator_InteractionStarted;
-            TPController.InteractionCanceled -= TPAnimator_InteractionCanceled;
         }
 
         public void UpdateAnimations(float deltaTime, bool isMoving)
@@ -76,11 +74,6 @@ namespace Context.ThirdPersonController
         private void TPAnimator_InteractionStarted()
         {
             CrossFade(_interactH, _deltaTime, _actionTransitionTime, _overrideLayer);
-        }
-
-        private void TPAnimator_InteractionCanceled()
-        {
-            CrossFade(_emptyH, _deltaTime, _actionTransitionTime, _overrideLayer);
         }
     }
 }

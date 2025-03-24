@@ -10,7 +10,6 @@ namespace Context.ThirdPersonController
         public bool CancelJump;
         public bool SustainJump;
         public bool Interact;
-        public bool SustainInteract;
     }
 
     public class TPInput
@@ -18,7 +17,6 @@ namespace Context.ThirdPersonController
         public Quaternion RequestedRotation;
         public Vector3 RequestedMovement;
         public bool RequestedInteract;
-        public bool RequestedInteractSustain;
         public bool RequestedJump;
         public bool RequestedJumpCancel;
         public bool RequestedJumpSustain;
@@ -39,7 +37,6 @@ namespace Context.ThirdPersonController
             RequestedJumpCancel = input.CancelJump || RequestedJumpCancel;
 
             RequestedJumpSustain = input.SustainJump;
-            RequestedInteractSustain = input.SustainInteract;
         }
     }
 }

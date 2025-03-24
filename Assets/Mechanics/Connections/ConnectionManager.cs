@@ -2,7 +2,6 @@ namespace Context
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Unity.VisualScripting;
     using UnityEngine;
 
     public struct OtherConnectionStruct
@@ -140,7 +139,7 @@ namespace Context
                 connection.Stable = true;
 
             // trigger events
-            target.ConnectionsStabilized();
+            target.ConnectionsModified();
         }
 
         // Press when connections are stable
@@ -149,6 +148,8 @@ namespace Context
             var otherConnectionStruct = target.GetFirstOtherConnection();
             otherConnectionStruct.Connection.Stable = false;
             caller.Connections[0].Stable = false;
+
+            target.ConnectionsModified();
         }
 
         private void RequestConnection(BaseConnectionPoint connectionPointA, BaseConnectionPoint connectionPointB)
@@ -184,6 +185,9 @@ namespace Context
             // Store the connection in both points
             connectionPointA.Connections.Add(connection);
             connectionPointB.Connections.Add(connection);
+
+            connectionPointA.ConnectionsModified();
+            connectionPointB.ConnectionsModified();
         }
 
         private void RemoveConnection(Connection connection)

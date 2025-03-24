@@ -23,9 +23,10 @@ namespace Context
         [Tooltip("This event is invoked when max connections are met.")]
         [SerializeField] private UnityEvent _completedConnections;
 
-        protected ConnectionManager _manager;
+        [Space]
+        [SerializeField] protected int _maxconnections = 2;
 
-        protected const int MAX_CONNECTIONS = 2;
+        protected ConnectionManager _manager;
 
         public virtual void Init(ConnectionManager connectionManager)
         {
@@ -43,7 +44,7 @@ namespace Context
             _completedConnections = null;
         }
 
-        public bool ConnectionsOverCap(int connectionIncrement) => Connections.Count + connectionIncrement > MAX_CONNECTIONS;
+        public bool ConnectionsOverCap(int connectionIncrement) => Connections.Count + connectionIncrement > _maxconnections;
 
         public OtherConnectionStruct GetFirstOtherConnection()
         {
@@ -53,11 +54,11 @@ namespace Context
             return new OtherConnectionStruct(other, connection);
         }
 
-        public void ConnectionsStabilized()
+        public void ConnectionsModified()
         {
             var stableConnections = Connections.Where(c => c.Stable).ToList();
-            if (stableConnections.Count == MAX_CONNECTIONS)
-                OnCompletedConnections();
+            if (stableConnections.Count == _maxconnections) OnCompletedConnections();
+            else OnIncompletedConnections();
         }
 
         protected virtual void OnCompletedConnections()
@@ -71,5 +72,7 @@ namespace Context
             _completedConnections?.Invoke();
             _completedConnections = null;
         }
+        protected virtual void OnIncompletedConnections() { }
+
     }
 }
