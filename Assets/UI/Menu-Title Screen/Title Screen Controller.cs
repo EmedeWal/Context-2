@@ -1,5 +1,6 @@
 namespace Context.UI
 {
+    using global::Context.UI.Context.UI;
     using UnityEngine.EventSystems;
     using UnityEngine.UI;
     using UnityEngine;
@@ -9,7 +10,12 @@ namespace Context.UI
         [Header("REFERENCES")]
 
         [Space]
+        [Header("Holders")]
+        [SerializeField] private GameObject _controlHolder; // Added this
+
+        [Space]
         [Header("Buttons")]
+        [SerializeField] private Button[] _buttons;
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _quitButton;
         [SerializeField] private Button _creditsButton;
@@ -22,8 +28,7 @@ namespace Context.UI
 
         [Space]
         [Header("Audio")]
-        [SerializeField] private AudioData _clickData;
-        [SerializeField] private AudioData _slideData;
+        [SerializeField] private AudioData _hoverData;
 
         private EventSystem _eventSystem;
         private AudioSource _audioSource;
@@ -36,15 +41,21 @@ namespace Context.UI
             _eventSystem = EventSystem.current;
             _audioSource = GetComponent<AudioSource>();
 
-            if (ApplicationManager.Instance.InputManager.GetInputType() > 0)
+            var keyboard = ApplicationManager.Instance.InputManager.GetInputType() == 0;
+            _controlHolder.SetActive(!keyboard); // Added this logic
+
+            if (!keyboard)
             {
                 _eventSystem.SetSelectedGameObject(firstSelected);
                 _eventSystem.firstSelectedGameObject = firstSelected;
             }
 
-            _playButton.onClick.AddListener(OnButtonClick);
-            _quitButton.onClick.AddListener(OnButtonClick);
-            _creditsButton.onClick.AddListener(OnButtonClick);
+            // Attach hover sound script to each button
+            foreach (var button in _buttons)
+            {
+                var hoverAudio = button.gameObject.AddComponent<ButtonHoverAudio>();
+                hoverAudio.Init(_audioSource, _hoverData);
+            }
 
             _playButton.onClick.AddListener(Play);
             _quitButton.onClick.AddListener(Quit);
@@ -53,9 +64,6 @@ namespace Context.UI
             foreach (var item in _volumeSettings)
                 item.Init();
             _brightnessSetting.Init();
-
-            foreach (var item in _sliders)
-                item.onValueChanged.AddListener(OnSliderChanged);
         }
 
         private void OnDisable()
@@ -67,9 +75,6 @@ namespace Context.UI
             foreach (var item in _volumeSettings)
                 item.Cleanup();
             _brightnessSetting.Cleanup();
-
-            foreach (var item in _sliders)
-                item.onValueChanged.RemoveListener(OnSliderChanged);
         }
 
         private void Update()
@@ -78,18 +83,6 @@ namespace Context.UI
 
             var currentSelected = _eventSystem.currentSelectedGameObject;
             if (currentSelected == null) _eventSystem.SetSelectedGameObject(_playButton.gameObject);
-        }
-
-        private void OnButtonClick()
-        {
-            if (_clickData != null)
-                ApplicationManager.Instance.AudioManager.Play(_clickData, _audioSource);
-        }
-
-        private void OnSliderChanged(float value)
-        {
-            if (_slideData != null)
-                ApplicationManager.Instance.AudioManager.Play(_slideData, _audioSource);
         }
 
         private void Play()

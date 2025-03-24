@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Group: {fileID: -3158872305780743129, guid: 939118d99342d9d4ba63d111864e7db4, type: 2}
   Clip: {fileID: 8300000, guid: 35cf7766e9e2aa542811e896fde57989, type: 3}
-  Volume: 1
+  Volume: 0.5
   Offset: 0
   PitchRanges:
   - 0.2
