@@ -29,8 +29,6 @@ namespace Context
         [Space]
         [Header("Scene")]
         [SerializeField] private ParticleController[] _fireflyParticles;
-        [SerializeField] private Texture[] _terrainTextures;
-
         private List<StaticConnectionPoint> _staticConnectionPoints;
         private List<BaseConnectionPoint> _connectionPoints;
 
