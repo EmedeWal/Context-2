@@ -59,7 +59,10 @@ namespace Context
         {
             // This point
             var material = alive ? _litMaterial : _defaultMaterial;
-            _bodyMeshRenderer.material = material;
+            
+            if (_bodyMeshRenderer != null)
+                _bodyMeshRenderer.material = material;
+                
             foreach (var renderer in _meshRenderers)
                 renderer.material = material;
 
