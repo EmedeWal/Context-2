@@ -110,13 +110,23 @@ namespace Context
         private void UpdateLevelBasedConnections(int index)
         {
             var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index).ToList();
+
+            if (connectionPoints.Count == 0)
+            {
+                Debug.LogWarning($"No connection points found for level {index}. Setting finishedPercentage to 0.");
+                _terrainLayerColorChanger.ChangeLayerColor(index, 0f);
+                _fireflyParticles[index].Tick(0f);
+                return;
+            }
+
             var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections()).ToList();
-            var finishedPercentage = (float)finishedPoints.Count / (float)connectionPoints.Count;
+            var finishedPercentage = (float)finishedPoints.Count / connectionPoints.Count;
             finishedPercentage = Mathf.Clamp01(finishedPercentage);
 
             _terrainLayerColorChanger.ChangeLayerColor(index, finishedPercentage);
             _fireflyParticles[index].Tick(finishedPercentage);
         }
+
 
         // Trigger enter
         public void CreateUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target)

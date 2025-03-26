@@ -45,6 +45,7 @@ namespace Context.ThirdPersonController
         [Space]
         [Header("Detection")]
         [SerializeField] private int _sandLayer = 0;
+        [SerializeField] private float _minFallVelocity = 10f;
         [SerializeField] private float _detectionDistance = 1f;
 
         public static event Action Add;
@@ -53,6 +54,9 @@ namespace Context.ThirdPersonController
         public static event Action<GroundType> Landed;
 
         private Timer _interactSustainTimer;
+        private Vector3 _temporaryVelocity;
+        private Vector3 _currentVelocity;
+        private Vector3 _previousVelocity;
         private float _timeSinceJumpRequest;
         private float _airborneTime;
         private bool _initializedGrounded;
@@ -118,6 +122,7 @@ namespace Context.ThirdPersonController
             if (_interactSustainTimer != null)
             {
                 _interactSustainTimer.Tick(deltaTime);
+                _input.RequestedInteract = false;
                 currentVelocity = Vector3.zero;
                 return;
             }
@@ -331,18 +336,24 @@ namespace Context.ThirdPersonController
         private void TPController_ConnectionExit(BaseConnectionPoint point) =>
             _manager.RemoveUnstableConnection(this, point);
 
-        public void BeforeCharacterUpdate(float deltaTime) { }
+        public void BeforeCharacterUpdate(float deltaTime)
+        {
+            _temporaryVelocity = _currentVelocity;
+        }
         public void AfterCharacterUpdate(float deltaTime)
         {
             _previouslyGrounded = _currentlyGrounded;
             _currentlyGrounded = _motor.GroundingStatus.IsStableOnGround;
             _initializedGrounded = (_currentlyGrounded && _previouslyGrounded)|| _initializedGrounded;
+
+            _currentVelocity = _motor.Velocity;
+            _previousVelocity = _temporaryVelocity;
         }
 
         public void PostGroundingUpdate(float deltaTime) { }
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
-            if (!_previouslyGrounded && !_currentlyGrounded && _initializedGrounded)
+            if (!_previouslyGrounded && !_currentlyGrounded && _initializedGrounded && Mathf.Abs(_previousVelocity.y) > _minFallVelocity)
                 OnLanded(GetGroundType());
         }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
