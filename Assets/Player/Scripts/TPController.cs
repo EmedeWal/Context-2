@@ -35,14 +35,21 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _jumpForce = 20f;
 
         [Header("INTERACTION")]
+
+        [Space]
+        [Header("Connection")]
         [SerializeField] private LayerMask _interactionLayer;
         [SerializeField] private float _interactionDuration = 1f;
         [SerializeField] private float _interactionRange = 3;
 
+        [Space]
+        [Header("Detection")]
+        [SerializeField] private int _sandLayer;
+
         public static event Action Add;
         public static event Action Remove;
         public static event Action Jumped;
-        public static event Action Landed;
+        public static event Action<Vector3> Landed;
 
         private Timer _interactSustainTimer;
         private float _timeSinceJumpRequest;
@@ -79,6 +86,16 @@ namespace Context.ThirdPersonController
             base.Cleanup();
 
             _channel.Cleanup();
+        }
+
+        public override bool HasMaxConnections() =>
+            Connections.Count >= _maxconnections;
+
+        public GroundType GetGroundType()
+        {
+            return (int)_motor.GroundingStatus.GroundCollider.gameObject.layer == _sandLayer
+                ? GroundType.Sand
+                : GroundType.Rock;
         }
 
         public bool IsMoving()
@@ -300,8 +317,8 @@ namespace Context.ThirdPersonController
         private void OnRemove() =>
             Remove?.Invoke();
 
-        private void OnLanded() =>
-            Landed?.Invoke();
+        private void OnLanded(Vector3 velocity) =>
+            Landed?.Invoke(velocity);
 
         private void TPController_ConnectionEnter(BaseConnectionPoint point) =>
             _manager.CreateUnstableConnection(this, point);
@@ -320,7 +337,7 @@ namespace Context.ThirdPersonController
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
             if (!_previouslyGrounded && _initializedGrounded)
-                OnLanded();
+                OnLanded(_motor.Velocity);
         }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
         public bool IsColliderValidForCollisions(Collider collider) => true;

@@ -24,7 +24,9 @@ namespace Context
 
         private List<BaseConnectionPoint> _connectionPoints;
 
-        private void Awake()
+        private PostProcessingManager _postProcessingManager;
+
+        private void Start()
         {
             if (Instance == null) Instance = this;
             else DestroyImmediate(gameObject);
@@ -43,6 +45,10 @@ namespace Context
             foreach (var connectionPoint in connectionPoints)
                 foreach (var other in connectionPoint.InitialConnectionPoints)
                     RequestConnection(connectionPoint, other);
+
+            _postProcessingManager = ApplicationManager.Instance.PostProcessingManager;
+
+            UpdatePostProcessing(1);
         }
 
         private void OnDisable()
@@ -56,7 +62,7 @@ namespace Context
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
             var playerConnectionCollider = player.Connections[0].MeshCollider;
 
-            HashSet<Connection> tickedConnections = new(); // Track already ticked connections
+            var tickedConnections = new HashSet<Connection>(); // Track already ticked connections
             foreach (var point in _connectionPoints)
             {
                 foreach (var connection in point.Connections)
@@ -68,6 +74,14 @@ namespace Context
                     }
                 }
             }
+            UpdatePostProcessing(Time.deltaTime);
+        }
+
+        private void UpdatePostProcessing(float deltaTime)
+        {
+            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
+            var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
+            _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
         }
 
         // Trigger enter

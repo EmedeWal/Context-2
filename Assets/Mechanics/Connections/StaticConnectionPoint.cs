@@ -12,6 +12,11 @@ namespace Context
         [SerializeField] private Material _litMaterial;
 
         [Space]
+        [Header("Environment")]
+        [SerializeField] private int _terrainLayerIndex = 0;
+        [SerializeField] private Organism[] _organisms;
+
+        [Space]
         [Header("Hierarchy")]
         [SerializeField] private SkinnedMeshRenderer _bodyMeshRenderer;
         [SerializeField] private MeshRenderer[] _meshRenderers;
@@ -22,7 +27,7 @@ namespace Context
 
             gameObject.layer = LayerMask.NameToLayer("Interactable");
 
-            SetMaterials(_defaultMaterial);
+            UpdateVisuals(false, 0f);
         }
 
         public void StartConnection(Vector3 callerPosition)
@@ -42,19 +47,25 @@ namespace Context
         {
             base.OnCompletedConnections();
 
-            SetMaterials(_litMaterial);
+            UpdateVisuals(true);
         }
 
         protected override void OnIncompletedConnections()
         {
-            SetMaterials(_defaultMaterial);
+            UpdateVisuals(false);
         }
 
-        private void SetMaterials(Material material)
+        private void UpdateVisuals(bool alive, float duration = 1f)
         {
+            // This point
+            var material = alive ? _litMaterial : _defaultMaterial;
             _bodyMeshRenderer.material = material;
             foreach (var renderer in _meshRenderers)
                 renderer.material = material;
+
+            // Environment
+            foreach (var organism in _organisms)
+                organism.SetState(alive, duration);
         }
     }
 }

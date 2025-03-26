@@ -15,13 +15,21 @@ namespace Context.ThirdPersonController
 
         [Space]
         [Header("Data")]
-        [SerializeField] private AudioData[] _footstepArray;
+        [SerializeField] private AudioData[] _sandFootstepsArray;
+        [SerializeField] private AudioData[] _rockFootstepsArray;
         [SerializeField] private AudioData _removeData;
         [SerializeField] private AudioData _addData;
         [SerializeField] private AudioData _jumpData;
         [SerializeField] private AudioData _landData;
 
+        [Header("SETTINGS")]
+
+        [Space]
+        [Header("Landing")]
+        [SerializeField] private float _minImpactMagnitude = 10;
+
         private AudioManager _audioManager;
+        private GroundType _groundType;
 
         public void Init()
         {
@@ -32,6 +40,11 @@ namespace Context.ThirdPersonController
             TPController.Jumped += TPAudio_Jumped;
             TPController.Landed += TPAudio_Landed;
             TPAnimator.Footstep += TPAudio_Footstep;
+        }
+
+        public void LateTick(GroundType groundType)
+        {
+            _groundType = groundType;
         }
 
         public void Cleanup()
@@ -55,13 +68,20 @@ namespace Context.ThirdPersonController
 
         private void TPAudio_Footstep()
         {
-            var index = Random.Range(0, _footstepArray.Length);
-            _audioManager.Play(_footstepArray[index], _footstepSource);
+            var array = _groundType is GroundType.Sand
+                ? _sandFootstepsArray
+                : _rockFootstepsArray;
+
+            var index = Random.Range(0, array.Length);
+            _audioManager.Play(array[index], _footstepSource);
         }
-        private void TPAudio_Landed()
+        private void TPAudio_Landed(Vector3 velocity)
         {
-            _jumpSource.Stop();
-            _audioManager.Play(_landData, _landSource);
+            if (velocity.magnitude > _minImpactMagnitude)
+            {
+                _jumpSource.Stop();
+                _audioManager.Play(_landData, _landSource);
+            }
         }
 
         private void TPAudio_Jumped()

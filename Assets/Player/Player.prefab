@@ -294,7 +294,7 @@ MonoBehaviour:
   _completedConnections:
     m_PersistentCalls:
       m_Calls: []
-  _maxconnections: 2
+  _maxconnections: 1
   _acceleration: 5
   _deceleration: 10
   _groundedSpeed: 5
@@ -13743,7 +13743,7 @@ Transform:
   m_GameObject: {fileID: 8589375594183367642}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4449611, y: -0.52, z: -20.150566}
+  m_LocalPosition: {x: 0, y: -0.29999995, z: -14.999999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

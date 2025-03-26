@@ -52,7 +52,10 @@ namespace Context.ThirdPersonController
 
         private void LateUpdate()
         {
-            _root.LateTick(Time.deltaTime, _controller.IsMoving());
+            var groundType = _controller.GetGroundType();
+
+            _root.LateTick(groundType, Time.deltaTime, _controller.IsMoving());
+            _audio.LateTick(groundType);
         }
     }
 }

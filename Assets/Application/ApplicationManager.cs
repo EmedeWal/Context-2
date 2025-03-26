@@ -2,6 +2,7 @@ namespace Context
 {
     using UnityEngine.EventSystems;
     using UnityEngine;
+    using UnityEngine.Rendering;
 
     public class ApplicationManager : MonoBehaviour
     {
@@ -9,6 +10,7 @@ namespace Context
 
         //
 
+        public PostProcessingManager PostProcessingManager => _postProcessingManager;
         public InputManager InputManager => _inputManager;
         public AudioManager AudioManager => _audioManager;
         public SceneLoader SceneLoader => _sceneLoader;
@@ -23,6 +25,12 @@ namespace Context
         [SerializeField] private GameObject _eventSystem;
         [SerializeField] private GameObject _canvas;
 
+        [Space]
+        [Header("Volumes")]
+        [SerializeField] private VolumeProfile _aliveProfile;
+        [SerializeField] private VolumeProfile _deadProfile;
+
+        private PostProcessingManager _postProcessingManager;
         private InputManager _inputManager;
         private AudioManager _audioManager;
         private SceneLoader _sceneLoader;
@@ -43,8 +51,9 @@ namespace Context
 
                 _overlay = new(canvas);
                 _sceneLoader = new(_overlay);
-                _audioManager = new(GetComponentsInChildren<AudioSource>());
                 _inputManager = new();
+                _audioManager = new(GetComponentsInChildren<AudioSource>());
+                _postProcessingManager = new(gameObject, _aliveProfile, _deadProfile);
 
                 Instance = this;
             }
