@@ -18,6 +18,7 @@ namespace Context
         [Space]
         [Header("Environment")]
         [SerializeField] private Organism[] _organisms;
+        [SerializeField] private ParticleSystem _fogParticles;
 
         [Space]
         [Header("Hierarchy")]
@@ -75,6 +76,11 @@ namespace Context
             // Environment
             foreach (var organism in _organisms)
                 organism.SetState(alive, duration);
+
+            if (_fogParticles == null) return;
+
+            if (alive) _fogParticles.Play();
+            else _fogParticles.Stop();
         }
     }
 }

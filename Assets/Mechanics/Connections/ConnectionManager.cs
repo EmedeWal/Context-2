@@ -111,7 +111,7 @@ namespace Context
 
             if (connectionPoints.Count == 0)
             {
-                Debug.LogWarning($"No connection points found for level {index}. Setting finishedPercentage to 0.");
+                //Debug.LogWarning($"No connection points found for level {index}. Setting finishedPercentage to 0.");
                 _terrainLayerColorChanger.ChangeLayerColor(index, 0f);
                 _fireflyParticles[index].Tick(0f);
                 return;
@@ -136,18 +136,19 @@ namespace Context
             if ((targetOtherConnection && !callerTargetConnection) 
             || (target.ConnectionsOverCap(2) && !callerTargetConnection)
             || (target.Connections.Count == 1 && callerTargetConnection))
-            {
-                //Debug.LogWarning("Something was invalid.");
                 return;
-            }
-
-            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, target.ControlPromptOffset, "Interact");
 
             if (!target.Connections.Contains(data.Connection))
             {
                 TransferConnection(caller, data.Other, target, data.Connection, false);
                 CreateConnection(caller, target, false);
             }
+
+            // Ensure all connections are unobstructed before stabilizing
+            if (data.Other.Connections.Any(connection => connection.Obstructed) || target.Connections.Any(connection => connection.Obstructed))
+                return;
+
+            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, target.ControlPromptOffset, "Interact");
         }
 
         // Trigger exit

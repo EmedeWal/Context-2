@@ -2,6 +2,7 @@ namespace Context
 {
     using UnityEngine;
 
+    [RequireComponent(typeof(Animator))]
     public class WorldSpaceUI : MonoBehaviour
     {
         private Transform _mainCamera;

@@ -1,16 +1,42 @@
-using UnityEngine;
-
-public class MovingObject : MonoBehaviour
+namespace Context
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    using System.Collections;
+    using UnityEngine;
 
-    // Update is called once per frame
-    void Update()
+    public class MovingObject : MonoBehaviour
     {
-        
+        [SerializeField] private Transform _moveTarget;
+        [SerializeField] private float _moveDuration;
+
+        private Transform _transform;
+        private Vector3 _targetPosition;
+
+        private void Start()
+        {
+            _transform = transform;
+            _targetPosition = _moveTarget.position;    
+        }
+
+        public void Activate()
+        {
+            StartCoroutine(MoveCoroutine());
+        }
+
+        private IEnumerator MoveCoroutine()
+        {
+            var elapsedTime = 0f;
+
+            while (elapsedTime < _moveDuration)
+            {
+                var progress = Mathf.Clamp01(elapsedTime / _moveDuration);
+                _transform.position = Vector3.Lerp(_transform.position, _targetPosition, progress);
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            Destroy(_moveTarget);
+            Destroy(this);
+        }
     }
 }

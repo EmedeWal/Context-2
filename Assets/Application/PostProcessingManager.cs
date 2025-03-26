@@ -6,27 +6,38 @@ namespace Context
 
     public class PostProcessingManager
     {
-        private readonly VolumeProfile _currentProfile;
+        private readonly VolumeProfile _standardProfile;
+        private readonly VolumeProfile _runtimeProfile;
         private readonly VolumeProfile _aliveProfile;
         private readonly VolumeProfile _deadProfile;
+        private readonly Volume _volume;
+
         private const float SPEED = 5f; // Speed multiplier for smooth lerp
 
-        public PostProcessingManager(GameObject parentObject, VolumeProfile aliveProfile, VolumeProfile deadProfile)
+        public PostProcessingManager(GameObject parentObject, VolumeProfile runtimeProfile, VolumeProfile standardProfile, VolumeProfile aliveProfile, VolumeProfile deadProfile)
         {
-            var volume = parentObject.GetComponentInChildren<Volume>();
-            _currentProfile = volume.profile;
+            _volume = parentObject.GetComponentInChildren<Volume>();
+
+            _runtimeProfile = runtimeProfile;
+            _standardProfile = standardProfile;
             _aliveProfile = aliveProfile;
             _deadProfile = deadProfile;
         }
 
+        public void Init()
+        {
+            _volume.profile = _standardProfile;
+        }
+
         public void UpdateVolumeSettings(float completedPercentage, float deltaTime)
         {
+            _volume.profile = _runtimeProfile;
             var response = 1f - Mathf.Exp(-SPEED * deltaTime);
 
             // Lerp Vignette settings
             if (_deadProfile.TryGet<Vignette>(out var deadVignette)
              && _aliveProfile.TryGet<Vignette>(out var aliveVignette)
-             && _currentProfile.TryGet(out Vignette vignette))
+             && _runtimeProfile.TryGet(out Vignette vignette))
             {
                 var targetColor = Color.Lerp(deadVignette.color.value, aliveVignette.color.value, completedPercentage);
                 vignette.color.Override(Color.Lerp(vignette.color.value, targetColor, response));
@@ -35,7 +46,7 @@ namespace Context
             // Lerp Color Adjustments settings
             if (_deadProfile.TryGet<ColorAdjustments>(out var deadColor)
              && _aliveProfile.TryGet<ColorAdjustments>(out var aliveColor)
-             && _currentProfile.TryGet<ColorAdjustments>(out var colorAdjustments))
+             && _runtimeProfile.TryGet<ColorAdjustments>(out var colorAdjustments))
             {
                 var targetPostExposure = Mathf.Lerp(deadColor.postExposure.value, aliveColor.postExposure.value, completedPercentage);
                 var targetContrast = Mathf.Lerp(deadColor.contrast.value, aliveColor.contrast.value, completedPercentage);
@@ -53,7 +64,7 @@ namespace Context
             // Lerp White Balance settings
             if (_deadProfile.TryGet<WhiteBalance>(out var deadBalance)
              && _aliveProfile.TryGet<WhiteBalance>(out var aliveBalance)
-             && _currentProfile.TryGet<WhiteBalance>(out var currentBalance))
+             && _runtimeProfile.TryGet<WhiteBalance>(out var currentBalance))
             {
                 var targetTemperature = Mathf.Lerp(deadBalance.temperature.value, aliveBalance.temperature.value, completedPercentage);
                 var targetTint = Mathf.Lerp(deadBalance.tint.value, aliveBalance.tint.value, completedPercentage);
