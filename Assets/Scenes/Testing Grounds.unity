@@ -373,6 +373,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2810550657810536755, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+      propertyPath: <ControlPromptOffset>k__BackingField
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5253311566689278362, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.13
@@ -689,6 +693,10 @@ PrefabInstance:
       propertyPath: '_organisms.Array.data[0]'
       value: 
       objectReference: {fileID: 1432027383}
+    - target: {fileID: 2810550657810536755, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
+      propertyPath: <ControlPromptOffset>k__BackingField
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5253311566689278362, guid: a17f7becee1cf4944ad756734eebf54d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.1656747

@@ -127,7 +127,7 @@ namespace Context
                 return;
             }
 
-            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, 2.2f, "Interact");
+            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, target.ControlPromptOffset, "Interact");
 
             if (!target.Connections.Contains(data.Connection))
             {
