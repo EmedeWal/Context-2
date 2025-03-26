@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3370698}
   - component: {fileID: 2336598}
   - component: {fileID: 6459400}
+  - component: {fileID: 6590163830408947641}
   m_Layer: 6
   m_Name: Rock_Flat_m_13
   m_TagString: Untagged
@@ -109,3 +110,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 2a31a5fe173aa1d41839b9c5df4d83c8, type: 3}
+--- !u!114 &6590163830408947641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderers:
+  - {fileID: 2336598}
+  _aliveColor: {r: 0.78431374, g: 0.5254902, b: 0.6392157, a: 0}
+  _deadColor: {r: 0.7294118, g: 0.78431374, b: 0.5254902, a: 0}

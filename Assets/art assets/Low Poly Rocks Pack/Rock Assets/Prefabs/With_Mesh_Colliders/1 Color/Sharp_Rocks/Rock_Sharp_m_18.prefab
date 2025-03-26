@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3383624}
   - component: {fileID: 2323476}
   - component: {fileID: 6471040}
+  - component: {fileID: 7406486053145384466}
   m_Layer: 6
   m_Name: Rock_Sharp_m_18
   m_TagString: Untagged
@@ -109,3 +110,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 82f0f73511f84f64b9eca82a61470e34, type: 3}
+--- !u!114 &7406486053145384466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderers: []
+  _aliveColor: {r: 0.78431374, g: 0.5254902, b: 0.6392157, a: 0}
+  _deadColor: {r: 0.7294118, g: 0.78431374, b: 0.5254902, a: 0}
