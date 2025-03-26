@@ -7,6 +7,10 @@ namespace Context
         [Header("REFERENCES")]
 
         [Space]
+        [Header("Behaviour")]
+        [SerializeField] private bool _isPillar;
+
+        [Space]
         [Header("Materials")]
         [SerializeField] private Material _defaultMaterial;
         [SerializeField] private Material _litMaterial;
@@ -33,9 +37,10 @@ namespace Context
 
         public void StartConnection(Vector3 callerPosition)
         {
+            if (_isPillar) return;
+
             var animator = GetComponentInChildren<Animator>();
-            if (animator == null) return;
-            
+
             animator.CrossFade("Connect", 0.1f);
             var direction = transform.position - callerPosition;
             direction = Vector3.ProjectOnPlane(direction, transform.up);

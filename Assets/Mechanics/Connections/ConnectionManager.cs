@@ -33,6 +33,8 @@ namespace Context
 
         private List<StaticConnectionPoint> _staticConnectionPoints;
         private List<BaseConnectionPoint> _connectionPoints;
+
+        private TerrainLayerColorChanger _terrainLayerColorChanger;
         private PostProcessingManager _postProcessingManager;
 
         private void Start()
@@ -56,12 +58,17 @@ namespace Context
                     RequestConnection(connectionPoint, other);
 
             _staticConnectionPoints = _connectionPoints.OfType<StaticConnectionPoint>().ToList(); 
+
+            _terrainLayerColorChanger = TerrainLayerColorChanger.Instance;
             _postProcessingManager = ApplicationManager.Instance.PostProcessingManager;
 
             foreach (var particle in _fireflyParticles)
                 particle.Init();
 
             UpdatePostProcessing(1);
+
+            for (int i = 0; i < _fireflyParticles.Length; i++)
+                UpdateLevelBasedConnections(i);
         }
 
         private void OnDisable()
@@ -107,9 +114,8 @@ namespace Context
             var finishedPercentage = (float)finishedPoints.Count / (float)connectionPoints.Count;
             finishedPercentage = Mathf.Clamp01(finishedPercentage);
 
+            _terrainLayerColorChanger.ChangeLayerColor(index, finishedPercentage);
             _fireflyParticles[index].Tick(finishedPercentage);
-            
-
         }
 
         // Trigger enter
