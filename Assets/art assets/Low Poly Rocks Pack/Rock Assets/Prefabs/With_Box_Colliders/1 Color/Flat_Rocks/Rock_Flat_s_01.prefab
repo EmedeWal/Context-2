@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 429008}
   - component: {fileID: 3329944}
   - component: {fileID: 2369920}
+  - component: {fileID: 8792475186954286002}
   m_Layer: 6
   m_Name: Rock_Flat_s_01
   m_TagString: Untagged
@@ -87,6 +88,22 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8792475186954286002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderers:
+  - {fileID: 2369920}
+  _aliveColor: {r: 0.78431374, g: 0.5254902, b: 0.6392157, a: 0}
+  _deadColor: {r: 0.7294118, g: 0.78431374, b: 0.5254902, a: 0}
 --- !u!1 &182670
 GameObject:
   m_ObjectHideFlags: 0

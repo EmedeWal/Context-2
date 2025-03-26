@@ -123,6 +123,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _meshRenderers:
-  - {fileID: 2338890, guid: d6afe01dacfba9a4db0ed294be52ac03, type: 3}
+  - {fileID: 2309488}
   _aliveColor: {r: 0.78431374, g: 0.5254902, b: 0.6392157, a: 0}
   _deadColor: {r: 0.7294118, g: 0.78431374, b: 0.5254902, a: 0}
