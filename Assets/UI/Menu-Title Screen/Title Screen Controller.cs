@@ -90,8 +90,11 @@ namespace Context.UI
             var nextIndex = ApplicationManager.Instance.SceneLoader.GetCurrentBuildIndex() + 1;
             ApplicationManager.Instance.SceneLoader.TransitionToScene(nextIndex);
         }
-
+        private void Credits()
+        {
+            var lastIndex = ApplicationManager.Instance.SceneLoader.GetLastBuildIndex();
+            ApplicationManager.Instance.SceneLoader.TransitionToScene(lastIndex);
+        }
         private void Quit() => Application.Quit();
-        private void Credits() => Debug.LogWarning("Credits not implemented.");
     }
 }

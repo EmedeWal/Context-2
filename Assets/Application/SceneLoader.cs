@@ -22,6 +22,9 @@ namespace Context
         public int GetCurrentBuildIndex() => 
             SceneManager.GetActiveScene().buildIndex;
 
+        public int GetLastBuildIndex() =>
+            SceneManager.sceneCountInBuildSettings - 1;
+
         public void TransitionToScene(int buildIndex)
         {
             _overlay.FadeRoutineOverlay

@@ -17,10 +17,11 @@ namespace Context.ThirdPersonController
         [Header("Data")]
         [SerializeField] private AudioData[] _sandFootstepsArray;
         [SerializeField] private AudioData[] _rockFootstepsArray;
+        [SerializeField] private AudioData _sandLandData;
+        [SerializeField] private AudioData _rockLandData;
         [SerializeField] private AudioData _removeData;
         [SerializeField] private AudioData _addData;
         [SerializeField] private AudioData _jumpData;
-        [SerializeField] private AudioData _landData;
 
         private AudioManager _audioManager;
         private GroundType _groundType;
@@ -71,8 +72,12 @@ namespace Context.ThirdPersonController
         }
         private void TPAudio_Landed(GroundType groundType)
         {
+            var data = groundType is GroundType.Sand
+                ? _sandLandData
+                : _rockLandData;
+
             _jumpSource.Stop();
-            _audioManager.Play(_landData, _landSource);
+            _audioManager.Play(data, _landSource);
         }
 
         private void TPAudio_Jumped()
