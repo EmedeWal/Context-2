@@ -32,6 +32,8 @@ namespace Context
         private List<StaticConnectionPoint> _staticConnectionPoints;
         private List<BaseConnectionPoint> _connectionPoints;
 
+        [Range(0, 1)] public float TEST;
+
         private TerrainLayerColorChanger _terrainLayerColorChanger;
         private PostProcessingManager _postProcessingManager;
 
@@ -102,7 +104,7 @@ namespace Context
         {
             var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
-            _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
+            _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(TEST), deltaTime);
         }
 
         private void UpdateLevelBasedConnections(int index)
@@ -121,8 +123,8 @@ namespace Context
             var finishedPercentage = (float)finishedPoints.Count / connectionPoints.Count;
             finishedPercentage = Mathf.Clamp01(finishedPercentage);
 
-            _terrainLayerColorChanger.ChangeLayerColor(index, finishedPercentage);
-            _fireflyParticles[index].Tick(finishedPercentage);
+            _terrainLayerColorChanger.ChangeLayerColor(index, TEST);
+            _fireflyParticles[index].Tick(TEST);
         }
 
 
