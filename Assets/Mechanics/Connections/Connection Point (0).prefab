@@ -2282,12 +2282,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <InitialConnectionPoints>k__BackingField: []
+  <ControlPromptOffset>k__BackingField: 2
   _dialogueData: {fileID: 0}
   _completedConnections:
     m_PersistentCalls:
       m_Calls: []
+  _maxconnections: 2
   _defaultMaterial: {fileID: 2100000, guid: 44696b106838ddf4bba93e3245f00900, type: 2}
   _litMaterial: {fileID: 2100000, guid: 43b06d1d423c7d74c81d507c850ed38a, type: 2}
+  _organisms: []
   _bodyMeshRenderer: {fileID: 1992898271129093777}
   _meshRenderers:
   - {fileID: 6277292229175680343}
@@ -2305,6 +2308,7 @@ MonoBehaviour:
   - {fileID: 3741575278423810978}
   - {fileID: 235129934443460898}
   - {fileID: 235129934443460898}
+  <LevelIndex>k__BackingField: 0
 --- !u!1 &6150565674970937679
 GameObject:
   m_ObjectHideFlags: 0
