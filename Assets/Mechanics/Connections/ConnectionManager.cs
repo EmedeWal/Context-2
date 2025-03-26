@@ -146,8 +146,13 @@ namespace Context
                 CreateConnection(caller, target, false);
             }
 
+            var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
+            var playerConnectionCollider = player.Connections[0].MeshCollider;
+            foreach (var connections in target.Connections)
+                connections.LateTick(playerConnectionCollider);
+
             // Ensure all connections are unobstructed before stabilizing
-            if (data.Other.Connections.Any(connection => connection.Obstructed) || target.Connections.Any(connection => connection.Obstructed))
+            if (target.Connections.Any(connection => connection.Obstructed))
                 return;
 
             WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, target.ControlPromptOffset, "Interact");

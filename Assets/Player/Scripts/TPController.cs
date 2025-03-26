@@ -288,7 +288,7 @@ namespace Context.ThirdPersonController
 
         private void CheckConnect()
         {
-            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround)
+            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround && WorldSpaceCanvas.Instance.IsEnabled)
             {
                 var pos = _motor.TransientPosition;
                 var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
