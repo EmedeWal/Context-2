@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 455888}
   - component: {fileID: 6551608}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 425768}
   - component: {fileID: 6522694}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 409916}
   - component: {fileID: 3315652}
   - component: {fileID: 2311072}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Stonehenge_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -205,7 +205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 422218}
   - component: {fileID: 6507844}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

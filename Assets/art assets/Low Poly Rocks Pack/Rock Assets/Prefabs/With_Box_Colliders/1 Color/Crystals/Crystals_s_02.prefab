@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 491110}
   - component: {fileID: 3346260}
   - component: {fileID: 2363892}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crystals_s_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}

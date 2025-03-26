@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3356426}
   - component: {fileID: 2392960}
   - component: {fileID: 6485214}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Concrete_Block_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}

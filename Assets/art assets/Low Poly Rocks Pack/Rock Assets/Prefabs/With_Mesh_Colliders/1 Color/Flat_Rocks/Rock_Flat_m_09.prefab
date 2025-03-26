@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3361100}
   - component: {fileID: 2358496}
   - component: {fileID: 6482090}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Flat_m_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}

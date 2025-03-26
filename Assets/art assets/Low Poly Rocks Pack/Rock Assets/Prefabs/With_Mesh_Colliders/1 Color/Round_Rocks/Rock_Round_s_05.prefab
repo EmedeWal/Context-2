@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 478246}
   - component: {fileID: 3347248}
   - component: {fileID: 2301554}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Round_s_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}

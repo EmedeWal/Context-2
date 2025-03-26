@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 402364}
   - component: {fileID: 6522470}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 423570}
   - component: {fileID: 3392218}
   - component: {fileID: 2301356}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Brick_Pile_m_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 453386}
   - component: {fileID: 6515818}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

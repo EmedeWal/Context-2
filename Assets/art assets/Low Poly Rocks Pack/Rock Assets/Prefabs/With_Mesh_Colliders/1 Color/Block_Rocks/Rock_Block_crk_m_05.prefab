@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3365876}
   - component: {fileID: 2318756}
   - component: {fileID: 6423680}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Block_crk_m_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}

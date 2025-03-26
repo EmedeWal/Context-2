@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 498322}
   - component: {fileID: 6511326}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 476060}
   - component: {fileID: 6529306}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 420478}
   - component: {fileID: 6572410}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   m_Component:
   - component: {fileID: 466780}
   - component: {fileID: 6501140}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 450272}
   - component: {fileID: 3396508}
   - component: {fileID: 2317688}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crystals_l_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}

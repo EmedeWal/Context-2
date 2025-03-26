@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 414476}
   - component: {fileID: 6579208}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 469082}
   - component: {fileID: 3356192}
   - component: {fileID: 2353684}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Concrete_Block_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}

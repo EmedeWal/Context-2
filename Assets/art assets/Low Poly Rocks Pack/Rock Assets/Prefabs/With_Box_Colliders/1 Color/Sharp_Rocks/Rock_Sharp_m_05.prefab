@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 467210}
   - component: {fileID: 3348896}
   - component: {fileID: 2363302}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Sharp_m_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 402952}
   - component: {fileID: 6578398}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

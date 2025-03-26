@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 457794}
   - component: {fileID: 6528082}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 464690}
   - component: {fileID: 3388208}
   - component: {fileID: 2304254}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crystal_m_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}

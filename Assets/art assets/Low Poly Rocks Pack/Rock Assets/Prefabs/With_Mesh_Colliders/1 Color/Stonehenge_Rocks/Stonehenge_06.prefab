@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3362566}
   - component: {fileID: 2392616}
   - component: {fileID: 6473376}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Stonehenge_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}

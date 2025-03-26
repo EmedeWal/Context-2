@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3373198}
   - component: {fileID: 2331982}
   - component: {fileID: 6479234}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Square_m_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 477826}
   - component: {fileID: 3305120}
   - component: {fileID: 2357968}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crystal_m_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 424082}
   - component: {fileID: 6535862}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

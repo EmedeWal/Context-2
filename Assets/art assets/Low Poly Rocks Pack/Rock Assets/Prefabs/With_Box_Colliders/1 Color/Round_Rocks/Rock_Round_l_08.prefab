@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 476864}
   - component: {fileID: 6549190}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Colliner (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427778}
   - component: {fileID: 6558592}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Colliner (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 485820}
   - component: {fileID: 6506146}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Colliner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   m_Component:
   - component: {fileID: 415172}
   - component: {fileID: 6574214}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Colliner (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 474540}
   - component: {fileID: 3378016}
   - component: {fileID: 2312770}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Round_l_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 462948}
   - component: {fileID: 6598584}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Colliner (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

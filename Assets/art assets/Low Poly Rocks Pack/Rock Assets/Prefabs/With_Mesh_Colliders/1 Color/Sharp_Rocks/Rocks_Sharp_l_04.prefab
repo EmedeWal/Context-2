@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3390526}
   - component: {fileID: 2392050}
   - component: {fileID: 6444688}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rocks_Sharp_l_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}

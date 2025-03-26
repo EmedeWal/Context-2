@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 446222}
   - component: {fileID: 6518410}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 423110}
   - component: {fileID: 6572780}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 430552}
   - component: {fileID: 3305096}
   - component: {fileID: 2345508}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crystal_crk_m_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}

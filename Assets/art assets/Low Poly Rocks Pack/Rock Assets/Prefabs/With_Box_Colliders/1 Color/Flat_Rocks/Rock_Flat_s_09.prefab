@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 401612}
   - component: {fileID: 3339562}
   - component: {fileID: 2388088}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Flat_s_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 418168}
   - component: {fileID: 6571344}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

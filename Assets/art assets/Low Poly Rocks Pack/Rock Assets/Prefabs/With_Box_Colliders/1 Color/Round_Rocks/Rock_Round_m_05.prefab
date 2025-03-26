@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 498748}
   - component: {fileID: 3321212}
   - component: {fileID: 2369810}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Round_m_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   m_Component:
   - component: {fileID: 444542}
   - component: {fileID: 6567198}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 492190}
   - component: {fileID: 6530868}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

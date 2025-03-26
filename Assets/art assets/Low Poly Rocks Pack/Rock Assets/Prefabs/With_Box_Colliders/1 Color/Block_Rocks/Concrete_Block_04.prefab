@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 483966}
   - component: {fileID: 3307254}
   - component: {fileID: 2331332}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Concrete_Block_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 451928}
   - component: {fileID: 6527890}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 434370}
   - component: {fileID: 6549312}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 443906}
   - component: {fileID: 6546318}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 435952}
   - component: {fileID: 3334132}
   - component: {fileID: 2320108}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock_Square_crk_s_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
