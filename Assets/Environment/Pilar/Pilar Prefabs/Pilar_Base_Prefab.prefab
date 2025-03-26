@@ -340,6 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <InitialConnectionPoints>k__BackingField: []
+  <ControlPromptOffset>k__BackingField: 4
   _dialogueData: {fileID: 0}
   _completedConnections:
     m_PersistentCalls:
@@ -347,7 +348,6 @@ MonoBehaviour:
   _maxconnections: 2
   _defaultMaterial: {fileID: 2100000, guid: 44696b106838ddf4bba93e3245f00900, type: 2}
   _litMaterial: {fileID: 2100000, guid: 43b06d1d423c7d74c81d507c850ed38a, type: 2}
-  _terrainLayerIndex: 0
   _organisms: []
   _bodyMeshRenderer: {fileID: 0}
   _meshRenderers:
@@ -369,6 +369,7 @@ MonoBehaviour:
   - {fileID: 6679546091076606983}
   - {fileID: 8545363718055736979}
   - {fileID: 3198252809790045152}
+  <LevelIndex>k__BackingField: 0
 --- !u!23 &1272313844546708106 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -7917923631560056382, guid: 9d5b917c95a3c2c4186d01f8857daee7, type: 3}
