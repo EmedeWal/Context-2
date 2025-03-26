@@ -68,10 +68,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.291
+    m_Value: 0.3
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.584
+    m_Value: 0.5
   rounded:
     m_OverrideState: 0
     m_Value: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: MainMenu Standard
+  m_Name: Alive Volume Profile
   m_EditorClassIdentifier: 
   components:
   - {fileID: -7893295128165547882}

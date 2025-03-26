@@ -14,12 +14,12 @@ namespace Context
 
         private const float SPEED = 5f; // Speed multiplier for smooth lerp
 
-        public PostProcessingManager(GameObject parentObject, VolumeProfile runtimeProfile, VolumeProfile standardProfile, VolumeProfile aliveProfile, VolumeProfile deadProfile)
+        public PostProcessingManager(GameObject parentObject, VolumeProfile standardProfile, VolumeProfile runtimeProfile, VolumeProfile aliveProfile, VolumeProfile deadProfile)
         {
             _volume = parentObject.GetComponentInChildren<Volume>();
 
-            _runtimeProfile = runtimeProfile;
             _standardProfile = standardProfile;
+            _runtimeProfile = runtimeProfile;
             _aliveProfile = aliveProfile;
             _deadProfile = deadProfile;
         }
