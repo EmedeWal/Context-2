@@ -44,6 +44,11 @@ namespace Context
             _completedConnections = null;
         }
 
+        public virtual bool HasMaxConnections()
+        {
+            var stableConnections = Connections.Where(connection => connection.Stable).ToList();
+            return stableConnections.Count >= _maxconnections;
+        }
         public bool ConnectionsOverCap(int connectionIncrement) => Connections.Count + connectionIncrement > _maxconnections;
 
         public OtherConnectionStruct GetFirstOtherConnection()

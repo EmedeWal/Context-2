@@ -81,6 +81,9 @@ namespace Context.ThirdPersonController
             _channel.Cleanup();
         }
 
+        public override bool HasMaxConnections() =>
+            Connections.Count >= _maxconnections;
+
         public bool IsMoving()
         {
             var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
