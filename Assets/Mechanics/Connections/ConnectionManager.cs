@@ -104,6 +104,7 @@ namespace Context
         {
             var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
+            finishedPercentage = 1;
             _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
         }
 
