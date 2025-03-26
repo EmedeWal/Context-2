@@ -95,7 +95,7 @@ namespace Context
             || (target.ConnectionsOverCap(2) && !callerTargetConnection)
             || (target.Connections.Count == 1 && callerTargetConnection))
             {
-                Debug.LogWarning("Something was invalid.");
+                //Debug.LogWarning("Something was invalid.");
                 return;
             }
 

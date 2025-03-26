@@ -93,7 +93,12 @@ namespace Context.ThirdPersonController
 
         public GroundType GetGroundType()
         {
-            return (int)_motor.GroundingStatus.GroundCollider.gameObject.layer == _sandLayer
+            var groundObject = _motor.GroundingStatus.GroundCollider;
+            
+            if (groundObject == null)
+                return GroundType.Sand;
+                
+            return (int)groundObject.gameObject.layer == _sandLayer
                 ? GroundType.Sand
                 : GroundType.Rock;
         }

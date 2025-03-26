@@ -68,6 +68,8 @@ namespace Context.ThirdPersonController
 
         private void TPAudio_Footstep()
         {
+            return;
+            
             var array = _groundType is GroundType.Sand
                 ? _sandFootstepsArray
                 : _rockFootstepsArray;
