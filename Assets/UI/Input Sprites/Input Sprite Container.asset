@@ -35,7 +35,7 @@ MonoBehaviour:
     _binding: E/Button West
     Sprites:
     - {fileID: 21300000, guid: f8eeeac57aff7ec489f52f179e2f14de, type: 3}
-    - {fileID: 21300000, guid: 49e74c1c97b6f1540b08de9fdd8e69aa, type: 3}
+    - {fileID: 21300000, guid: 01f045ec00c51de43b8736c871ed0a22, type: 3}
     - {fileID: 21300000, guid: 5288f33c573de87408c5238cf4f0e40d, type: 3}
   - ActionName: Pause
     _binding: Escape/Menu
@@ -46,6 +46,6 @@ MonoBehaviour:
   - ActionName: Continue
     _binding: Enter/Button South
     Sprites:
-    - {fileID: 0}
+    - {fileID: 21300000, guid: ffa5694c7a704584ca8bf7c7587389fc, type: 3}
     - {fileID: 21300000, guid: 50d9097d82b401d418f0084c59e5ea2a, type: 3}
     - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}
