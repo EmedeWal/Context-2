@@ -1,5 +1,6 @@
 namespace Context
 {
+    using System;
     using System.Linq;
     using UnityEngine;
 
@@ -26,20 +27,27 @@ namespace Context
         [SerializeField] private float _sizeWidth = 0.15f;
         [SerializeField] private float _checkWidth = 0.03f;
 
-        private LineRenderer _lineRenderer;
+        [Space]
+        [Header("Spring")]
+        [SerializeField] private AnimationCurve _springCurve;
+        [SerializeField] private float _pointsPerUnit = 10f; // Determines resolution
+        [SerializeField] private float _waveHeight = 0.5f;
+        [SerializeField] private float _waveCount = 3f;
+        [SerializeField] private float _velocity = 15f;
+
+        private LineRenderer _line;
         private Mesh _bakedMesh;
 
         public void Init(BaseConnectionPoint pointA, BaseConnectionPoint pointB, bool stable)
         {
-            _lineRenderer = GetComponent<LineRenderer>();
+            _line = GetComponent<LineRenderer>();
             MeshCollider = GetComponent<MeshCollider>();
 
-            _lineRenderer.colorGradient = _stableDefaultGradient;
-            _lineRenderer.numCornerVertices = 6;
-            _lineRenderer.numCapVertices = 6;
-            _lineRenderer.positionCount = 2;
-            _lineRenderer.startWidth = _sizeWidth;
-            _lineRenderer.endWidth = _sizeWidth;
+            _line.colorGradient = _stableDefaultGradient;
+            _line.numCornerVertices = 6;
+            _line.numCapVertices = 6;
+            _line.startWidth = _sizeWidth;
+            _line.endWidth = _sizeWidth;
 
             Stable = stable;
 
@@ -61,7 +69,7 @@ namespace Context
             }
         }
 
-        public void LateTick(Collider collider)
+        public void LateTick(Collider collider, float time)
         {
             var colliderA = AttachedPoints[0].Collider;
             var colliderB = AttachedPoints[1].Collider;
@@ -77,22 +85,51 @@ namespace Context
                 : _unstableDefaultGradient;  
 
             Obstructed = IsObstructed(colliderA, colliderB, pointA, pointB, collider);
-            _lineRenderer.colorGradient = Obstructed
+            _line.colorGradient = Obstructed
                 ? obstructedGradient
                 : defaultGradient;
 
-            UpdateConnection(pointA, pointB);
+            UpdateConnection(pointA, pointB, time);
         }
+
+        private void UpdateRope(Vector3 pointA, Vector3 pointB, float time)
+        {
+            float noiseOffset = time * _velocity; // Move Perlin noise over time
+            Vector3 direction = (pointB - pointA).normalized;
+
+            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
+            Vector3 upDirection = Vector3.Cross(right, direction).normalized; // Correct up vector
+
+            for (int i = 0; i < _line.positionCount; i++)
+            {
+                float delta = i / (float)(_line.positionCount - 1); // Proper interpolation
+                Vector3 basePosition = Vector3.Lerp(pointA, pointB, delta);
+
+                // Generate Perlin noise based on world position & time
+                float noise = Mathf.PerlinNoise(delta * _waveCount, noiseOffset) * 2f - 1f; // Normalize to [-1, 1]
+                float waveOffset = noise * _waveHeight;
+
+                Vector3 finalPosition = basePosition + upDirection * waveOffset;
+                _line.SetPosition(i, finalPosition);
+            }
+        }
+
 
         public void SetupConnection(BaseConnectionPoint a, BaseConnectionPoint b)
         {
             AttachedPoints = new BaseConnectionPoint[2] { a, b };
-            UpdateConnection(AttachedPoints[0].Collider.bounds.center, AttachedPoints[1].Collider.bounds.center);
+            UpdateConnection(AttachedPoints[0].Collider.bounds.center, AttachedPoints[1].Collider.bounds.center, Time.time);
         }
 
-        public void UpdateConnection(Vector3 pointA, Vector3 pointB)
+        public void UpdateConnection(Vector3 pointA, Vector3 pointB, float time)
         {
-            UpdateLinePoints(pointA, pointB);
+            // Determine the number of segments based on distance
+            float distance = Vector3.Distance(pointA, pointB);
+            var lineQuality = Mathf.Max(2, Mathf.RoundToInt(distance * _pointsPerUnit)); // Ensure at least 2 points
+
+            _line.positionCount = lineQuality + 1; // Update line segment count
+
+            UpdateRope(pointA, pointB, time);
             UpdateMeshCollider();
         }
 
@@ -117,8 +154,8 @@ namespace Context
 
         private void UpdateLinePoints(Vector3 pointA, Vector3 pointB)
         {
-            _lineRenderer.SetPosition(0, pointA);
-            _lineRenderer.SetPosition(1, pointB);
+            _line.SetPosition(0, pointA);
+            _line.SetPosition(1, pointB);
         }
 
         private void UpdateMeshCollider()
@@ -126,7 +163,7 @@ namespace Context
             if (_bakedMesh != null) Destroy(_bakedMesh); // Destroy previous mesh to free memory
 
             _bakedMesh = new Mesh();
-            _lineRenderer.BakeMesh(_bakedMesh, true);
+            _line.BakeMesh(_bakedMesh, true);
             MeshCollider.sharedMesh = _bakedMesh;
 
             MeshCollider.convex = true;

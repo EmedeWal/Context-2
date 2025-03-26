@@ -7546,6 +7546,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &266273199 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4871852229967560694, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+  m_PrefabInstance: {fileID: 266703245}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &266703245
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7618,6 +7623,18 @@ PrefabInstance:
       propertyPath: '<InitialConnectionPoints>k__BackingField.Array.data[0]'
       value: 
       objectReference: {fileID: 1541033057}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: _completedConnections.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: _completedConnections.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 266273199}
+    - target: {fileID: 6548532282193351310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
+      propertyPath: _completedConnections.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6928492156877016310, guid: e16d4b6d99ff3e54a91835de94bd8606, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
