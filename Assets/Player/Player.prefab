@@ -11080,7 +11080,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2602172895592267090}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13327703, y: 0, z: 0, w: 0.99107885}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.29999995, z: -14.999999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -11973,10 +11973,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 93eb88b546623384db091a6a464e1598, type: 2}
   - {fileID: 11400000, guid: f8cf1be4095cbc6458087537bf35465d, type: 2}
   - {fileID: 11400000, guid: a41f858cd9cb45a43b24a0c4c737315e, type: 2}
+  _sandLandData: {fileID: 11400000, guid: 7316f62a65ed0854694109d3cd290019, type: 2}
+  _rockLandData: {fileID: 11400000, guid: 68a20275533b93741bd1ae22751ba279, type: 2}
   _removeData: {fileID: 11400000, guid: b1511fa8d642ed247816586754146f47, type: 2}
   _addData: {fileID: 11400000, guid: 54169ac5ec3de324eb4ac202b7314505, type: 2}
   _jumpData: {fileID: 11400000, guid: a4a7f990843abea45ad02158de4e97b9, type: 2}
-  _landData: {fileID: 11400000, guid: ccf01b68fd512014d9d5dc3318d9d640, type: 2}
 --- !u!1 &4283970265585364030
 GameObject:
   m_ObjectHideFlags: 0
@@ -13758,7 +13759,7 @@ Transform:
   m_GameObject: {fileID: 8589375594183367642}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13327703, y: 0, z: 0, w: 0.99107885}
-  m_LocalPosition: {x: 0, y: 3.8086007, z: -15}
+  m_LocalPosition: {x: 207.22, y: 50.298603, z: 203.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

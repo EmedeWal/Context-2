@@ -10,11 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f24a92a9f666bd4a8bab9cde0773423, type: 3}
-  m_Name: Land
+  m_Name: Rock Landing
   m_EditorClassIdentifier: 
   Group: {fileID: -3158872305780743129, guid: 939118d99342d9d4ba63d111864e7db4, type: 2}
-  Clip: {fileID: 8300000, guid: eaae8fe8d600e1f459f34aa5757fa3b8, type: 3}
-  Volume: 0.5
+  Clip: {fileID: 8300000, guid: 3d8f480d252db9449b2f978284506f8e, type: 3}
+  Volume: 1
   Offset: 0
-  PitchRanges: []
+  PitchRanges:
+  - 0.8
+  - 0.9
+  - 1
+  - 1.1
+  - 1.2
   Overwrite: 0
