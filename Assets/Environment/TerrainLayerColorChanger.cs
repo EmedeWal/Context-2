@@ -27,8 +27,13 @@ namespace Context
 
         public void ChangeLayerColor(int index, float finishedPercentage)
         {
-            TerrainLayer layer = _terrainData.terrainLayers[index];
+            var layer = _terrainData.terrainLayers[index];
             layer.diffuseRemapMax = Color.Lerp(_deadColor, _aliveColor, finishedPercentage);
+
+            // Reassign the layers (this forces an update)
+            TerrainLayer[] newLayers = _terrainData.terrainLayers;
+            newLayers[index] = layer;
+            _terrainData.terrainLayers = newLayers;
         }
     }
 }
