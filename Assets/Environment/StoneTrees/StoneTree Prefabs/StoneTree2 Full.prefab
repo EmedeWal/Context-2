@@ -50,12 +50,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
       propertyPath: m_Name
-      value: StoneTree2
+      value: StoneTree2 Full
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6217064291500811375}
     - targetCorrespondingSourceObject: {fileID: 7045030354117346258, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9161820221746587002}
@@ -75,6 +78,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 930916806950887783}
   m_SourcePrefab: {fileID: 100100000, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+--- !u!23 &1193776939118917157 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7841272781267861279, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1363995995133002454 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7975042476016782316, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
@@ -129,6 +137,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -4753976898039024662, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+--- !u!23 &4120295656072880986 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -4220204009960789408, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4606308886825766197 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4876285997155681295, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4950304231581837714 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4103881766339141800, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
@@ -156,6 +174,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 3785296276508407262, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+--- !u!23 &5388769601667597888 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -5293936662160175238, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5689786027710923542 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5569043992460113364, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
@@ -237,3 +260,39 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1515144191993293674, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+--- !u!23 &7332529271529011224 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7385189512676675294, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &7665695674366756295 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7628274954807177987, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8106901611581387883 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 69c9556e3f12e1647a09ab4e3aebc912, type: 3}
+  m_PrefabInstance: {fileID: 8953413077157841210}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-6217064291500811375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8106901611581387883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderers:
+  - {fileID: 1193776939118917157}
+  - {fileID: 7665695674366756295}
+  - {fileID: 7332529271529011224}
+  - {fileID: 4606308886825766197}
+  - {fileID: 5388769601667597888}
+  - {fileID: 4120295656072880986}
+  _aliveColor: {r: 1, g: 0.5882353, b: 0.8745098, a: 0}
+  _deadColor: {r: 0.41568628, g: 0.49803922, b: 0.4, a: 0}

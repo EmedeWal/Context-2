@@ -122,6 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshRenderers: []
+  _meshRenderers:
+  - {fileID: 2312902}
   _aliveColor: {r: 0.78431374, g: 0.5254902, b: 0.6392157, a: 0}
   _deadColor: {r: 0.7294118, g: 0.78431374, b: 0.5254902, a: 0}
