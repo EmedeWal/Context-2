@@ -356,3 +356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _eventSystem: {fileID: 5942034887085437497, guid: 149194281cc433645963d26f1888b941, type: 3}
   _canvas: {fileID: 1336456341691679986, guid: 7a3a647ddb2115b46a54fec39c039367, type: 3}
+  _standardProfile: {fileID: 0}
+  _runtimeProfile: {fileID: 11400000, guid: 0528afd9dbc6d4a45a4b2bb718cfa7e5, type: 2}
+  _aliveProfile: {fileID: 11400000, guid: 35ca3ab473bcbc946b974d5cb207b07e, type: 2}
+  _deadProfile: {fileID: 11400000, guid: 22b1eb73c9e4d604fbeb9e912b58fefd, type: 2}

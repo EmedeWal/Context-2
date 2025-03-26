@@ -27,6 +27,8 @@ namespace Context
 
         [Space]
         [Header("Volumes")]
+        [SerializeField] private VolumeProfile _standardProfile;
+        [SerializeField] private VolumeProfile _runtimeProfile;
         [SerializeField] private VolumeProfile _aliveProfile;
         [SerializeField] private VolumeProfile _deadProfile;
 
@@ -53,12 +55,19 @@ namespace Context
                 _sceneLoader = new(_overlay);
                 _inputManager = new();
                 _audioManager = new(GetComponentsInChildren<AudioSource>());
-                _postProcessingManager = new(gameObject, _aliveProfile, _deadProfile);
+                _postProcessingManager = new(gameObject, _standardProfile, _runtimeProfile, _aliveProfile, _deadProfile);
 
                 Instance = this;
             }
             else
                 Destroy(gameObject);
+
+            Instance.Init();
+        }
+
+        public void Init()
+        {
+            _postProcessingManager.Init();
         }
 
         private void Update()
