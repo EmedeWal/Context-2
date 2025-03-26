@@ -29,8 +29,6 @@ namespace Context
         [Space]
         [Header("Scene")]
         [SerializeField] private ParticleController[] _fireflyParticles;
-        [SerializeField] private Texture[] _terrainTextures;
-
         private List<StaticConnectionPoint> _staticConnectionPoints;
         private List<BaseConnectionPoint> _connectionPoints;
 
@@ -104,7 +102,6 @@ namespace Context
         {
             var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
-            finishedPercentage = 1;
             _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
         }
 
