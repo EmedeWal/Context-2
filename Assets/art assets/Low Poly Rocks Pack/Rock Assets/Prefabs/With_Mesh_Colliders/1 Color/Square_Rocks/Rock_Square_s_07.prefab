@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3305104}
   - component: {fileID: 2396898}
   - component: {fileID: 6480302}
+  - component: {fileID: -9212167922836636642}
   m_Layer: 6
   m_Name: Rock_Square_s_07
   m_TagString: Untagged
@@ -109,3 +110,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 61a7f1555628872458548c2350904527, type: 3}
+--- !u!114 &-9212167922836636642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderers: []
+  _aliveColor: {r: 0.78431374, g: 0.5254902, b: 0.6392157, a: 0}
+  _deadColor: {r: 0.7294118, g: 0.78431374, b: 0.5254902, a: 0}
