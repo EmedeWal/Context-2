@@ -20,10 +20,19 @@ namespace Context
     {
         public static ConnectionManager Instance { get; private set; }
 
+        [Header("REFERENCES")]
+
+        [Space]
+        [Header("Project")]
         [SerializeField] private Connection _connectionPrefab;
 
-        private List<BaseConnectionPoint> _connectionPoints;
+        [Space]
+        [Header("Scene")]
+        [SerializeField] private ParticleController[] _fireflyParticles;
+        [SerializeField] private Texture[] _terrainTextures;
 
+        private List<StaticConnectionPoint> _staticConnectionPoints;
+        private List<BaseConnectionPoint> _connectionPoints;
         private PostProcessingManager _postProcessingManager;
 
         private void Start()
@@ -46,7 +55,11 @@ namespace Context
                 foreach (var other in connectionPoint.InitialConnectionPoints)
                     RequestConnection(connectionPoint, other);
 
+            _staticConnectionPoints = _connectionPoints.OfType<StaticConnectionPoint>().ToList(); 
             _postProcessingManager = ApplicationManager.Instance.PostProcessingManager;
+
+            foreach (var particle in _fireflyParticles)
+                particle.Init();
 
             UpdatePostProcessing(1);
         }
@@ -75,6 +88,9 @@ namespace Context
                 }
             }
             UpdatePostProcessing(Time.deltaTime);
+
+            for (int i = 0; i < _fireflyParticles.Length; i++)
+                UpdateLevelBasedConnections(i);
         }
 
         private void UpdatePostProcessing(float deltaTime)
@@ -82,6 +98,18 @@ namespace Context
             var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
             _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
+        }
+
+        private void UpdateLevelBasedConnections(int index)
+        {
+            var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index).ToList();
+            var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections()).ToList();
+            var finishedPercentage = (float)finishedPoints.Count / (float)connectionPoints.Count;
+            finishedPercentage = Mathf.Clamp01(finishedPercentage);
+
+            _fireflyParticles[index].Tick(finishedPercentage);
+            
+
         }
 
         // Trigger enter
