@@ -83,7 +83,7 @@ namespace Context.ThirdPersonController
             CrossFade(_jumpH, _deltaTime, _actionTransitionTime, false, _overrideLayer);
         }
 
-        private void TPAnimator_Landed(Vector3 velocity)
+        private void TPAnimator_Landed(GroundType groundType)
         {
             CrossFade(_emptyH, _deltaTime, _locomotionTransitionTime, false, _overrideLayer);
         }

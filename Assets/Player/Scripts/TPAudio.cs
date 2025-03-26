@@ -22,12 +22,6 @@ namespace Context.ThirdPersonController
         [SerializeField] private AudioData _jumpData;
         [SerializeField] private AudioData _landData;
 
-        [Header("SETTINGS")]
-
-        [Space]
-        [Header("Landing")]
-        [SerializeField] private float _minImpactMagnitude = 10;
-
         private AudioManager _audioManager;
         private GroundType _groundType;
 
@@ -68,8 +62,6 @@ namespace Context.ThirdPersonController
 
         private void TPAudio_Footstep()
         {
-            return;
-            
             var array = _groundType is GroundType.Sand
                 ? _sandFootstepsArray
                 : _rockFootstepsArray;
@@ -77,13 +69,10 @@ namespace Context.ThirdPersonController
             var index = Random.Range(0, array.Length);
             _audioManager.Play(array[index], _footstepSource);
         }
-        private void TPAudio_Landed(Vector3 velocity)
+        private void TPAudio_Landed(GroundType groundType)
         {
-            if (velocity.magnitude > _minImpactMagnitude)
-            {
-                _jumpSource.Stop();
-                _audioManager.Play(_landData, _landSource);
-            }
+            _jumpSource.Stop();
+            _audioManager.Play(_landData, _landSource);
         }
 
         private void TPAudio_Jumped()

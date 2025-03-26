@@ -11,12 +11,6 @@ namespace Context.ThirdPersonController
         [SerializeField] private ParticleSystem _smallDust;
         [SerializeField] private ParticleSystem _bigDust;
 
-        [Header("SETTINGS")]
-
-        [Space]
-        [Header("Land Settings")]
-        [SerializeField] private float _minImpactMagnitude = 10f;
-
         private Transform _followTarget;
         private Transform _transform;
         private TPAnimator _animator;
@@ -60,9 +54,9 @@ namespace Context.ThirdPersonController
             }
         }
 
-        private void TPRoot_Landed(Vector3 velocity)
+        private void TPRoot_Landed(GroundType groundType)
         {
-            if (_groundType is GroundType.Sand && velocity.magnitude > _minImpactMagnitude)
+            if (groundType is GroundType.Sand)
             {
                 _bigDust.Play();
             }

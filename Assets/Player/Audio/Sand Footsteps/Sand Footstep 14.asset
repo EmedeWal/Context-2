@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f24a92a9f666bd4a8bab9cde0773423, type: 3}
-  m_Name: Footstep 6
+  m_Name: Sand Footstep 14
   m_EditorClassIdentifier: 
   Group: {fileID: -3158872305780743129, guid: 939118d99342d9d4ba63d111864e7db4, type: 2}
-  Clip: {fileID: 8300000, guid: 4abc431d61ba42a4197ca0aba3bad8d3, type: 3}
+  Clip: {fileID: 8300000, guid: 7ec804530ad09cd4093a5ef030cfc7ec, type: 3}
   Volume: 0.2
   Offset: 0
   PitchRanges:

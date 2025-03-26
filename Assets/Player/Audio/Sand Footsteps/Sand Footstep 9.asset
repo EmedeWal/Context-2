@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f24a92a9f666bd4a8bab9cde0773423, type: 3}
+  m_Name: Sand Footstep 9
+  m_EditorClassIdentifier: 
+  Group: {fileID: -3158872305780743129, guid: 939118d99342d9d4ba63d111864e7db4, type: 2}
+  Clip: {fileID: 8300000, guid: 17a55e09664ccf54392bb53bbf824804, type: 3}
+  Volume: 0.2
+  Offset: 0
+  PitchRanges:
+  - 0.8
+  - 0.9
+  - 1
+  - 1.1
+  - 1.2
+  Overwrite: 0

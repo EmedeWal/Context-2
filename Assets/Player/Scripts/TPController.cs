@@ -44,12 +44,13 @@ namespace Context.ThirdPersonController
 
         [Space]
         [Header("Detection")]
-        [SerializeField] private int _sandLayer;
+        [SerializeField] private int _sandLayer = 0;
+        [SerializeField] private float _detectionDistance = 1f;
 
         public static event Action Add;
         public static event Action Remove;
         public static event Action Jumped;
-        public static event Action<Vector3> Landed;
+        public static event Action<GroundType> Landed;
 
         private Timer _interactSustainTimer;
         private float _timeSinceJumpRequest;
@@ -93,14 +94,13 @@ namespace Context.ThirdPersonController
 
         public GroundType GetGroundType()
         {
-            var groundObject = _motor.GroundingStatus.GroundCollider;
-            
-            if (groundObject == null)
-                return GroundType.Sand;
-                
-            return (int)groundObject.gameObject.layer == _sandLayer
-                ? GroundType.Sand
-                : GroundType.Rock;
+            if (Physics.Raycast(_motor.TransientPosition, -_motor.CharacterUp, out var hit, _detectionDistance))
+            {
+                return (int)hit.transform.gameObject.layer == _sandLayer
+                    ? GroundType.Sand
+                    : GroundType.Rock;
+            }
+            return GroundType.Rock;
         }
 
         public bool IsMoving()
@@ -322,8 +322,8 @@ namespace Context.ThirdPersonController
         private void OnRemove() =>
             Remove?.Invoke();
 
-        private void OnLanded(Vector3 velocity) =>
-            Landed?.Invoke(velocity);
+        private void OnLanded(GroundType groundType) =>
+            Landed?.Invoke(groundType);
 
         private void TPController_ConnectionEnter(BaseConnectionPoint point) =>
             _manager.CreateUnstableConnection(this, point);
@@ -338,11 +338,12 @@ namespace Context.ThirdPersonController
             _currentlyGrounded = _motor.GroundingStatus.IsStableOnGround;
             _initializedGrounded = (_currentlyGrounded && _previouslyGrounded)|| _initializedGrounded;
         }
+
         public void PostGroundingUpdate(float deltaTime) { }
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
-            if (!_previouslyGrounded && _initializedGrounded)
-                OnLanded(_motor.Velocity);
+            if (!_previouslyGrounded && !_currentlyGrounded && _initializedGrounded)
+                OnLanded(GetGroundType());
         }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
         public bool IsColliderValidForCollisions(Collider collider) => true;
