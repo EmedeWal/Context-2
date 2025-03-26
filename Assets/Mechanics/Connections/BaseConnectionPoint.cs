@@ -12,6 +12,7 @@ namespace Context
         public Collider Collider { get; private set; }
 
         [field: SerializeField] public BaseConnectionPoint[] InitialConnectionPoints { get; private set; }
+        [field: SerializeField] public float ControlPromptOffset { get; private set; }
 
         [Header("REFERENCES")]
 

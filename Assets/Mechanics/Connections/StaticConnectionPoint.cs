@@ -13,13 +13,14 @@ namespace Context
 
         [Space]
         [Header("Environment")]
-        [SerializeField] private int _terrainLayerIndex = 0;
         [SerializeField] private Organism[] _organisms;
 
         [Space]
         [Header("Hierarchy")]
         [SerializeField] private SkinnedMeshRenderer _bodyMeshRenderer;
         [SerializeField] private MeshRenderer[] _meshRenderers;
+
+        [field: SerializeField] public int LevelIndex { get; private set; }
 
         public override void Init(ConnectionManager connectionManager)
         {
