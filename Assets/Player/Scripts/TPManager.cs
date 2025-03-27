@@ -42,10 +42,11 @@ namespace Context.ThirdPersonController
             {
                 Rotation = _cameraTransform.rotation,
                 Movement = inputActions.Move.ReadValue<Vector2>(),
-                Interact = inputActions.Interact.WasPressedThisFrame(),
                 Jump = inputActions.Jump.WasPressedThisFrame(),
                 CancelJump = inputActions.Jump.WasReleasedThisFrame(),
                 SustainJump = inputActions.Jump.IsPressed(),
+                SustainSprint = inputActions.Sprint.IsPressed(),
+                Interact = inputActions.Interact.WasPressedThisFrame(),
             };
             _controller.Tick(controllerInput);
         }
@@ -54,7 +55,7 @@ namespace Context.ThirdPersonController
         {
             var groundType = _controller.GetGroundType();
 
-            _root.LateTick(groundType, Time.deltaTime, _controller.IsMoving());
+            _root.LateTick(groundType, Time.deltaTime, _controller.IsMoving, _controller.IsSprinting);
             _audio.LateTick(groundType);
         }
     }

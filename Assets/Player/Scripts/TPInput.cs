@@ -9,6 +9,7 @@ namespace Context.ThirdPersonController
         public bool Jump;
         public bool CancelJump;
         public bool SustainJump;
+        public bool SustainSprint;
         public bool Interact;
     }
 
@@ -16,10 +17,11 @@ namespace Context.ThirdPersonController
     {
         public Quaternion RequestedRotation;
         public Vector3 RequestedMovement;
-        public bool RequestedInteract;
         public bool RequestedJump;
         public bool RequestedJumpCancel;
         public bool RequestedJumpSustain;
+        public bool RequestedSustainedSprint;
+        public bool RequestedInteract;
 
         public void UpdateInput(ControllerInput input)
         {
@@ -36,6 +38,7 @@ namespace Context.ThirdPersonController
             RequestedInteract = input.Interact || RequestedInteract;
             RequestedJumpCancel = input.CancelJump || RequestedJumpCancel;
 
+            RequestedSustainedSprint = input.SustainSprint;
             RequestedJumpSustain = input.SustainJump;
         }
     }

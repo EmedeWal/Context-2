@@ -88,7 +88,7 @@ namespace Context
             {
                 foreach (var connection in point.Connections)
                 {
-                    if (!tickedConnections.Contains(connection))
+                    if (!tickedConnections.Contains(connection) && connection != player.Connections[0])
                     {
                         connection.LateTick(playerConnectionCollider, time);
                         tickedConnections.Add(connection);

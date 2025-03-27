@@ -6,6 +6,9 @@ namespace Context.ThirdPersonController
 
     public class TPController : BaseConnectionPoint, ICharacterController
     {
+        public bool IsMoving => Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp).sqrMagnitude > 0.1f;
+        public bool IsSprinting => _input.RequestedSustainedSprint;
+
         private KinematicCharacterMotor _motor;
         private TriggerChannel _channel;
         private TPInput _input;
@@ -18,6 +21,7 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _deceleration = 10f;
         [SerializeField] private float _groundedSpeed = 10f;
         [SerializeField] private float _groundedRotation = 5f;
+        [SerializeField] private float _sprintMultiplier = 2f;
 
         [Space]
         [Header("Airborne")]
@@ -107,12 +111,6 @@ namespace Context.ThirdPersonController
             return GroundType.Rock;
         }
 
-        public bool IsMoving()
-        {
-            var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-            return planarVelocity.sqrMagnitude > 0.1f;
-        }
-
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
         public void SetTransientPosition(Vector3 position) => _motor.SetPosition(position);
         public Vector3 GetTransientPosition() => _motor.TransientPosition;
@@ -169,15 +167,21 @@ namespace Context.ThirdPersonController
             ) * _input.RequestedMovement.magnitude;
 
             var targetVelocity = groundedMovement * _groundedSpeed;
-            var response = currentVelocity.magnitude < targetVelocity.magnitude
+            var responseFactor = currentVelocity.magnitude < targetVelocity.magnitude
                 ? _acceleration
                 : _deceleration;
+
+            if (_input.RequestedSustainedSprint)
+            {
+                targetVelocity *= _sprintMultiplier;
+                responseFactor *= _sprintMultiplier;
+            }
 
             var moveVelocity = Vector3.Lerp
             (
                 a: currentVelocity,
                 b: targetVelocity,
-                t: 1f - Mathf.Exp(-response * deltaTime)
+                t: 1f - Mathf.Exp(-responseFactor * deltaTime)
             );
             currentVelocity = moveVelocity;
         }

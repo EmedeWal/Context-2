@@ -12,6 +12,7 @@ namespace Context.ThirdPersonController
         private int _walkH;
         private int _idleH;
         private int _emptyH;
+        private int _speedH;
 
         [Header("SETTINGS")]
 
@@ -36,6 +37,7 @@ namespace Context.ThirdPersonController
             _walkH = Animator.StringToHash("Walk");
             _idleH = Animator.StringToHash("Idle");
             _emptyH = Animator.StringToHash("Empty");
+            _speedH = Animator.StringToHash("Speed");
 
             TPController.Jumped += TPAnimator_Jumped;
             TPController.Landed += TPAnimator_Landed;
@@ -51,9 +53,11 @@ namespace Context.ThirdPersonController
             TPController.Add -= TPAnimator_InteractionStarted;
         }
 
-        public void UpdateAnimations(float deltaTime, bool isMoving)
+        public void UpdateAnimations(float deltaTime, bool isMoving, bool isSprinting)
         {
             _deltaTime = deltaTime;
+
+            _animator.SetFloat(_speedH, isSprinting ? 2 : 1);   
 
             CrossFade(isMoving ? _walkH : _idleH, _deltaTime, _locomotionTransitionTime);
         }
