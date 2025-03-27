@@ -81,6 +81,7 @@ namespace Context
         {
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
             var playerConnectionCollider = player.Connections[0].MeshCollider;
+            //var otherConnectionplayer.GetFirstOtherConnection
             var time = Time.time;
 
             var tickedConnections = new HashSet<Connection>(); // Track already ticked connections
@@ -88,7 +89,7 @@ namespace Context
             {
                 foreach (var connection in point.Connections)
                 {
-                    if (!tickedConnections.Contains(connection) && connection != player.Connections[0])
+                    if (!tickedConnections.Contains(connection))
                     {
                         connection.LateTick(playerConnectionCollider, time);
                         tickedConnections.Add(connection);
