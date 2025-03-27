@@ -29,11 +29,13 @@ namespace Context
         [SerializeField] protected int _maxconnections = 2;
 
         protected ConnectionManager _manager;
+        protected bool _wasCompleted;
 
         public virtual void Init(ConnectionManager connectionManager)
         {
             Connections = new();
             Collider = GetComponent<Collider>();
+            _wasCompleted = false;
 
             _manager = connectionManager;
         }
@@ -66,18 +68,18 @@ namespace Context
         {
             var stableConnections = Connections.Where(c => c.Stable).ToList();
             if (stableConnections.Count == _maxconnections) OnCompletedConnections();
-            else if (stableConnections.Count == 0) OnIncompletedConnections();
-            Debug.Log(stableConnections.Count + " " + gameObject.name);
+            else if (stableConnections.Count == 0 && _wasCompleted) OnIncompletedConnections();
         }
 
         protected virtual void OnCompletedConnections()
         {
+            _wasCompleted = true;
+
             if (_dialogueData != null)
             {
                 DialogueManager.Instance.StartDialogue(_dialogueData.Dialogue);
                 _dialogueData = null;
             }
-
             _connectionAdded?.Invoke();
         }
         protected virtual void OnIncompletedConnections()
