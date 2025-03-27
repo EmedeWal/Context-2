@@ -35,7 +35,7 @@ namespace Context
                 yield return null;
             }
 
-            Destroy(_moveTarget);
+            Destroy(_moveTarget.gameObject);
             Destroy(this);
         }
     }
