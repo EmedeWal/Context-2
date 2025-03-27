@@ -22,7 +22,8 @@ namespace Context
 
         [Space]
         [Tooltip("This event is invoked when max connections are met.")]
-        [SerializeField] private UnityEvent _completedConnections;
+        [SerializeField] private UnityEvent _connectionAdded;
+        [SerializeField] private UnityEvent _connectionRemoved;
 
         [Space]
         [SerializeField] protected int _maxconnections = 2;
@@ -42,7 +43,8 @@ namespace Context
             foreach (var connection in Connections)
                 connection.Cleanup();
 
-            _completedConnections = null;
+            _connectionAdded = null;
+            _connectionRemoved = null;
         }
 
         public virtual bool HasMaxConnections()
@@ -75,10 +77,12 @@ namespace Context
                 _dialogueData = null;
             }
 
-            _completedConnections?.Invoke();
-            _completedConnections = null;
+            _connectionAdded?.Invoke();
         }
-        protected virtual void OnIncompletedConnections() { }
+        protected virtual void OnIncompletedConnections()
+        {
+            _connectionRemoved?.Invoke();
+        }
 
     }
 }

@@ -52,6 +52,13 @@ namespace Context
             }
         }
 
+        public void Deactivate()
+        {
+            ActivationMode = ActivationMode.None;
+            _movingForward = false;
+            _waypointIndex = 0;
+        }
+
         public void SetCollision()
         {
             ActivationMode = ActivationMode.Collision;
