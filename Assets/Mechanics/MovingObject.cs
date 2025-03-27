@@ -1,12 +1,13 @@
 namespace Context
 {
     using System.Collections;
+    using Unity.Mathematics;
     using UnityEngine;
 
     public class MovingObject : MonoBehaviour
     {
         [SerializeField] private Transform _moveTarget;
-        [SerializeField] private float _moveDuration;
+        [SerializeField] private float _speed;
 
         private Transform _transform;
         private Vector3 _startPosition;
@@ -21,25 +22,22 @@ namespace Context
 
         public void Activate()
         {
+            StopAllCoroutines();
             StartCoroutine(MoveCoroutine(_targetPosition));
         }
 
         public void Deactivate()
         {
-            Debug.Log("hi");
+            StopAllCoroutines();
             StartCoroutine(MoveCoroutine(_startPosition));
         }
 
         private IEnumerator MoveCoroutine(Vector3 targetPosition)
         {
-            var elapsedTime = 0f;
-
-            while (elapsedTime < _moveDuration)
+            while (Vector3.Distance(_transform.position, targetPosition) > 0.1f)
             {
-                var progress = Mathf.Clamp01(elapsedTime / _moveDuration);
-                _transform.position = Vector3.Lerp(_transform.position, targetPosition, progress);
-
-                elapsedTime += Time.deltaTime;
+                var response = 1f - Mathf.Exp(-_speed * Time.deltaTime);
+                _transform.position = Vector3.Lerp(_transform.position, targetPosition, response);
                 yield return null;
             }
         }
