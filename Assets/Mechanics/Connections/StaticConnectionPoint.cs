@@ -59,6 +59,8 @@ namespace Context
 
         protected override void OnIncompletedConnections()
         {
+            base.OnIncompletedConnections();
+        
             UpdateVisuals(false);
         }
 

@@ -26,6 +26,7 @@ namespace Context
 
         public void Deactivate()
         {
+            Debug.Log("hi");
             StartCoroutine(MoveCoroutine(_startPosition));
         }
 

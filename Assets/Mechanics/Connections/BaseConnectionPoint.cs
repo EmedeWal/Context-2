@@ -66,7 +66,8 @@ namespace Context
         {
             var stableConnections = Connections.Where(c => c.Stable).ToList();
             if (stableConnections.Count == _maxconnections) OnCompletedConnections();
-            else OnIncompletedConnections();
+            else if (stableConnections.Count == 0) OnIncompletedConnections();
+            Debug.Log(stableConnections.Count + " " + gameObject.name);
         }
 
         protected virtual void OnCompletedConnections()
