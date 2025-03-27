@@ -52,6 +52,11 @@ namespace Context
             }
         }
 
+        public void SetCollision()
+        {
+            ActivationMode = ActivationMode.Collision;
+        }
+
         public void Activate()
         {
             ActivationMode = ActivationMode.None;
