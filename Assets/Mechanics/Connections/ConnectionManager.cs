@@ -81,7 +81,7 @@ namespace Context
         {
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
             var playerConnectionCollider = player.Connections[0].MeshCollider;
-            //var otherConnectionplayer.GetFirstOtherConnection
+            var otherConnectionCollider = player.GetFirstOtherConnection().Connection.MeshCollider;
             var time = Time.time;
 
             var tickedConnections = new HashSet<Connection>(); // Track already ticked connections
@@ -91,7 +91,7 @@ namespace Context
                 {
                     if (!tickedConnections.Contains(connection))
                     {
-                        connection.LateTick(playerConnectionCollider, time);
+                        connection.LateTick(playerConnectionCollider, otherConnectionCollider, time);
                         tickedConnections.Add(connection);
                     }
                 }
@@ -150,10 +150,12 @@ namespace Context
 
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
             var playerConnectionCollider = player.Connections[0].MeshCollider;
+            var otherConnectionCollider = player.GetFirstOtherConnection().Connection.MeshCollider;
+            Debug.Log(otherConnectionCollider.name);
             var time = Time.time;
 
             foreach (var connections in target.Connections)
-                connections.LateTick(playerConnectionCollider, time);
+                connections.LateTick(playerConnectionCollider, otherConnectionCollider, time);
 
             // Ensure all connections are unobstructed before stabilizing
             if (target.Connections.Any(connection => connection.Obstructed))

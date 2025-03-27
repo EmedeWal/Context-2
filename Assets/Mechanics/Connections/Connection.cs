@@ -69,7 +69,7 @@ namespace Context
             }
         }
 
-        public void LateTick(Collider collider, float time)
+        public void LateTick(Collider exceptionA, Collider exceptionB, float time)
         {
             var colliderA = AttachedPoints[0].Collider;
             var colliderB = AttachedPoints[1].Collider;
@@ -84,7 +84,7 @@ namespace Context
                 ? _stableDefaultGradient
                 : _unstableDefaultGradient;  
 
-            Obstructed = IsObstructed(colliderA, colliderB, pointA, pointB, collider);
+            Obstructed = IsObstructed(colliderA, colliderB, pointA, pointB, exceptionA, exceptionB);
             _line.colorGradient = Obstructed
                 ? obstructedGradient
                 : defaultGradient;
@@ -133,7 +133,7 @@ namespace Context
             UpdateMeshCollider();
         }
 
-        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB, Collider collider)
+        private bool IsObstructed(Collider colliderA, Collider colliderB, Vector3 pointA, Vector3 pointB, Collider exceptionA, Collider exceptionB)
         {
             // Offset the points slightly to avoid overlapping with colliders
             var start = colliderA.ClosestPoint(pointB);
@@ -148,7 +148,8 @@ namespace Context
                 hit.collider != MeshCollider && // Exclude its own mesh collider
                 hit.collider != colliderA &&    // Exclude its own connection point A
                 hit.collider != colliderB &&   // Exclude its own connection point B
-                hit.collider != collider      // Exclude the player connections mesh collider
+                hit.collider != exceptionA &&
+                hit.collider != exceptionB // Exclude the player connections mesh collider
             );
         }
 
