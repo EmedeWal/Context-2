@@ -11,6 +11,7 @@ namespace Context
 
         [Header("World")]
         [SerializeField] private CinemachineCamera _mainCamera;
+        [SerializeField] private GameObject[] _worldUI;
 
         [Header("Children")]
         [SerializeField] private PlayableDirector _openingCutscene;
@@ -78,6 +79,9 @@ namespace Context
         private void OpeningCutsceneStopped(PlayableDirector director)
         {
             _mainCamera.Priority = 10;
+
+            foreach (var ui in _worldUI)
+                ui.SetActive(true);
         }
 
         public void LerpColorToDead()
