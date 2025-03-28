@@ -208,9 +208,9 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   _unstableDefaultGradient:
     serializedVersion: 2
-    key0: {r: 0, g: 1, b: 0.88235295, a: 0.39215687}
-    key1: {r: 0, g: 0.5882353, b: 1, a: 0.39215687}
-    key2: {r: 0, g: 1, b: 1, a: 0}
+    key0: {r: 1, g: 0.93697256, b: 0.34276712, a: 0.39215687}
+    key1: {r: 1, g: 0.81159127, b: 0, a: 0.39215687}
+    key2: {r: 1, g: 0.9372549, b: 0.34117648, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -268,9 +268,9 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   _stableDefaultGradient:
     serializedVersion: 2
-    key0: {r: 0, g: 0.78431374, b: 1, a: 1}
-    key1: {r: 0, g: 1, b: 0.9979677, a: 1}
-    key2: {r: 0, g: 0.6862745, b: 1, a: 0}
+    key0: {r: 1, g: 0.976746, b: 0.3238992, a: 1}
+    key1: {r: 1, g: 0.80091095, b: 0, a: 1}
+    key2: {r: 1, g: 0.98039216, b: 0.3254902, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -322,9 +322,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _lineQuality: 50
+  _pointsPerUnit: 10
   _waveHeight: 0.5
   _waveCount: 3
   _velocity: 1
-  _strength: 800
-  _damping: 14
