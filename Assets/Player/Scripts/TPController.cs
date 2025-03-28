@@ -4,6 +4,7 @@ namespace Context.ThirdPersonController
     using UnityEngine;
     using System;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Linq;
 
     public class TPController : BaseConnectionPoint, ICharacterController
     {
@@ -53,6 +54,8 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _minFallVelocity = 10f;
         [SerializeField] private float _detectionDistance = 1f;
 
+        private WorldSpaceCanvas _worldCanvas;
+
         public static event Action Add;
         public static event Action Remove;
         public static event Action Jumped;
@@ -78,6 +81,8 @@ namespace Context.ThirdPersonController
             _channel.Init(this, _interactionRange);
 
             _input = new();
+
+            _worldCanvas = WorldSpaceCanvas.Instance;
 
             _interactSustainTimer = null;
             _timeSinceJumpRequest = 0;
@@ -292,35 +297,41 @@ namespace Context.ThirdPersonController
 
         private void CheckConnect()
         {
-            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround && WorldSpaceCanvas.Instance.IsEnabled)
+            var pos = _motor.TransientPosition;
+            var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
+
+            if (hits.Length > 0 && hits[0].TryGetComponent(out StaticConnectionPoint component))
             {
-                var pos = _motor.TransientPosition;
-                var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
+                var connections = component.Connections;
+                if (connections.Count > 0 && !component.Connections.Any(c => c.Obstructed))
+                    _worldCanvas.ShowPrompt(component.transform.position, component.ControlPromptOffset, "Interact");
+            }
+            else
+            {
+                _input.RequestedInteract = false;
+                _worldCanvas.HidePrompt();
+                return;
+            }
 
-                if (hits.Length == 0) return;
+            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround && _worldCanvas.IsVisible)
+            {
+                if (_manager.HasStableConnection(this, component)) OnRemove();
+                else OnAdd();
 
-                if (hits[0].TryGetComponent<StaticConnectionPoint>(out var component))
-                {
-                    if (_manager.HasStableConnection(this, component)) OnRemove();
-                    else OnAdd();
+                component.StartConnection(pos);
+                var direction = component.transform.position - pos;
+                direction = Vector3.ProjectOnPlane(direction, _motor.CharacterUp);
+                _motor.SetRotation(Quaternion.LookRotation(direction, _motor.CharacterUp));
 
-                    component.StartConnection(pos);
-                    var direction = component.transform.position - pos;
-                    direction = Vector3.ProjectOnPlane(direction, _motor.CharacterUp);
-                    _motor.SetRotation(Quaternion.LookRotation(direction, _motor.CharacterUp));
-
-                    _interactSustainTimer = new
-                    (
-                        duration: _interactionDuration,
-                        completed: () =>
-                        {
-                            _manager.InteractWithConnections(this, component);
-                            _interactSustainTimer = _interactSustainTimer.Cleanup();
-                        }
-                    );
-                }
-                else Debug.LogWarning("Hit on connectable Layer had no base connection point script.");
-
+                _interactSustainTimer = new
+                (
+                    duration: _interactionDuration,
+                    completed: () =>
+                    {
+                        _manager.InteractWithConnections(this, component);
+                        _interactSustainTimer = _interactSustainTimer.Cleanup();
+                    }
+                );
             }
             _input.RequestedInteract = false;
         }

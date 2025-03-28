@@ -167,27 +167,11 @@ namespace Context
                 TransferConnection(caller, data.Other, target, data.Connection, false);
                 CreateConnection(caller, target, false);
             }
-
-            var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
-            var playerConnectionCollider = player.Connections[0].MeshCollider;
-            var otherConnectionCollider = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(caller)).MeshCollider;
-            var time = Time.time;
-
-            foreach (var connections in target.Connections)
-                connections.LateTick(playerConnectionCollider, otherConnectionCollider, time);
-
-            // Ensure all connections are unobstructed before stabilizing
-            if (target.Connections.Any(connection => connection.Obstructed))
-                return;
-
-            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, target.ControlPromptOffset, "Interact");
         }
 
         // Trigger exit
         public void RemoveUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
         {
-            WorldSpaceCanvas.Instance.HidePrompt();
-
             var callerData = caller.GetFirstOtherConnection();
             var callerTargetConnection = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(caller));
             var targetOtherConnection = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(callerData.Other));
@@ -209,7 +193,7 @@ namespace Context
         {
             if (target.Connections.Any(c => !c.Stable)) 
                 StabilizeConnections(target);
-            else if (WorldSpaceCanvas.Instance.IsEnabled) 
+            else if (WorldSpaceCanvas.Instance.IsVisible) 
                 UnstabilizeConnections(caller, target);
         }
 
