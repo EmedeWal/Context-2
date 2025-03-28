@@ -9395,9 +9395,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 242961119}
     m_Modifications:
+    - target: {fileID: 127626, guid: 1718789d530a5264db7a718c627f66da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 132718, guid: 1718789d530a5264db7a718c627f66da, type: 3}
       propertyPath: m_Name
       value: Rocks_Square_m_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 163960, guid: 1718789d530a5264db7a718c627f66da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 412436, guid: 1718789d530a5264db7a718c627f66da, type: 3}
       propertyPath: m_LocalScale.x
@@ -9454,7 +9462,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 132718, guid: 1718789d530a5264db7a718c627f66da, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 352082919}
   m_SourcePrefab: {fileID: 100100000, guid: 1718789d530a5264db7a718c627f66da, type: 3}
 --- !u!4 &352082916 stripped
 Transform:
@@ -9466,12 +9477,39 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: -5634643922029216357, guid: 1718789d530a5264db7a718c627f66da, type: 3}
   m_PrefabInstance: {fileID: 352082915}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 352082918}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4b92e83dec55e14f96a95ed0058753e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &352082918 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 132718, guid: 1718789d530a5264db7a718c627f66da, type: 3}
+  m_PrefabInstance: {fileID: 352082915}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &352082919
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352082918}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: e2e2172ecc47ad44e946cd87a92496a9, type: 3}
 --- !u!1001 &353174089
 PrefabInstance:
   m_ObjectHideFlags: 0
