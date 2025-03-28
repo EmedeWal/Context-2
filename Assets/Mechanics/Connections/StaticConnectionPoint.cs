@@ -81,8 +81,8 @@ namespace Context
 
             if (_fogParticles == null) return;
 
-            if (alive) _fogParticles.Play();
-            else _fogParticles.Stop();
+            if (alive) _fogParticles.Stop();
+            else _fogParticles.Play();
         }
     }
 }
