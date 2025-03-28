@@ -19,6 +19,7 @@ namespace Context
         {
             Instance = this;
 
+            _targetColors = new Color[3];
             _terrain = GetComponent<Terrain>();
             _terrainData = _terrain.terrainData;
         }

@@ -35,7 +35,9 @@ namespace Context
         private TerrainLayerColorChanger _terrainLayerColorChanger;
         private PostProcessingManager _postProcessingManager;
 
+        [Header("SETTINGS")]
         [Range(0, 1)] public float OverrideValue = 1;
+        [SerializeField] private float _renderDistance = 50f;
 
         private void Start()
         {
@@ -66,10 +68,14 @@ namespace Context
                 particle.Init();
 
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
-            UpdatePostProcessing(player, 1);
+            var playerConnectionCollider = player.Connections[0].MeshCollider;
+            var blergh = player.GetFirstOtherConnection().Other;
+            var otherConnection = blergh.Connections.FirstOrDefault(c => !c.AttachedPoints.Contains(player));
+
+            UpdatePostProcessing(otherConnection, 1);
 
             for (int i = 0; i < _fireflyParticles.Length; i++)
-                UpdateLevelBasedConnections(player, i);
+                UpdateLevelBasedConnections(otherConnection, i);
         }
 
         private void OnDisable()
@@ -81,15 +87,21 @@ namespace Context
         private void LateUpdate()
         {
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
-            var playerConnectionCollider = player.Connections[0].MeshCollider;
+            var playerConnection = player.Connections[0];
+            var playerConnectionCollider = playerConnection.MeshCollider;
             var other = player.GetFirstOtherConnection().Other;
             var otherConnection = other.Connections.FirstOrDefault(c => !c.AttachedPoints.Contains(player));
             var otherConnectionCollider = otherConnection != null ? otherConnection.MeshCollider : null;
             var time = Time.time;
+            var playerPos = player.transform.position;
 
             var tickedConnections = new HashSet<Connection>(); // Track already ticked connections
             foreach (var point in _connectionPoints)
             {
+                var isFar = Vector3.Distance(playerPos, point.transform.position) > _renderDistance;
+                if (isFar && !point.Connections.Contains(playerConnection))
+                    continue;
+
                 foreach (var connection in point.Connections)
                 {
                     if (!tickedConnections.Contains(connection))
@@ -99,15 +111,15 @@ namespace Context
                     }
                 }
             }
-            UpdatePostProcessing(player, Time.deltaTime);
+            UpdatePostProcessing(otherConnection, Time.deltaTime);
 
             for (int i = 0; i < _fireflyParticles.Length; i++)
-                UpdateLevelBasedConnections(player, i);
+                UpdateLevelBasedConnections(otherConnection, i);
         }
 
-        private void UpdatePostProcessing(BaseConnectionPoint player, float deltaTime)
+        private void UpdatePostProcessing(Connection connection, float deltaTime)
         {
-            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections() && point != player).ToList();
+            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections(connection)).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
 
             if (OverrideValue > 0.1f) finishedPercentage = OverrideValue;
@@ -115,9 +127,9 @@ namespace Context
             _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
         }
 
-        private void UpdateLevelBasedConnections(BaseConnectionPoint player, int index)
+        private void UpdateLevelBasedConnections(Connection connection, int index)
         {
-            var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index && point != player).ToList();
+            var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index).ToList();
 
             if (connectionPoints.Count == 0)
             {
@@ -127,7 +139,7 @@ namespace Context
                 return;
             }
 
-            var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections()).ToList();
+            var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections(connection)).ToList();
             var finishedPercentage = (float)finishedPoints.Count / connectionPoints.Count;
             finishedPercentage = Mathf.Clamp01(finishedPercentage);
 

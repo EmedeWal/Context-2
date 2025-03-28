@@ -3,6 +3,7 @@ namespace Context.ThirdPersonController
     using KinematicCharacterController;
     using UnityEngine;
     using System;
+    using System.Runtime.InteropServices.WindowsRuntime;
 
     public class TPController : BaseConnectionPoint, ICharacterController
     {
@@ -97,8 +98,7 @@ namespace Context.ThirdPersonController
             _channel.Cleanup();
         }
 
-        public override bool HasMaxConnections() =>
-            Connections.Count >= _maxconnections;
+        public override bool HasMaxConnections(Connection exception) => false;
 
         public GroundType GetGroundType()
         {

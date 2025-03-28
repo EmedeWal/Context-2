@@ -10,7 +10,6 @@ namespace Context
         public static CutsceneManager Instance { get; private set; }
 
         [Header("World")]
-        [SerializeField] private StaticConnectionPoint[] _staticPoints;
         [SerializeField] private CinemachineCamera _mainCamera;
 
         [Header("Children")]
@@ -21,6 +20,7 @@ namespace Context
         [Header("Settings")]
         [SerializeField] private float _lerpDuration;
 
+        private StaticConnectionPoint[] _staticPoints;
         private InputActions _actions;
 
 
@@ -28,6 +28,7 @@ namespace Context
         {
             Instance = this;
 
+            _staticPoints = GameObject.FindObjectsByType<StaticConnectionPoint>(FindObjectsSortMode.None);
             _actions = ApplicationManager.Instance.InputManager.Actions;
 
             PlayCutscene(_openingCutscene);
@@ -41,10 +42,22 @@ namespace Context
             if (menu.Continue.WasPressedThisFrame())
             {
                 if (_openingCutscene.state is PlayState.Playing)
+                {
+                    foreach (var point in _staticPoints)
+                        point.UpdateVisuals(false, 1);
+
+                    StopAllCoroutines();
+                    StartCoroutine(ColorCoroutine(1));
+
+                    _mainCamera.Priority = 10;
                     _openingCutscene.Stop();
+                }
 
                 if (_endingCutscene.state is PlayState.Playing)
+                {
                     _endingCutscene.Stop();
+                    LoadMainMenu();
+                }
             }
         }
 
@@ -72,18 +85,18 @@ namespace Context
             foreach (var point in _staticPoints)
                 point.UpdateVisuals(false, _lerpDuration);
 
-            StartCoroutine(ColorCoroutine());
+            StartCoroutine(ColorCoroutine(_lerpDuration));
         }
 
-        private IEnumerator ColorCoroutine()
+        private IEnumerator ColorCoroutine(float duration)
         {
             ConnectionManager connectionManager = ConnectionManager.Instance;
             float elapsedTime = 0f;
 
-            while (elapsedTime < _lerpDuration)
+            while (elapsedTime < duration)
             {
                 elapsedTime += Time.deltaTime;
-                float t = elapsedTime / _lerpDuration;
+                float t = elapsedTime / duration;
 
                 connectionManager.OverrideValue = Mathf.Lerp(1, 0, t);
 
