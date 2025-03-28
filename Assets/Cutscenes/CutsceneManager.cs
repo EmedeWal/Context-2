@@ -11,7 +11,7 @@ namespace Context
 
         [Header("World")]
         [SerializeField] private CinemachineCamera _mainCamera;
-        [SerializeField] private GameObject[] _worldUI;
+        [SerializeField] private GameObject _worldUI;
 
         [Header("Children")]
         [SerializeField] private PlayableDirector _openingCutscene;
@@ -20,6 +20,7 @@ namespace Context
 
         [Header("Settings")]
         [SerializeField] private float _lerpDuration;
+        [SerializeField] private float _activationDelayUI;
 
         private StaticConnectionPoint[] _staticPoints;
         private InputActions _actions;
@@ -80,8 +81,12 @@ namespace Context
         {
             _mainCamera.Priority = 10;
 
-            foreach (var ui in _worldUI)
-                ui.SetActive(true);
+            Invoke(nameof(EnableUI), _activationDelayUI);
+        }
+
+        private void EnableUI()
+        {
+            _worldUI.SetActive(true);
         }
 
         public void LerpColorToDead()

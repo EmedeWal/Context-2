@@ -3,7 +3,6 @@ namespace Context.ThirdPersonController
     using KinematicCharacterController;
     using UnityEngine;
     using System;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Linq;
 
     public class TPController : BaseConnectionPoint, ICharacterController
@@ -300,10 +299,10 @@ namespace Context.ThirdPersonController
             var pos = _motor.TransientPosition;
             var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
 
-            if (hits.Length > 0 && hits[0].TryGetComponent(out StaticConnectionPoint component))
+            if (hits.Length > 0 && hits[0].TryGetComponent(out StaticConnectionPoint component) && _motor.GroundingStatus.IsStableOnGround)
             {
                 var connections = component.Connections;
-                if (connections.Count > 0 && !component.Connections.Any(c => c.Obstructed))
+                if (connections.Count == 2 && !component.Connections.Any(c => c.Obstructed) && component.Connections.Any(c => c.AttachedPoints.Contains(this)))
                     _worldCanvas.ShowPrompt(component.transform.position, component.ControlPromptOffset, "Interact");
             }
             else
@@ -313,7 +312,7 @@ namespace Context.ThirdPersonController
                 return;
             }
 
-            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround && _worldCanvas.IsVisible)
+            if (_input.RequestedInteract && _worldCanvas.IsVisible)
             {
                 if (_manager.HasStableConnection(this, component)) OnRemove();
                 else OnAdd();
