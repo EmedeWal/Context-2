@@ -47,11 +47,11 @@ MonoBehaviour:
     _binding: Escape/Menu
     Sprites:
     - {fileID: 21300000, guid: 50d9097d82b401d418f0084c59e5ea2a, type: 3}
-    - {fileID: 21300000, guid: 1e1ba18b207d47847bd8522b9644f508, type: 3}
     - {fileID: 21300000, guid: 5e58a0ea1d42ec74eaaa6570c0852d2d, type: 3}
+    - {fileID: 21300000, guid: a9831ca87880a8d40a2fce45ebf4d413, type: 3}
   - ActionName: Continue
     _binding: Enter/Button South
     Sprites:
     - {fileID: 21300000, guid: ffa5694c7a704584ca8bf7c7587389fc, type: 3}
-    - {fileID: 21300000, guid: 50d9097d82b401d418f0084c59e5ea2a, type: 3}
+    - {fileID: 21300000, guid: 0ceb425e986f36e49b8e96e8c51e3895, type: 3}
     - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}

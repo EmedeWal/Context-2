@@ -3,6 +3,7 @@ namespace Context
     using TMPro;
     using UnityEngine;
     using System.Collections;
+    using UnityEngine.Rendering;
 
     public class DialogueManager : MonoBehaviour
     {
@@ -38,8 +39,23 @@ namespace Context
         {
             if (!ActiveDialogue) return;
 
-            var menuMap = _inputActions.Menu;
-            if (menuMap.Continue.WasPressedThisFrame())
+            //var menuMap = _inputActions.Menu;
+            //if (menuMap.Continue.WasPressedThisFrame())
+            //{
+            //    if (_isTyping)
+            //    {
+            //        StopAllCoroutines();
+            //        _dialogueText.text = _currentDialogue[_currentIndex]; // Instantly set full text
+            //        _isTyping = false;
+            //    }
+            //    else
+            //    {
+            //        NextDialogue();
+            //    }
+            //}
+
+           
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.anyKeyDown)
             {
                 if (_isTyping)
                 {
