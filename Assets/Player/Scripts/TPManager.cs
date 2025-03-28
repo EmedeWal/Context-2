@@ -8,6 +8,7 @@ namespace Context.ThirdPersonController
         private TPAudio _audio;
         private TPRoot _root;
 
+        private CutsceneManager _cutsceneManager;
         private InputActions _inputActions;
         private Transform _cameraTransform;
 
@@ -19,6 +20,7 @@ namespace Context.ThirdPersonController
             _audio = GetComponentInChildren<TPAudio>();
             _root = GetComponentInChildren<TPRoot>();
 
+            _cutsceneManager = CutsceneManager.Instance;
             _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _cameraTransform = Camera.main.transform;
 
@@ -37,6 +39,9 @@ namespace Context.ThirdPersonController
 
         private void Update()
         {
+            if (_cutsceneManager.IsPlayingCutscene())
+                return;
+
             var inputActions = _inputActions.Gameplay;
             var controllerInput = new ControllerInput
             {
@@ -53,6 +58,9 @@ namespace Context.ThirdPersonController
 
         private void LateUpdate()
         {
+            if (_cutsceneManager.IsPlayingCutscene())
+                return;
+
             var groundType = _controller.GetGroundType();
 
             _root.LateTick(groundType, Time.deltaTime, _controller.IsMoving, _controller.IsSprinting);

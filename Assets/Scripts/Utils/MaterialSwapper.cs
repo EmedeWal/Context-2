@@ -14,23 +14,20 @@ namespace Context
         [Header("Hierarchy")]
         [SerializeField] private MeshRenderer[] _meshRenderers;
 
-        [Header("Settings")]
-        [SerializeField] private bool _shouldSwap = true; // Control swapping per object
+        [Header("SETTINGS")]
+        [SerializeField] private float _time = 1;
+        [SerializeField] private float _repeatRate = 1; 
 
         private bool _isLit; // Tracks current material state
 
         private void Start()
         {
             SetMaterials(_startMaterial);
-
-            if (_shouldSwap) // Only start swapping if enabled
-                StartSwapping();
         }
 
         public void StartSwapping()
         {
-            if (!_shouldSwap) return; // Prevents starting if disabled
-            InvokeRepeating(nameof(SwapMaterials), 1f, 1f);
+            InvokeRepeating(nameof(SwapMaterials), _time, _repeatRate);
         }
 
         public void StopSwapping()
@@ -42,7 +39,6 @@ namespace Context
 
         private void SwapMaterials()
         {
-            if (!_shouldSwap) return; // If swapping is disabled, do nothing
             _isLit = !_isLit;
             SetMaterials(_isLit ? _litMaterial : _defaultMaterial);
         }
@@ -51,16 +47,6 @@ namespace Context
         {
             foreach (var renderer in _meshRenderers)
                 renderer.material = material;
-        }
-
-        public void ToggleSwapping(bool enable)
-        {
-            _shouldSwap = enable;
-
-            if (_shouldSwap)
-                StartSwapping();
-            else
-                StopSwapping();
         }
 
         // New Functions to Manually Set Materials

@@ -31,6 +31,12 @@ namespace Context
             _colorCoroutine = StartCoroutine(ColorCoroutine(duration));
         }
 
+        public void SetDeadColor(float time)
+        {
+            _targetColor = _deadColor;
+            StartCoroutine(ColorCoroutine(time));
+        }
+
         private IEnumerator ColorCoroutine(float duration)
         {
             float elapsedTime = 0f;

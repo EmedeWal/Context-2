@@ -35,6 +35,8 @@ namespace Context
         private TerrainLayerColorChanger _terrainLayerColorChanger;
         private PostProcessingManager _postProcessingManager;
 
+        [Range(0, 1)] public float OverrideValue = 1;
+
         private void Start()
         {
             if (Instance == null) Instance = this;
@@ -63,10 +65,11 @@ namespace Context
             foreach (var particle in _fireflyParticles)
                 particle.Init();
 
-            UpdatePostProcessing(1);
+            var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
+            UpdatePostProcessing(player, 1);
 
             for (int i = 0; i < _fireflyParticles.Length; i++)
-                UpdateLevelBasedConnections(i);
+                UpdateLevelBasedConnections(player, i);
         }
 
         private void OnDisable()
@@ -96,22 +99,25 @@ namespace Context
                     }
                 }
             }
-            UpdatePostProcessing(Time.deltaTime);
+            UpdatePostProcessing(player, Time.deltaTime);
 
             for (int i = 0; i < _fireflyParticles.Length; i++)
-                UpdateLevelBasedConnections(i);
+                UpdateLevelBasedConnections(player, i);
         }
 
-        private void UpdatePostProcessing(float deltaTime)
+        private void UpdatePostProcessing(BaseConnectionPoint player, float deltaTime)
         {
-            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
+            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections() && point != player).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
+
+            if (OverrideValue > 0.1f) finishedPercentage = OverrideValue;
+
             _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
         }
 
-        private void UpdateLevelBasedConnections(int index)
+        private void UpdateLevelBasedConnections(BaseConnectionPoint player, int index)
         {
-            var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index).ToList();
+            var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index && point != player).ToList();
 
             if (connectionPoints.Count == 0)
             {
@@ -124,6 +130,8 @@ namespace Context
             var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections()).ToList();
             var finishedPercentage = (float)finishedPoints.Count / connectionPoints.Count;
             finishedPercentage = Mathf.Clamp01(finishedPercentage);
+
+            if (OverrideValue > 0.1f) finishedPercentage = OverrideValue;
 
             _terrainLayerColorChanger.ChangeLayerColor(index, finishedPercentage);
             _fireflyParticles[index].Tick(finishedPercentage);
