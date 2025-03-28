@@ -31,6 +31,12 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 4bb79d875e50fc24295006f4a464ce2f, type: 3}
     - {fileID: 21300000, guid: 0ceb425e986f36e49b8e96e8c51e3895, type: 3}
     - {fileID: 21300000, guid: d578a6f4bb574c54c88c206e540dc1b3, type: 3}
+  - ActionName: Sprint
+    _binding: Shift/Left Trigger
+    Sprites:
+    - {fileID: 21300000, guid: 833c9e95af11e914d9eb49d8e5f9f6fb, type: 3}
+    - {fileID: 21300000, guid: 08d8760fc9a798c43924c0cccf7a2c50, type: 3}
+    - {fileID: 21300000, guid: 08d8760fc9a798c43924c0cccf7a2c50, type: 3}
   - ActionName: Interact
     _binding: E/Button West
     Sprites:

@@ -2288,26 +2288,27 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _maxconnections: 2
+  _isPillar: 0
   _defaultMaterial: {fileID: 2100000, guid: 44696b106838ddf4bba93e3245f00900, type: 2}
   _litMaterial: {fileID: 2100000, guid: 43b06d1d423c7d74c81d507c850ed38a, type: 2}
   _organisms: []
+  _fogParticles: {fileID: 0}
   _bodyMeshRenderer: {fileID: 1992898271129093777}
   _meshRenderers:
   - {fileID: 6277292229175680343}
-  - {fileID: 1319391230554039811}
+  - {fileID: 2831915629844081633}
   - {fileID: 4513756937083165746}
+  - {fileID: 2854301721522513763}
+  - {fileID: 1319391230554039811}
+  - {fileID: 8777599532827388192}
+  - {fileID: 3741575278423810978}
+  - {fileID: 159596759088746434}
+  - {fileID: 9037105750097882643}
+  - {fileID: 235129934443460898}
   - {fileID: 9219646504505986257}
+  - {fileID: 1288725695649214924}
   - {fileID: 7099055368912741201}
   - {fileID: 9014763986310607044}
-  - {fileID: 1288725695649214924}
-  - {fileID: 2831915629844081633}
-  - {fileID: 8777599532827388192}
-  - {fileID: 2854301721522513763}
-  - {fileID: 9037105750097882643}
-  - {fileID: 159596759088746434}
-  - {fileID: 3741575278423810978}
-  - {fileID: 235129934443460898}
-  - {fileID: 235129934443460898}
   <LevelIndex>k__BackingField: 0
 --- !u!1 &6150565674970937679
 GameObject:

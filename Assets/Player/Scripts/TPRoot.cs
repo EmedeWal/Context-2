@@ -37,11 +37,11 @@ namespace Context.ThirdPersonController
             TPAnimator.Footstep -= TPRoot_Footstep;
         }
 
-        public void LateTick(GroundType groundType, float deltaTime, bool isMoving)
+        public void LateTick(GroundType groundType, float deltaTime, bool isMoving, bool isSprinting)
         {
             _transform.SetPositionAndRotation(_followTarget.position, _followTarget.rotation);
 
-            _animator.UpdateAnimations(deltaTime, isMoving);
+            _animator.UpdateAnimations(deltaTime, isMoving, isSprinting);
 
             _groundType = groundType;
         }

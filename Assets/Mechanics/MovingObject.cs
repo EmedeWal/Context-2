@@ -1,42 +1,45 @@
 namespace Context
 {
     using System.Collections;
+    using Unity.Mathematics;
     using UnityEngine;
 
     public class MovingObject : MonoBehaviour
     {
         [SerializeField] private Transform _moveTarget;
-        [SerializeField] private float _moveDuration;
+        [SerializeField] private float _speed;
 
         private Transform _transform;
+        private Vector3 _startPosition;
         private Vector3 _targetPosition;
 
         private void Start()
         {
             _transform = transform;
+            _startPosition = _transform.position;
             _targetPosition = _moveTarget.position;    
         }
 
         public void Activate()
         {
-            StartCoroutine(MoveCoroutine());
+            StopAllCoroutines();
+            StartCoroutine(MoveCoroutine(_targetPosition));
         }
 
-        private IEnumerator MoveCoroutine()
+        public void Deactivate()
         {
-            var elapsedTime = 0f;
+            StopAllCoroutines();
+            StartCoroutine(MoveCoroutine(_startPosition));
+        }
 
-            while (elapsedTime < _moveDuration)
+        private IEnumerator MoveCoroutine(Vector3 targetPosition)
+        {
+            while (Vector3.Distance(_transform.position, targetPosition) > 0.1f)
             {
-                var progress = Mathf.Clamp01(elapsedTime / _moveDuration);
-                _transform.position = Vector3.Lerp(_transform.position, _targetPosition, progress);
-
-                elapsedTime += Time.deltaTime;
+                var response = 1f - Mathf.Exp(-_speed * Time.deltaTime);
+                _transform.position = Vector3.Lerp(_transform.position, targetPosition, response);
                 yield return null;
             }
-
-            Destroy(_moveTarget);
-            Destroy(this);
         }
     }
 }

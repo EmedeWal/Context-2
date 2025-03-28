@@ -32,10 +32,12 @@ namespace Context
         private List<StaticConnectionPoint> _staticConnectionPoints;
         private List<BaseConnectionPoint> _connectionPoints;
 
-        [Range(0, 1)] public float TEST;
-
         private TerrainLayerColorChanger _terrainLayerColorChanger;
         private PostProcessingManager _postProcessingManager;
+
+        [Header("SETTINGS")]
+        [Range(0, 1)] public float OverrideValue = 1;
+        [SerializeField] private float _renderDistance = 50f;
 
         private void Start()
         {
@@ -65,10 +67,15 @@ namespace Context
             foreach (var particle in _fireflyParticles)
                 particle.Init();
 
-            UpdatePostProcessing(1);
+            var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
+            var playerConnectionCollider = player.Connections[0].MeshCollider;
+            var blergh = player.GetFirstOtherConnection().Other;
+            var otherConnection = blergh.Connections.FirstOrDefault(c => !c.AttachedPoints.Contains(player));
+
+            UpdatePostProcessing(otherConnection, 1);
 
             for (int i = 0; i < _fireflyParticles.Length; i++)
-                UpdateLevelBasedConnections(i);
+                UpdateLevelBasedConnections(otherConnection, i);
         }
 
         private void OnDisable()
@@ -80,35 +87,47 @@ namespace Context
         private void LateUpdate()
         {
             var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
-            var playerConnectionCollider = player.Connections[0].MeshCollider;
+            var playerConnection = player.Connections[0];
+            var playerConnectionCollider = playerConnection.MeshCollider;
+            var other = player.GetFirstOtherConnection().Other;
+            var otherConnection = other.Connections.FirstOrDefault(c => !c.AttachedPoints.Contains(player));
+            var otherConnectionCollider = otherConnection != null ? otherConnection.MeshCollider : null;
             var time = Time.time;
+            var playerPos = player.transform.position;
 
             var tickedConnections = new HashSet<Connection>(); // Track already ticked connections
             foreach (var point in _connectionPoints)
             {
+                var isFar = Vector3.Distance(playerPos, point.transform.position) > _renderDistance;
+                if (isFar && !point.Connections.Contains(playerConnection))
+                    continue;
+
                 foreach (var connection in point.Connections)
                 {
                     if (!tickedConnections.Contains(connection))
                     {
-                        connection.LateTick(playerConnectionCollider, time);
+                        connection.LateTick(playerConnectionCollider, otherConnectionCollider, time);
                         tickedConnections.Add(connection);
                     }
                 }
             }
-            UpdatePostProcessing(Time.deltaTime);
+            UpdatePostProcessing(otherConnection, Time.deltaTime);
 
             for (int i = 0; i < _fireflyParticles.Length; i++)
-                UpdateLevelBasedConnections(i);
+                UpdateLevelBasedConnections(otherConnection, i);
         }
 
-        private void UpdatePostProcessing(float deltaTime)
+        private void UpdatePostProcessing(Connection connection, float deltaTime)
         {
-            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections()).ToList();
+            var finishedConnectionPoints = _connectionPoints.Where(point => point.HasMaxConnections(connection)).ToList();
             var finishedPercentage = ((float)finishedConnectionPoints.Count / (float)_connectionPoints.Count);
-            _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(TEST), deltaTime);
+
+            if (OverrideValue > 0.1f) finishedPercentage = OverrideValue;
+
+            _postProcessingManager.UpdateVolumeSettings(Mathf.Clamp01(finishedPercentage), deltaTime);
         }
 
-        private void UpdateLevelBasedConnections(int index)
+        private void UpdateLevelBasedConnections(Connection connection, int index)
         {
             var connectionPoints = _staticConnectionPoints.Where(point => point.LevelIndex == index).ToList();
 
@@ -120,12 +139,14 @@ namespace Context
                 return;
             }
 
-            var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections()).ToList();
+            var finishedPoints = connectionPoints.Where(point => point.HasMaxConnections(connection)).ToList();
             var finishedPercentage = (float)finishedPoints.Count / connectionPoints.Count;
             finishedPercentage = Mathf.Clamp01(finishedPercentage);
 
-            _terrainLayerColorChanger.ChangeLayerColor(index, TEST);
-            _fireflyParticles[index].Tick(TEST);
+            if (OverrideValue > 0.1f) finishedPercentage = OverrideValue;
+
+            _terrainLayerColorChanger.ChangeLayerColor(index, finishedPercentage);
+            _fireflyParticles[index].Tick(finishedPercentage);
         }
 
 
@@ -146,26 +167,11 @@ namespace Context
                 TransferConnection(caller, data.Other, target, data.Connection, false);
                 CreateConnection(caller, target, false);
             }
-
-            var player = _connectionPoints.FirstOrDefault(point => point.transform.CompareTag("Player"));
-            var playerConnectionCollider = player.Connections[0].MeshCollider;
-            var time = Time.time;
-
-            foreach (var connections in target.Connections)
-                connections.LateTick(playerConnectionCollider, time);
-
-            // Ensure all connections are unobstructed before stabilizing
-            if (target.Connections.Any(connection => connection.Obstructed))
-                return;
-
-            WorldSpaceCanvas.Instance.ShowPrompt(target.transform.position, target.ControlPromptOffset, "Interact");
         }
 
         // Trigger exit
         public void RemoveUnstableConnection(BaseConnectionPoint caller, BaseConnectionPoint target)
         {
-            WorldSpaceCanvas.Instance.HidePrompt();
-
             var callerData = caller.GetFirstOtherConnection();
             var callerTargetConnection = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(caller));
             var targetOtherConnection = target.Connections.FirstOrDefault(c => c.AttachedPoints.Contains(callerData.Other));
@@ -187,7 +193,7 @@ namespace Context
         {
             if (target.Connections.Any(c => !c.Stable)) 
                 StabilizeConnections(target);
-            else if (WorldSpaceCanvas.Instance.IsEnabled) 
+            else if (WorldSpaceCanvas.Instance.IsVisible) 
                 UnstabilizeConnections(caller, target);
         }
 

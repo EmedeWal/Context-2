@@ -3,9 +3,14 @@ namespace Context.ThirdPersonController
     using KinematicCharacterController;
     using UnityEngine;
     using System;
+    using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Linq;
 
     public class TPController : BaseConnectionPoint, ICharacterController
     {
+        public bool IsMoving => Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp).sqrMagnitude > 0.1f;
+        public bool IsSprinting => _input.RequestedSustainedSprint;
+
         private KinematicCharacterMotor _motor;
         private TriggerChannel _channel;
         private TPInput _input;
@@ -18,6 +23,7 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _deceleration = 10f;
         [SerializeField] private float _groundedSpeed = 10f;
         [SerializeField] private float _groundedRotation = 5f;
+        [SerializeField] private float _sprintMultiplier = 2f;
 
         [Space]
         [Header("Airborne")]
@@ -48,6 +54,8 @@ namespace Context.ThirdPersonController
         [SerializeField] private float _minFallVelocity = 10f;
         [SerializeField] private float _detectionDistance = 1f;
 
+        private WorldSpaceCanvas _worldCanvas;
+
         public static event Action Add;
         public static event Action Remove;
         public static event Action Jumped;
@@ -74,6 +82,8 @@ namespace Context.ThirdPersonController
 
             _input = new();
 
+            _worldCanvas = WorldSpaceCanvas.Instance;
+
             _interactSustainTimer = null;
             _timeSinceJumpRequest = 0;
             _airborneTime = 0;
@@ -93,8 +103,7 @@ namespace Context.ThirdPersonController
             _channel.Cleanup();
         }
 
-        public override bool HasMaxConnections() =>
-            Connections.Count >= _maxconnections;
+        public override bool HasMaxConnections(Connection exception) => false;
 
         public GroundType GetGroundType()
         {
@@ -105,12 +114,6 @@ namespace Context.ThirdPersonController
                     : GroundType.Rock;
             }
             return GroundType.Rock;
-        }
-
-        public bool IsMoving()
-        {
-            var planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-            return planarVelocity.sqrMagnitude > 0.1f;
         }
 
         public void Tick(ControllerInput controllerInput) => _input.UpdateInput(controllerInput);
@@ -169,15 +172,21 @@ namespace Context.ThirdPersonController
             ) * _input.RequestedMovement.magnitude;
 
             var targetVelocity = groundedMovement * _groundedSpeed;
-            var response = currentVelocity.magnitude < targetVelocity.magnitude
+            var responseFactor = currentVelocity.magnitude < targetVelocity.magnitude
                 ? _acceleration
                 : _deceleration;
+
+            if (_input.RequestedSustainedSprint)
+            {
+                targetVelocity *= _sprintMultiplier;
+                responseFactor *= _sprintMultiplier;
+            }
 
             var moveVelocity = Vector3.Lerp
             (
                 a: currentVelocity,
                 b: targetVelocity,
-                t: 1f - Mathf.Exp(-response * deltaTime)
+                t: 1f - Mathf.Exp(-responseFactor * deltaTime)
             );
             currentVelocity = moveVelocity;
         }
@@ -288,35 +297,41 @@ namespace Context.ThirdPersonController
 
         private void CheckConnect()
         {
-            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround && WorldSpaceCanvas.Instance.IsEnabled)
+            var pos = _motor.TransientPosition;
+            var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
+
+            if (hits.Length > 0 && hits[0].TryGetComponent(out StaticConnectionPoint component))
             {
-                var pos = _motor.TransientPosition;
-                var hits = Physics.OverlapSphere(pos, _interactionRange, _interactionLayer);
+                var connections = component.Connections;
+                if (connections.Count > 0 && !component.Connections.Any(c => c.Obstructed))
+                    _worldCanvas.ShowPrompt(component.transform.position, component.ControlPromptOffset, "Interact");
+            }
+            else
+            {
+                _input.RequestedInteract = false;
+                _worldCanvas.HidePrompt();
+                return;
+            }
 
-                if (hits.Length == 0) return;
+            if (_input.RequestedInteract && _motor.GroundingStatus.IsStableOnGround && _worldCanvas.IsVisible)
+            {
+                if (_manager.HasStableConnection(this, component)) OnRemove();
+                else OnAdd();
 
-                if (hits[0].TryGetComponent<StaticConnectionPoint>(out var component))
-                {
-                    if (_manager.HasStableConnection(this, component)) OnRemove();
-                    else OnAdd();
+                component.StartConnection(pos);
+                var direction = component.transform.position - pos;
+                direction = Vector3.ProjectOnPlane(direction, _motor.CharacterUp);
+                _motor.SetRotation(Quaternion.LookRotation(direction, _motor.CharacterUp));
 
-                    component.StartConnection(pos);
-                    var direction = component.transform.position - pos;
-                    direction = Vector3.ProjectOnPlane(direction, _motor.CharacterUp);
-                    _motor.SetRotation(Quaternion.LookRotation(direction, _motor.CharacterUp));
-
-                    _interactSustainTimer = new
-                    (
-                        duration: _interactionDuration,
-                        completed: () =>
-                        {
-                            _manager.InteractWithConnections(this, component);
-                            _interactSustainTimer = _interactSustainTimer.Cleanup();
-                        }
-                    );
-                }
-                else Debug.LogWarning("Hit on connectable Layer had no base connection point script.");
-
+                _interactSustainTimer = new
+                (
+                    duration: _interactionDuration,
+                    completed: () =>
+                    {
+                        _manager.InteractWithConnections(this, component);
+                        _interactSustainTimer = _interactSustainTimer.Cleanup();
+                    }
+                );
             }
             _input.RequestedInteract = false;
         }

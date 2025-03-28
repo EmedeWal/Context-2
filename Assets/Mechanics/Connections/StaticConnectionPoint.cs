@@ -33,7 +33,7 @@ namespace Context
 
             gameObject.layer = LayerMask.NameToLayer("Interactable");
 
-            UpdateVisuals(false, 0f);
+            UpdateVisuals(true, 0);
         }
 
         public void StartConnection(Vector3 callerPosition)
@@ -59,10 +59,12 @@ namespace Context
 
         protected override void OnIncompletedConnections()
         {
+            base.OnIncompletedConnections();
+        
             UpdateVisuals(false);
         }
 
-        private void UpdateVisuals(bool alive, float duration = 1f)
+        public void UpdateVisuals(bool alive, float duration = 1f)
         {
             // This point
             var material = alive ? _litMaterial : _defaultMaterial;

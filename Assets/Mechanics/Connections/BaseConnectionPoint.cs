@@ -22,17 +22,20 @@ namespace Context
 
         [Space]
         [Tooltip("This event is invoked when max connections are met.")]
-        [SerializeField] private UnityEvent _completedConnections;
+        [SerializeField] private UnityEvent _connectionAdded;
+        [SerializeField] private UnityEvent _connectionRemoved;
 
         [Space]
         [SerializeField] protected int _maxconnections = 2;
 
         protected ConnectionManager _manager;
+        protected bool _wasCompleted;
 
         public virtual void Init(ConnectionManager connectionManager)
         {
             Connections = new();
             Collider = GetComponent<Collider>();
+            _wasCompleted = false;
 
             _manager = connectionManager;
         }
@@ -42,12 +45,15 @@ namespace Context
             foreach (var connection in Connections)
                 connection.Cleanup();
 
-            _completedConnections = null;
+            _connectionAdded = null;
+            _connectionRemoved = null;
         }
 
-        public virtual bool HasMaxConnections()
+        public virtual bool HasMaxConnections(Connection exception)
         {
-            var stableConnections = Connections.Where(connection => connection.Stable).ToList();
+            var stableConnections = exception != null
+                ? Connections.Where(connection => connection.Stable || connection == exception).ToList()
+                : Connections.Where(connection => connection.Stable).ToList();
             return stableConnections.Count >= _maxconnections;
         }
         public bool ConnectionsOverCap(int connectionIncrement) => Connections.Count + connectionIncrement > _maxconnections;
@@ -64,21 +70,24 @@ namespace Context
         {
             var stableConnections = Connections.Where(c => c.Stable).ToList();
             if (stableConnections.Count == _maxconnections) OnCompletedConnections();
-            else OnIncompletedConnections();
+            else if (stableConnections.Count == 0 && _wasCompleted) OnIncompletedConnections();
         }
 
         protected virtual void OnCompletedConnections()
         {
+            _wasCompleted = true;
+
             if (_dialogueData != null)
             {
                 DialogueManager.Instance.StartDialogue(_dialogueData.Dialogue);
                 _dialogueData = null;
             }
-
-            _completedConnections?.Invoke();
-            _completedConnections = null;
+            _connectionAdded?.Invoke();
         }
-        protected virtual void OnIncompletedConnections() { }
+        protected virtual void OnIncompletedConnections()
+        {
+            _connectionRemoved?.Invoke();
+        }
 
     }
 }

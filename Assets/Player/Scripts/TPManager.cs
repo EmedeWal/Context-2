@@ -8,6 +8,7 @@ namespace Context.ThirdPersonController
         private TPAudio _audio;
         private TPRoot _root;
 
+        private CutsceneManager _cutsceneManager;
         private InputActions _inputActions;
         private Transform _cameraTransform;
 
@@ -19,6 +20,7 @@ namespace Context.ThirdPersonController
             _audio = GetComponentInChildren<TPAudio>();
             _root = GetComponentInChildren<TPRoot>();
 
+            _cutsceneManager = CutsceneManager.Instance;
             _inputActions = ApplicationManager.Instance.InputManager.Actions;
             _cameraTransform = Camera.main.transform;
 
@@ -37,24 +39,31 @@ namespace Context.ThirdPersonController
 
         private void Update()
         {
+            if (_cutsceneManager.IsPlayingCutscene())
+                return;
+
             var inputActions = _inputActions.Gameplay;
             var controllerInput = new ControllerInput
             {
                 Rotation = _cameraTransform.rotation,
                 Movement = inputActions.Move.ReadValue<Vector2>(),
-                Interact = inputActions.Interact.WasPressedThisFrame(),
                 Jump = inputActions.Jump.WasPressedThisFrame(),
                 CancelJump = inputActions.Jump.WasReleasedThisFrame(),
                 SustainJump = inputActions.Jump.IsPressed(),
+                SustainSprint = inputActions.Sprint.IsPressed(),
+                Interact = inputActions.Interact.WasPressedThisFrame(),
             };
             _controller.Tick(controllerInput);
         }
 
         private void LateUpdate()
         {
+            if (_cutsceneManager.IsPlayingCutscene())
+                return;
+
             var groundType = _controller.GetGroundType();
 
-            _root.LateTick(groundType, Time.deltaTime, _controller.IsMoving());
+            _root.LateTick(groundType, Time.deltaTime, _controller.IsMoving, _controller.IsSprinting);
             _audio.LateTick(groundType);
         }
     }
