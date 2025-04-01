@@ -94,22 +94,21 @@ namespace Context
 
         private void UpdateRope(Vector3 pointA, Vector3 pointB, float time)
         {
-            float noiseOffset = time * _velocity; // Move Perlin noise over time
-            Vector3 direction = (pointB - pointA).normalized;
+            var noiseOffset = time * _velocity;
+            var direction = (pointB - pointA).normalized;
 
-            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
-            Vector3 upDirection = Vector3.Cross(right, direction).normalized; // Correct up vector
+            var right = Vector3.Cross(direction, Vector3.up).normalized;
+            var upDirection = Vector3.Cross(right, direction).normalized; 
 
             for (int i = 0; i < _line.positionCount; i++)
             {
-                float delta = i / (float)(_line.positionCount - 1); // Proper interpolation
-                Vector3 basePosition = Vector3.Lerp(pointA, pointB, delta);
+                var delta = i / (float)(_line.positionCount - 1);
+                var basePosition = Vector3.Lerp(pointA, pointB, delta);
 
-                // Generate Perlin noise based on world position & time
-                float noise = Mathf.PerlinNoise(delta * _waveCount, noiseOffset) * 2f - 1f; // Normalize to [-1, 1]
-                float waveOffset = noise * _waveHeight;
+                var noise = Mathf.PerlinNoise(delta * _waveCount, noiseOffset) * 2f - 1f; // Normalize to [-1, 1]
+                var waveOffset = noise * _waveHeight;
 
-                Vector3 finalPosition = basePosition + upDirection * waveOffset;
+                var finalPosition = basePosition + upDirection * waveOffset;
                 _line.SetPosition(i, finalPosition);
             }
         }
